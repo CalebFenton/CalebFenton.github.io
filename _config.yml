@@ -69,7 +69,7 @@ theme: metro-light
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: https://github.com/CalebFenton/CalebFenton.github.com.git
+  repository: git@github.com:CalebFenton/CalebFenton.github.io.git
   branch: master
 
 feed:
