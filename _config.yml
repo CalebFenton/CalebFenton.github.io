@@ -3,8 +3,8 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Caleb's Blog
-subtitle: reversing, security, hax
+title: Caleb Fenton's Blog
+subtitle: Think Like An Attacker
 description: Reverse engineering, computer security, programming, and hacks.
 author: Caleb Fenton
 language: default
@@ -76,3 +76,5 @@ feed:
   type: atom
   path: rss2.xml
   limit: 20
+
+disqus_shortname: calebfenton
