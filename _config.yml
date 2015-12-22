@@ -63,7 +63,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
-theme: metro-light
+theme: landscape
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
@@ -78,3 +78,12 @@ feed:
   limit: 20
 
 disqus_shortname: calebfenton
+
+marked:
+  gfm: true
+  pedantic: false
+  sanitize: false
+  tables: true
+  breaks: true
+  smartLists: true
+  smartypants: true
