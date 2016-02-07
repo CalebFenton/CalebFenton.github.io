@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Why Anti-Virus Software Sucks | Caleb Fenton&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Everyone knows anti-virus products suck and you can say anti-virus sucks for many different reasons and at different levels. You could start with obvious, surface level reasons: anti-virus software (A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why Anti-Virus Software Sucks">
+<meta property="og:url" content="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/index.html">
+<meta property="og:site_name" content="Caleb Fenton's Blog">
+<meta property="og:description" content="Everyone knows anti-virus products suck and you can say anti-virus sucks for many different reasons and at different levels. You could start with obvious, surface level reasons: anti-virus software (A">
+<meta property="og:image" content="http://usercontent1.hubimg.com/3675524_f520.jpg">
+<meta property="og:image" content="https://i.imgflip.com/8bki5.jpg">
+<meta property="og:image" content="http://www.kappit.com/img/pics/201412_1752_gaaid_sm.jpg">
+<meta property="og:image" content="https://i.imgur.com/K8AFzev.png">
+<meta property="og:image" content="https://i.imgur.com/VAsfyWg.jpg">
+<meta property="og:image" content="https://i.imgur.com/TZSHLqV.jpg">
+<meta property="og:updated_time" content="2016-02-07T23:53:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Why Anti-Virus Software Sucks">
+<meta name="twitter:description" content="Everyone knows anti-virus products suck and you can say anti-virus sucks for many different reasons and at different levels. You could start with obvious, surface level reasons: anti-virus software (A">
+<meta name="twitter:creator" content="@CalebFenton">
+  
+    <link rel="alternative" href="/atom.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Think Like An Attacker</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://CalebFenton.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-why-anti-virus-sucks" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/07/why-anti-virus-sucks/" class="article-date">
+  <time datetime="2016-02-08T04:13:40.000Z" itemprop="datePublished">2016-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Why Anti-Virus Software Sucks
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Everyone knows anti-virus products suck and you can say anti-virus sucks for many different reasons and at different levels. You could start with obvious, surface level reasons: anti-virus software (AV) sucks because it’s slow, klunky, self-advertising garbage that slows your machine down. From there, you could move on to more perceptive complaints such as how it hardly ever detects new malware and almost certainly will not detect fancypants, bespoke, advanced persistent threats (APT). You could still deeper and claim that there’s something wrong with an industry that thrives on selling people fear and selling companies mere compliance so their insurance doesn’t laugh in their faces when they try to collect after getting their gibson’s backdoor hacked.</p>
+<p>The obvious question is then <em>why</em> do AV products suck? Malware is a big problem that costs people money and heartache all the time. Why isn’t this solved better? Need to understand the problem at the most fundamental level. For me, this means understanding the condition in terms of economics principals–incentives, constraints, market forces at work, and so on. Once you understand something at this level, you can usually extrapolate most of the symptoms yourself and, importantly, you’ll have a much better idea of how to actually <em>fix</em> it. This brings me to my main thesis: AV software sucks because it’s impossible for the market to be informed and to meaningfully differentiate between products and objectively determine which one is better. Because of this, there isn’t much incentive for companies to make lean, clean, optimized, AV products with amazing, complex detection capabilities and behavior analysis. They can’t compete on quality, because people can’t tell the difference between great and crap, so they have to compete on sales and advertising.</p>
+<p><img src="http://usercontent1.hubimg.com/3675524_f520.jpg" alt="fearmongering"></p>
+<p>You may have a favorite AV scanner, but can you honestly tell me, objectively, why it’s better than all the others? You might have a few good, small reasons like one has a cleaner, faster user interface (UI) or <em>seems</em> to have better detections. But how can you be sure? Do you know what each one is really doing under the hood? How do you know how good it is at detecting new viruses? How do you know how fast its detection signatures are updated? What about code quality and security bugs in the AV software itself? If you’re like most people, you simply prefer one AV product because it sucks the <em>least</em>.</p>
+<p><img src="https://i.imgflip.com/8bki5.jpg" alt="gear grinding"></p>
+<p>It’s pretty much impossible for laypeeps to have any clue how good an AV product is. Actually, I can’t even tell, so I reckon most experts can’t either, at least in general. Because of this general inability to compare, AV testing companies have stepped up to solve this problem. They test and compare all the different AV products and claim to provide an objective, meaningful, comparative analysis. The idea is that consumers can read their reports and really know what’s going on and pick a good AV product based on <em>science</em> and not anecdotal hearsay.</p>
+<p><img src="http://www.kappit.com/img/pics/201412_1752_gaaid_sm.jpg" alt="difficulty"></p>
+<h2 id="Why_AV_Testing_Sucks"><a href="#Why_AV_Testing_Sucks" class="headerlink" title="Why AV Testing Sucks"></a>Why AV Testing Sucks</h2><p>First, if you’ve never seen an AV Test report and you’re some kind of masochist, here are two from 2015:</p>
+<ol>
+<li><a href="https://www.av-test.org/fileadmin/tests/mobile/avtest_summary_mobile_2015-11.xlsx" target="_blank" rel="external">https://www.av-test.org/fileadmin/tests/mobile/avtest_summary_mobile_2015-11.xlsx</a></li>
+<li><a href="http://www.av-comparatives.org/wp-content/uploads/2015/12/avc_prot_2015b_en.pdf" target="_blank" rel="external">http://www.av-comparatives.org/wp-content/uploads/2015/12/avc_prot_2015b_en.pdf</a></li>
+</ol>
+<p>They evaluate products on various features and abilities such as:</p>
+<ol>
+<li>% of malware detected (detection rates)</li>
+<li>% of good apps detected as malware (false positives)</li>
+<li>ability to detect new and unknown threats (0day detections)</li>
+<li>user-interface and usability</li>
+<li>battery usage (for mobile devices)</li>
+<li>other nice features: backup, device locate, remote wipe, remote lock, etc.</li>
+</ol>
+<p>Sounds good, doesn’t it? Where’s the problem here?, you may be wondering. I’ll just cut straight to the heart of it. Let’s start at #1, detection rates, the most critical metric. <em>How can an AV test determine this?</em> How can they possibly know how much malware an AV product detects and misses? First off, they would need a sample set of <em>known</em> malware to run through the AV scanner. Hmm. But that can’t be right. How can they make a malware sample set? How can they know what malware is? If they had perfect knowledge of what was malware and what wasn’t they would <em>be</em> an AV company not an AV <em>testing</em> company!</p>
+<p>The truth is that AV testing companies have no clue how to detect malware. Instead, and this part is just pure gold, they rely on the <em>AV companies</em> to provide the malware samples. Sort of like if college students got to pick which questions were on the test.</p>
+<p>Yeah. Just let that sink in for a minute. While you meditate on how fucked up that is, contemplate on the “appropriate” use of “ironic” quotes:</p>
+<p><img src="https://i.imgur.com/K8AFzev.png" alt="ironic quotes"></p>
+<h3 id="Problem_1_3A_Black_Magic"><a href="#Problem_1_3A_Black_Magic" class="headerlink" title="Problem 1: Black Magic"></a>Problem 1: Black Magic</h3><p>Right off the bat, the objectivity of the test is seriously compromised. Different AV companies submit their samples and somehow the AV test has to somehow figure out which ones are actually malware and which ones are false positives from the AV company. How does it achieve such a feat? I’m assuming it has something to do with many Excel spreadsheets, animal sacrifice, and <em>fucking witchery</em>.</p>
+<p>There was one time I found an entirely new family of sneaky malware that no one else detected. So we submitted some as test samples. Since everyone <em>except us</em> missed it, they took it out of the sample set. Because, you know, it must not be malware, right?</p>
+<p><img src="https://i.imgur.com/VAsfyWg.jpg" alt="its magic"></p>
+<h3 id="Problem_2_3A_Biased_Against_Small_Companies"><a href="#Problem_2_3A_Biased_Against_Small_Companies" class="headerlink" title="Problem 2: Biased Against Small Companies"></a>Problem 2: Biased Against Small Companies</h3><p>Not all companies have the time or resources to curate and submit test samples, so that only leaves the big companies. And you can be absolutely 100% sure the big companies have test machines setup to run samples through the competition so they know exactly what samples the other AV products are likely to miss. Because of this, the sample set is biased against companies which don’t bother or can’t afford to do “offensive sample testing”. I’ve been at conferences and talked with people enough to learn that some companies spend millions of dollars and have entire teams just for winning these tests. That’s money and resources <em>not</em> going to improving the product and protecting the customer.</p>
+<h3 id="Problem_3_3A_Unrealistic_Samples"><a href="#Problem_3_3A_Unrealistic_Samples" class="headerlink" title="Problem 3: Unrealistic Samples"></a>Problem 3: Unrealistic Samples</h3><p>The sample sets used in these tests are completely unrealistic. It’s usually a bunch of samples from a few families no one ever actually encounters in the wild. Where I worked, ~0.3% of our test misses were actually encountered by users. That means 99.7% of the test samples were never seen <em>once</em> by <em>any</em> of our customers.</p>
+<p>Since the number of families used in the sample set is not nearly representative of the number of actual families spreading in the wild, if an AV company misses one family, they could miss a lot of samples. It’s like when one paragraph from a single chapter in a book is used to make 99.7% of the test.</p>
+<p>I remember when I saw Microsoft Security Essentials massively fail a particular AV test and was amazed by their badass response:<br><a href="https://blogs.technet.microsoft.com/mmpc/2014/01/17/key-lessons-learned-from-the-latest-test-results/" target="_blank" rel="external">https://blogs.technet.microsoft.com/mmpc/2014/01/17/key-lessons-learned-from-the-latest-test-results/</a></p>
+<p>In this polished, polite, and diplomatic response, homeboy drops the mic with this little gem:</p>
+<blockquote>
+<p>Our review showed that 0.0033 percent of our Microsoft Security Essentials and Microsoft Forefront Endpoint Protection customers were impacted by malware samples not detected during the test. In addition, 94 percent of the malware samples not detected during the test didn’t impact our customers.</p>
+</blockquote>
+<p>I don’t want to be accused of putting words in anyone’s mouth, but this basically says “y’alls test is bunk lol whatever”.</p>
+<h3 id="Problem_4_3A_Not_All_Detections_Are_Equal"><a href="#Problem_4_3A_Not_All_Detections_Are_Equal" class="headerlink" title="Problem 4: Not All Detections Are Equal"></a>Problem 4: Not All Detections Are Equal</h3><p>If an app with ads is infected with the most malicious, vile, and insidious malware ever created by man is submitted to AV test as a sample, the tests have no way to distinguish between a detection of the ads and a detection of the actual malware. What you end up with is every product scurrying around to aggressively detect adware. Also, this creates an incentive to create broad, noisy signatures which detect just about anything possibly bad. These “weak detections” usually read like as “This application smells funny and might be bad, but we’re not saying it’s bad. We don’t know. Don’t break eye contact! Good luck!”.</p>
+<p><img src="https://i.imgur.com/TZSHLqV.jpg" alt="unequal"></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Because good testing is so hard, people will continue to pick what AV product they use based on reading tea leaves, chicken bones, PCMagazine articles, word of mouth, etc. Until quality can be better measured, AV companies will continue focus on marketing and winning these bullshit tests, or pretty much anything except for making their stuff better.</p>
+<p>Good testing is needed and that requires a good sample set of relevant, recent, modern malware. But those best equipped for creating this ideal sample set are the same being tested, so a perfect solution may not be possible. One way to improve it would be if companies open sourced their detection data and samples from some of the most prevalent families. I’m not talking a download link on their main page, but if a security researcher or academic wanted a copy, they could contact the company and there would be a system in place to verify they’re legit and send them the goods. This would open up AV testing to competition and would also make the process more transparent. Another cool side effect is academics can stop using super old malware sample sets for research.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/" data-id="cikd7gchr0007v0aodjjnxafa" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/anti-virus/">anti-virus</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/realtalk/">realtalk</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">What happens when a DEX includes a framework class?</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/android/" style="font-size: 10px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 10px;">research</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/02/07/why-anti-virus-sucks/">Why Anti-Virus Software Sucks</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/">What happens when a DEX includes a framework class?</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Caleb Fenton<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'calebfenton';
+  
+  var disqus_url = 'https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
