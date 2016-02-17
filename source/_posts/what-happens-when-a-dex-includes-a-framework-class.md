@@ -9,6 +9,7 @@ date: 2015-12-21 20:13:40
 
 ## Why
 While working on a new class loading system for [SmaliVM](https://github.com/CalebFenton/simplify/tree/master/smalivm), I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as `Ljava/lang/Object;`. I'd originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be _stupid_.
+<!-- more -->
 
 If Dalvik let apps redefine framework classes, it has huge security implications. Sure, each app runs it its own zygote-spawned sandbox, but what if somewhere, somehow, my malicious app's DEX file was loaded by an app with system or root access? I could just backdoor `Ljava/lang/Object;`. Even if that's not possible, I'm sure I could think of something nefarious if you gave me the ability to backdoor any class.
 
