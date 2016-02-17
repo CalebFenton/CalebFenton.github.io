@@ -2,6 +2,7 @@ title: What happens when a DEX includes a framework class?
 tags:
   - research
   - android
+  - dalvik
 comments: true
 date: 2015-12-21 20:13:40
 ---
