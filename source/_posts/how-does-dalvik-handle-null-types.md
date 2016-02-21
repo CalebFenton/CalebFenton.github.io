@@ -25,8 +25,10 @@ In case you were wondering about how `char` is handled, `char c = 'a'` it looks 
 
 I wanted to know when Dalvik coaxed `0` values into `null` references for my work on [Simplify](https://github.com/CalebFenton/simplify). I tried searching and only found bits and pieces, and, of course, a bunch of source code. The first page I found that looked promising was [http://forensics.spreitzenbarth.de/2012/08/27/comparison-of-dalvik-and-java-bytecode/
 ](http://forensics.spreitzenbarth.de/2012/08/27/comparison-of-dalvik-and-java-bytecode/
-) but all it said about nulls was:
+) but _all_ it said about `null`s was:
 > Dalvik bytecode does not have a specific null type. Instead, Dalvik uses a 0 value constant. So, the ambiguous implication of constant 0 should be distinguished properly.
+
+This wasn't going to cut it.
 
 ## The Experiment
 I dug through the source code a little and felt like I only partially understood when it happened. To be sure, and to understand more deeply, and mostly because I like to do things the cheap, easy, ghetto way, I decided to write some Java, convert it to Smali, and execute it to see what happens!

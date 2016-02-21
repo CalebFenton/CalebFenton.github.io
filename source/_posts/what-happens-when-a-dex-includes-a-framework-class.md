@@ -20,7 +20,7 @@ First, I created two small Smali files.
 
 smali/**hello.smali**:
 
-``` smali
+```smali
 .class public LHelloWorld;
 .super Ljava/lang/Object;
 
@@ -39,7 +39,7 @@ The purpose of this is just to provide a `main(String[])` method and to have `Ob
 
 smali/**object.smali**:
 
-``` smali
+```smali
 .class Ljava/lang/Object;
 
 .method public static <clinit>()V
@@ -57,7 +57,7 @@ This is the real test. If I can overwrite framework classes, I should get a lot 
 
 After that, it was just packing it up and shoving it onto an emulator:
 
-``` bash
+```bash
 $ smali smali -o classes.dex
 $ zip hello.zip classes.dex
   adding: classes.dex (deflated 47%)
@@ -66,13 +66,13 @@ $ adb push hello.zip /data/local
 
 I'll also wanted to see the error explosions in the logs. You'd be surprised how many people have an app crash or something and don't bother looking at the logs. `monitor` is your friend. It usually has bad news, and confuses Eclipse and IntelliJ if it's running, but at least it's honest.
 
-``` bash
+```bash
 $ monitor &disown
 ```
 
 Finally, just invoke `dalvikvm` with our ZIP as the classpath:
 
-``` bash
+```bash
 $ adb shell
 root@android:/ # cd /data/local
 root@android:/data/local # dalvikvm -cp hello.zip HelloWorld
