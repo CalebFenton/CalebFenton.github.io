@@ -1,5 +1,5 @@
 
-title: How does Dalvik handle 'this' references?
+title: How does Dalvik handle 'this' registers?
 tags:
   - research
   - android
