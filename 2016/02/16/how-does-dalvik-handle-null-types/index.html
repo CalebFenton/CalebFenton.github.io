@@ -19,7 +19,7 @@ It could actually represent a few of different types:
 
 int v0 = 0;
 boo">
-<meta property="og:updated_time" content="2016-02-17T03:17:15.000Z">
+<meta property="og:updated_time" content="2016-02-19T19:16:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How does Dalvik handle null?">
 <meta name="twitter:description" content="The ProblemDalvik doesn’t have a proper null type. A null is represented by a 0. Consider this example Smali code:const/4 v0, 0x0
@@ -29,7 +29,7 @@ int v0 = 0;
 boo">
 <meta name="twitter:creator" content="@CalebFenton">
   
-    <link rel="alternative" href="/atom.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+    <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -66,7 +66,7 @@ boo">
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/rss2.xml" title="RSS Feed"></a>
         
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
@@ -111,10 +111,11 @@ boo">
 </ul>
 <p>In case you were wondering about how <code>char</code> is handled, <code>char c = &#39;a&#39;</code> it looks like this:<br><code>const/16 v0, 0x61</code></p>
 <p>I wanted to know when Dalvik coaxed <code>0</code> values into <code>null</code> references for my work on <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a>. I tried searching and only found bits and pieces, and, of course, a bunch of source code. The first page I found that looked promising was <a href="http://forensics.spreitzenbarth.de/2012/08/27/comparison-of-dalvik-and-java-bytecode/" target="_blank" rel="external">http://forensics.spreitzenbarth.de/2012/08/27/comparison-of-dalvik-and-java-bytecode/
-</a> but all it said about nulls was:</p>
+</a> but <em>all</em> it said about <code>null</code>s was:</p>
 <blockquote>
 <p>Dalvik bytecode does not have a specific null type. Instead, Dalvik uses a 0 value constant. So, the ambiguous implication of constant 0 should be distinguished properly.</p>
 </blockquote>
+<p>This wasn’t going to cut it.</p>
 <h2 id="The_Experiment"><a href="#The_Experiment" class="headerlink" title="The Experiment"></a>The Experiment</h2><p>I dug through the source code a little and felt like I only partially understood when it happened. To be sure, and to understand more deeply, and mostly because I like to do things the cheap, easy, ghetto way, I decided to write some Java, convert it to Smali, and execute it to see what happens!</p>
 <p>Consider this bit of code which handles <code>null</code> and <code>0</code> back to back:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addNullAnd0ToList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; wtf = <span class="keyword">new</span> LinkedList&lt;Integer&gt;();</span><br><span class="line">    wtf.add(<span class="keyword">null</span>);</span><br><span class="line">    wtf.add(<span class="number">0</span>);</span><br><span class="line">    System.out.println(wtf); <span class="comment">// [null, 0]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>This is the resulting Smali (with a <code>main</code> method that I added because I’m nice and want you to be able to easily execute this yourself):<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LHelloWorld;</span></span><br><span class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> varargs<span class="function"> main(</span><span class="keyword">[</span><span class="class">Ljava/lang/String;</span><span class="function">)</span>V</span><br><span class="line"><span class="keyword">    .locals</span> 0</span><br><span class="line"><span class="keyword">    .prologue</span></span><br><span class="line">   <span class="instruction"> invoke-static </span>&#123;&#125;, <span class="class">LHelloWorld;</span><span class="function">-&gt;addNullAnd0ToList(</span><span class="function">)</span>V</span><br><span class="line">   <span class="instruction"> return-void</span><br><span class="line"></span><span class="keyword">.end method</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span><span class="function"> addNullAnd0ToList(</span><span class="function">)</span>V</span><br><span class="line"><span class="keyword">    .locals</span> 4</span><br><span class="line"><span class="keyword">    .prologue</span></span><br><span class="line">   <span class="instruction"> new-instance </span><span class="variable">v0</span>, <span class="class">Ljava/util/LinkedList;</span></span><br><span class="line">   <span class="instruction"> invoke-direct </span>&#123;<span class="variable">v0</span>&#125;, <span class="class">Ljava/util/LinkedList;</span><span class="function">-&gt;&lt;init&gt;(</span><span class="function">)</span>V</span><br><span class="line"></span><br><span class="line"><span class="keyword">    .local</span> <span class="variable">v0</span>, <span class="string">"wtf"</span>:<span class="class">Ljava/util/List;</span>, <span class="string">"Ljava/util/List&lt;Ljava/lang/Integer;&gt;;"</span></span><br><span class="line">   <span class="instruction"> const/4 </span><span class="variable">v1</span>, 0x0</span><br><span class="line">   <span class="instruction"> invoke-interface </span>&#123;<span class="variable">v0</span>, <span class="variable">v1</span>&#125;, <span class="class">Ljava/util/List;</span><span class="function">-&gt;add(</span><span class="class">Ljava/lang/Object;</span><span class="function">)</span>Z</span><br><span class="line"></span><br><span class="line">   <span class="instruction"> const/4 </span><span class="variable">v1</span>, 0x0</span><br><span class="line">   <span class="instruction"> invoke-static </span>&#123;<span class="variable">v1</span>&#125;, <span class="class">Ljava/lang/Integer;</span><span class="function">-&gt;valueOf(</span>I<span class="function">)</span><span class="class">Ljava/lang/Integer;</span></span><br><span class="line">   <span class="instruction"> move-result-object </span><span class="variable">v1</span></span><br><span class="line">   <span class="instruction"> invoke-interface </span>&#123;<span class="variable">v0</span>, <span class="variable">v1</span>&#125;, <span class="class">Ljava/util/List;</span><span class="function">-&gt;add(</span><span class="class">Ljava/lang/Object;</span><span class="function">)</span>Z</span><br><span class="line"></span><br><span class="line">   <span class="instruction"> sget-object </span><span class="variable">v1</span>, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></span><br><span class="line">   <span class="instruction"> invoke-virtual </span>&#123;<span class="variable">v1</span>, <span class="variable">v0</span>&#125;, <span class="class">Ljava/io/PrintStream;</span><span class="function">-&gt;println(</span><span class="class">Ljava/lang/Object;</span><span class="function">)</span>V</span><br><span class="line"></span><br><span class="line">   <span class="instruction"> return-void</span><br><span class="line"></span><span class="keyword">.end method</span></span><br></pre></td></tr></table></figure></p>
@@ -144,7 +145,7 @@ boo">
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/" data-id="cikqaxg4r000ikjaothx3i1mp" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/" data-id="ciky6qz97000mocao4xx5cl15" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -156,6 +157,15 @@ boo">
   
     
 <nav id="article-nav">
+  
+    <a href="/2016/02/21/how-does-dalvik-handle-this-references/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          How does Dalvik handle this references?
+        
+      </div>
+    </a>
   
   
     <a href="/2016/02/07/why-anti-virus-sucks/" id="article-nav-older" class="article-nav-link-wrap">
@@ -184,7 +194,7 @@ boo">
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -202,7 +212,7 @@ boo">
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -212,6 +222,10 @@ boo">
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/02/21/how-does-dalvik-handle-this-references/">How does Dalvik handle this references?</a>
+          </li>
         
           <li>
             <a href="/2016/02/16/how-does-dalvik-handle-null-types/">How does Dalvik handle null?</a>
