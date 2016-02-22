@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2016-02-22T16:14:21.000Z</updated>
+  <updated>2016-02-22T16:17:18.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>How does Dalvik handle this references?</title>
+    <title>How does Dalvik handle &#39;this&#39; references?</title>
     <link href="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-references/"/>
     <id>https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-references/</id>
     <published>2016-02-21T20:44:39.000Z</published>
-    <updated>2016-02-22T16:14:21.000Z</updated>
+    <updated>2016-02-22T16:17:18.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;The_this_Reference&quot;&gt;&lt;a href=&quot;#The_this_Reference&quot; class=&quot;headerlink&quot; title=&quot;The this Reference&quot;&gt;&lt;/a&gt;The &lt;code&gt;this&lt;/code&gt; Reference&lt;/h2&gt;&lt;p&gt;For every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the &lt;code&gt;this&lt;/code&gt; reference. I wanted to know if it was legal to reassign the register value.&lt;/p&gt;
 &lt;p&gt;Just so I’m sure you know what I’m talking about, here’s a simple Java class with an instance method called &lt;code&gt;instanceMethod&lt;/code&gt;:&lt;/p&gt;
