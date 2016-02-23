@@ -18,7 +18,7 @@ widgets:
 - recent_posts
 
 # Miscellaneous
-google_analytics:
+google_analytics: UA-74177443-1
 favicon: /favicon.png
 twitter: CalebFenton
 google_plus:
