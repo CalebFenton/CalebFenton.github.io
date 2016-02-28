@@ -103,4 +103,4 @@ The `manifest.json` must be the file used by the installer. It must be the metad
 
 # Summary
 
-If you want to decompile the `.xapk`, first unxip the `.apk` file floating around the root of the archive.
+If you want to decompile an `.xapk`, all you have to do is unzip it, look for the original `.apk`, and decompile it normally.
