@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Caleb Fenton&#39;s Blog</title>
+  <title>Decompiling XAPK Files | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Reverse engineering, computer security, programming, and hacks.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Caleb Fenton's Blog">
-<meta property="og:url" content="https://CalebFenton.github.io/index.html">
+  <meta name="description" content="While reviewing new Android reverse engineering questions on Stack Overflow, I came across this request to decompile an .xapk. A brief, non-technical description of the format is described on APKPure’">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Decompiling XAPK Files">
+<meta property="og:url" content="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/index.html">
 <meta property="og:site_name" content="Caleb Fenton's Blog">
-<meta property="og:description" content="Reverse engineering, computer security, programming, and hacks.">
+<meta property="og:description" content="While reviewing new Android reverse engineering questions on Stack Overflow, I came across this request to decompile an .xapk. A brief, non-technical description of the format is described on APKPure’">
+<meta property="og:updated_time" content="2016-02-28T15:57:26.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Caleb Fenton's Blog">
-<meta name="twitter:description" content="Reverse engineering, computer security, programming, and hacks.">
+<meta name="twitter:title" content="Decompiling XAPK Files">
+<meta name="twitter:description" content="While reviewing new Android reverse engineering questions on Stack Overflow, I came across this request to decompile an .xapk. A brief, non-technical description of the format is described on APKPure’">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -77,9 +78,7 @@ ga('send', 'pageview');
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-decompiling-xapk-files" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-decompiling-xapk-files" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/02/28/decompiling-xapk-files/" class="article-date">
   <time datetime="2016-02-28T15:41:03.000Z" itemprop="datePublished">2016-02-28</time>
@@ -92,8 +91,8 @@ ga('send', 'pageview');
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/28/decompiling-xapk-files/">Decompiling XAPK Files</a>
+    <h1 class="article-title" itemprop="name">
+      Decompiling XAPK Files
     </h1>
   
 
@@ -130,202 +129,26 @@ ga('send', 'pageview');
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-how-does-dalvik-handle-this-registers" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/02/21/how-does-dalvik-handle-this-registers/" class="article-date">
-  <time datetime="2016-02-21T20:44:39.000Z" itemprop="datePublished">2016-02-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/21/how-does-dalvik-handle-this-registers/">How does Dalvik handle &#39;this&#39; registers?</a>
-    </h1>
+    <a href="/2016/02/21/how-does-dalvik-handle-this-registers/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">How does Dalvik handle &#39;this&#39; registers?</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="The_this_Reference"><a href="#The_this_Reference" class="headerlink" title="The this Reference"></a>The <code>this</code> Reference</h2><p>For every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the <code>this</code> reference. I wanted to know if it was legal to reassign the register value.</p>
-<p>Just so I’m sure you know what I’m talking about, here’s a simple Java class with an instance method called <code>instanceMethod</code>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Instance</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">instanceMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.number;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-          <p class="article-more-link">
-            <a href="/2016/02/21/how-does-dalvik-handle-this-registers/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/" data-id="cil6qosn9000i75ao0gdlzk7j" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
 
 
-  
-    <article id="post-how-does-dalvik-handle-null-types" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/02/16/how-does-dalvik-handle-null-types/" class="article-date">
-  <time datetime="2016-02-17T03:44:39.000Z" itemprop="datePublished">2016-02-16</time>
-</a>
-    
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/16/how-does-dalvik-handle-null-types/">How does Dalvik handle null?</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="The_Problem"><a href="#The_Problem" class="headerlink" title="The Problem"></a>The Problem</h2><p>Dalvik doesn’t have a proper null type. A null is <a href="https://github.com/android/platform_dalvik/blob/master/dx/src/com/android/dx/rop/cst/CstKnownNull.java#L92">represented by a <code>0</code></a>. Consider this example Smali code:<br><code>const/4 v0, 0x0</code></p>
-<p>It could actually represent a few of different types:</p>
-<ul>
-<li><code>int v0 = 0;</code></li>
-<li><code>boolean v0 = false;</code></li>
-<li><code>byte v0 = 0x0;</code></li>
-<li><code>short v0 = 0;</code></li>
-<li>And even: <code>v0 = null;</code>
-        
-          <p class="article-more-link">
-            <a href="/2016/02/16/how-does-dalvik-handle-null-types/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/" data-id="cil6qosnb000m75aot3edbaf2" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-why-anti-virus-sucks" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/02/07/why-anti-virus-sucks/" class="article-date">
-  <time datetime="2016-02-08T04:13:40.000Z" itemprop="datePublished">2016-02-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/07/why-anti-virus-sucks/">Why Anti-Virus Software Sucks</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Everyone knows anti-virus products suck and you can say anti-virus sucks for many different reasons and at different levels. You could start with obvious, surface level reasons: anti-virus software (AV) sucks because it’s slow, klunky, self-advertising garbage that slows your machine down. From there, you could move on to more perceptive complaints such as how it hardly ever detects new malware and almost certainly will not detect fancypants, bespoke, advanced persistent threats (APT). You could still deeper and claim that there’s something wrong with an industry that thrives on selling people fear and selling companies mere compliance so their insurance doesn’t laugh in their faces when they try to collect after getting their gibson’s backdoor hacked.</p>
-<p>The obvious question is then <em>why</em> do AV products suck? Malware is a big problem that costs people money and heartache all the time. Why isn’t this solved better? Need to understand the problem at the most fundamental level. For me, this means understanding the condition in terms of economics principals–incentives, constraints, market forces at work, and so on. Once you understand something at this level, you can usually extrapolate most of the symptoms yourself and, importantly, you’ll have a much better idea of how to actually <em>fix</em> it. This brings me to my main thesis: <strong>AV software sucks because it’s impossible for the market to be informed and to meaningfully differentiate between products and objectively determine which one is better.</strong> Because of this, there isn’t much incentive for companies to make lean, clean, optimized, AV products with amazing, complex detection capabilities and behavior analysis. They can’t compete on quality, because people can’t tell the difference between great and crap, so they have to compete on sales and advertising.</p>
-<p><img src="http://usercontent1.hubimg.com/3675524_f520.jpg" alt="fearmongering"><br>
-        
-          <p class="article-more-link">
-            <a href="/2016/02/07/why-anti-virus-sucks/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/" data-id="cil6qosn3000775aonkwnylx7" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/anti-virus/">anti-virus</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/realtalk/">realtalk</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-what-happens-when-a-dex-includes-a-framework-class" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" class="article-date">
-  <time datetime="2015-12-22T04:13:40.000Z" itemprop="datePublished">2015-12-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/">What happens when a DEX includes a framework class?</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>While working on a new class loading system for <a href="https://github.com/CalebFenton/simplify/tree/master/smalivm">SmaliVM</a>, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as <code>Ljava/lang/Object;</code>. I’d originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be <em>stupid</em>.<br>
-        
-          <p class="article-more-link">
-            <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" data-id="cil6qosn7000c75aoj37sqwns" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-  
+</section>
 </section>
         
           <aside id="sidebar">
@@ -414,11 +237,13 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
+  var disqus_url = 'https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
