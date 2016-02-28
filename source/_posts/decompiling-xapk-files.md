@@ -10,6 +10,7 @@ While reviewing new Android reverse engineering questions on Stack Overflow, I c
 
 > XAPK is a brand new file format standard for Android APK package file. Contains all APK package and obb cache asset file to keep Android games or apps working, it always ends in ".xapk". To ensure games, applications run perfectly, APK Install one click install makes it easy for Android users directly install .apk, .xapk file to the root directory.
 obb cache data?
+<!-- more -->
 
 The "OBB cache files" are usually pretty big for games and include all of the assets like maps, models, images, music, whatever.
 
@@ -17,7 +18,10 @@ Ok, so it looks like we have a new **APK** format specifically designed for game
 
 Nope. _The original `.apk` is at the root of the `.xapk` archive._ EASY. (read: boring) Shit, I was looking for a challenge!
 
-I downloaded and examined [Side Lift King](https://apkpure.com/side-lift-king/org.ammarz.MT). Here's the shasum:
+I downloaded and examined [Side Lift King](https://apkpure.com/side-lift-king/org.ammarz.MT).
+![such lift, much king](/images/decompiling-xapk/side-lift-king.png)
+
+Here's the shasum:
 ```bash
 $ shasum Side\ Lift\ King_v2.0_apkpure.com.xapk
 155dbed0809d49b477c6ab4c52f555cfc8f47144  Side Lift King_v2.0_apkpure.com.xapk
