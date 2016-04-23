@@ -1,4 +1,3 @@
-
 title: How does Dalvik handle null?
 tags:
   - research

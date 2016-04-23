@@ -1,4 +1,3 @@
-
 title: How does Dalvik handle 'this' registers?
 tags:
   - research
