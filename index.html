@@ -19,7 +19,25 @@
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
   
   
-    <link rel="icon" href="/favicon.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="/css/style.css" type="text/css">
@@ -39,6 +57,7 @@ ga('send', 'pageview');
 
 
 </head>
+
 <body>
   <div id="container">
     <div id="wrap">
@@ -79,6 +98,284 @@ ga('send', 'pageview');
       <div class="outer">
         <section id="main">
   
+    <article id="post-dalvik-virtual-execution-with-smalivm" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/05/06/dalvik-virtual-execution-with-smalivm/" class="article-date">
+  <time datetime="2016-05-06T07:00:00.000Z" itemprop="datePublished">2016-05-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/05/06/dalvik-virtual-execution-with-smalivm/">Dalvik Virtual Execution with SmaliVM</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Sometimes it’s useful to know what code does without executing it. One way to do this is to read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard. Actually executing code can get messy, especially if it’s malicious. But what can you do if you have a lot of obfuscated code and want to know what it does? Or if you want to do some fancy analysis so you can accurately know when certain methods are called? Well, one option is to kinda execute it on a <em>virtual</em> machine (virtual execution). There are many different ways of implementing a virtual machine but the general principal is simple: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/05/06/dalvik-virtual-execution-with-smalivm/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/05/06/dalvik-virtual-execution-with-smalivm/" data-id="cindjgn660019reaohrb43jba" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/05/06/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/deobfuscation/">deobfuscation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smali/">smali</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/">smalivm</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-why-most-vulnerabilities-are-never-disclosed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" class="article-date">
+  <time datetime="2016-04-29T07:00:00.000Z" itemprop="datePublished">2016-04-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/">Why Most Vulnerabilities Are Never Disclosed</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely <em>terrible</em> at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to <a href="http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html">validate an email address</a> or <a href="http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">properly deal with names</a>. That fact we get anything to work at all is amazing</p>
+<p>The bottom line is that if developers are writing code, they’re writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or <a href="http://0day.today/">sold</a>. For reasons which I shall explain, I believe that <em>most</em> security vulnerabilities are fixed but <em>never disclosed</em>.</p>
+        
+          <p class="article-more-link">
+            <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="cindjgn5l0007reaoosjdu14i" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-code-kata-bloom-filter" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/26/code-kata-bloom-filter/" class="article-date">
+  <time datetime="2016-04-27T02:11:11.000Z" itemprop="datePublished">2016-04-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/26/code-kata-bloom-filter/">Code Kata: Bloom Filter</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>If you’re unfamiliar with what a Code Kata is, check out my previous post <a href="/2016/04/19/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a></p>
+<p>The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/04/26/code-kata-bloom-filter/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="cindjgn6c001nreaokaq31etw" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-reversing-an-open-source-vulnerability" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/24/reversing-an-open-source-vulnerability/" class="article-date">
+  <time datetime="2016-04-24T07:00:00.000Z" itemprop="datePublished">2016-04-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/24/reversing-an-open-source-vulnerability/">Reversing an Open Source Vulnerability</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Vulnerability disclosures rarely include enough technical detail to reproduce the exploit. This is a <em>good</em> thing. It wouldn’t do to arm every script kiddie with exact details of how to write an exploit with every disclosure. However, there are times when someone like an application security engineer or security researcher need to “reverse engineer” the disclosure to reconstruct the technical detail in order to fully understand the vulnerability or write an exploit to test systems for weakness.<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/04/24/reversing-an-open-source-vulnerability/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/" data-id="cindjgn5v000ureaoj3j3sizl" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-code-kata-tdd-and-run-length-encoding" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/" class="article-date">
+  <time datetime="2016-04-24T02:26:04.000Z" itemprop="datePublished">2016-04-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>A <em>kata</em> is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A <em>code kata</em> is is a training method for developing skill in programming. Take something you do frequently, or wish to do better, strip away everything not essential, and practice it repeatedly.<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="cindjgn69001ireao0nsh13ru" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tdd/">tdd</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-tetcon-2016-android-deobfuscation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/23/tetcon-2016-android-deobfuscation/" class="article-date">
+  <time datetime="2016-04-23T07:00:00.000Z" itemprop="datePublished">2016-04-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/23/tetcon-2016-android-deobfuscation/">TetCon 2016 - Android Deobfuscation: Tools and Techniques</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>I gave a talk at <a href="https://tetcon.org" target="_blank" rel="external">TetCon 2016</a> about Android obfuscation and deobfuscation.</p>
+<p>The talks at TetCon were great and the people there were super nice. I got all kinds of new ideas and spent the entire flight home furiously coding. Super motivating to hear from and talk to other people working on similar problems. Thanks to the organizers and volunteers Thai for making everything happen.</p>
+<p>Also, special thanks to everyone for speaking English around me!</p>
+<h1 id="Slides_+_Video"><a href="#Slides_+_Video" class="headerlink" title="Slides + Video"></a>Slides + Video</h1><p><a href="http://www.slideshare.net/tekproxy/tetcon-2016" target="_blank" rel="external">http://www.slideshare.net/tekproxy/tetcon-2016</a></p>
+<h1 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h1><ul>
+<li><a href="https://github.com/CalebFenton/dex-oracle" target="_blank" rel="external">https://github.com/CalebFenton/dex-oracle</a></li>
+<li><a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">https://github.com/CalebFenton/simplify</a></li>
+</ul>
+<h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>State of android deobfuscation is weak. Commercial obfuscators are getting more common, and reversers need to understand how to deobfuscate them. This talk provides an overview of different obfuscation types. After that, it describes two code deobfuscation approaches: pattern recognition and virtual execution.</p>
+<p>Pattern recognition focuses mainly on identifying obfuscation patterns, crafting into regular expressions, and then repeatedly applying pattern-based transformations on the code. Insight into code behavior is improved by limited execution of certain methods and storing the result.</p>
+<p>Virtual execution involves simulating the applications code to determine semantics. A context sensitive graph is generated representing every possible execution path and all possible register + class states for each execution of each instruction. This is then analyzed and modified to make the code easier to understand but behaves identically.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/" data-id="cindjgn5t000nreaob02nadc4" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/deobfuscation/">deobfuscation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dex-oracle/">dex-oracle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-decompiling-xapk-files" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/02/28/decompiling-xapk-files/" class="article-date">
@@ -112,7 +409,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/" data-id="cil6r8iie000qgmaoptb4of4r" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/" data-id="cindjgn640015reaorzjr1zxy" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -159,7 +456,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/" data-id="cil6r8iia000igmao1a53vqz1" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/" data-id="cindjgn5z000xreaous83rot0" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -211,7 +508,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/" data-id="cil6r8iic000mgmaols5bzjsx" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/" data-id="cindjgn620011reaoe6eise34" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -258,7 +555,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/" data-id="cil6r8ii40007gmaos59lf64c" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/" data-id="cindjgn5o000creaozbysmhi9" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -272,51 +569,10 @@ ga('send', 'pageview');
 
 
   
-    <article id="post-what-happens-when-a-dex-includes-a-framework-class" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" class="article-date">
-  <time datetime="2015-12-22T04:13:40.000Z" itemprop="datePublished">2015-12-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/">What happens when a DEX includes a framework class?</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>While working on a new class loading system for <a href="https://github.com/CalebFenton/simplify/tree/master/smalivm">SmaliVM</a>, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as <code>Ljava/lang/Object;</code>. I’d originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be <em>stupid</em>.<br>
-        
-          <p class="article-more-link">
-            <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" data-id="cil6r8ii8000cgmaotzkh0o2u" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 </section>
         
@@ -328,7 +584,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -337,7 +593,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/dalvik/" style="font-size: 15px;">dalvik</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 15px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/code-kata/" style="font-size: 12.5px;">code-kata</a> <a href="/tags/dalvik/" style="font-size: 17.5px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12.5px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/open-source/" style="font-size: 12.5px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 15px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12.5px;">security</a> <a href="/tags/simplify/" style="font-size: 12.5px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 10px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
     </div>
   </div>
 
@@ -346,7 +602,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -358,23 +614,23 @@ ga('send', 'pageview');
       <ul>
         
           <li>
-            <a href="/2016/02/28/decompiling-xapk-files/">Decompiling XAPK Files</a>
+            <a href="/2016/05/06/dalvik-virtual-execution-with-smalivm/">Dalvik Virtual Execution with SmaliVM</a>
           </li>
         
           <li>
-            <a href="/2016/02/21/how-does-dalvik-handle-this-registers/">How does Dalvik handle &#39;this&#39; registers?</a>
+            <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/">Why Most Vulnerabilities Are Never Disclosed</a>
           </li>
         
           <li>
-            <a href="/2016/02/16/how-does-dalvik-handle-null-types/">How does Dalvik handle null?</a>
+            <a href="/2016/04/26/code-kata-bloom-filter/">Code Kata: Bloom Filter</a>
           </li>
         
           <li>
-            <a href="/2016/02/07/why-anti-virus-sucks/">Why Anti-Virus Software Sucks</a>
+            <a href="/2016/04/24/reversing-an-open-source-vulnerability/">Reversing an Open Source Vulnerability</a>
           </li>
         
           <li>
-            <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/">What happens when a DEX includes a framework class?</a>
+            <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a>
           </li>
         
       </ul>
