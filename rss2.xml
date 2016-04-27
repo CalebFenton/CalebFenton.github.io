@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2016-04-27T20:11:26.000Z</updated>
+  <updated>2016-04-27T20:13:46.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -20,9 +20,9 @@
     <link href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/"/>
     <id>https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/</id>
     <published>2016-04-27T02:11:11.000Z</published>
-    <updated>2016-04-27T20:11:26.000Z</updated>
+    <updated>2016-04-27T20:13:46.000Z</updated>
     
-    <content type="html">&lt;p&gt;If you’re unfamiliar with what a Code Kata is, check out my previous post &lt;a href=&quot;/2016/04/19/code-kata-tdd-and-run-length-encoding/&quot;&gt;Code Kata: TDD and Run-length Encoding&lt;/a&gt;&lt;/p&gt;
+    <content type="html">&lt;p&gt;If you’re unfamiliar with what a Code Kata is, check out my previous post &lt;a href=&quot;/2016/04/23/code-kata-tdd-and-run-length-encoding/&quot;&gt;Code Kata: TDD and Run-length Encoding&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&quot;What_is_a_bloom_filter_3F&quot;&gt;&lt;a href=&quot;#What_is_a_bloom_filter_3F&quot; class=&quot;headerlink&quot; title=&quot;What is a bloom filter?&quot;&gt;&lt;/a&gt;What is a bloom filter?&lt;/h1&gt;&lt;p&gt;A bloom filter has two methods:&lt;/p&gt;
 &lt;ol&gt;
@@ -71,7 +71,7 @@
     
     <summary type="html">
     
-      &lt;p&gt;If you’re unfamiliar with what a Code Kata is, check out my previous post &lt;a href=&quot;/2016/04/19/code-kata-tdd-and-run-length-encoding/&quot;&gt;Code Kata: TDD and Run-length Encoding&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;If you’re unfamiliar with what a Code Kata is, check out my previous post &lt;a href=&quot;/2016/04/23/code-kata-tdd-and-run-length-encoding/&quot;&gt;Code Kata: TDD and Run-length Encoding&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.&lt;br&gt;
     
     </summary>
