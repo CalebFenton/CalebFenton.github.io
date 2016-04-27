@@ -6,7 +6,7 @@ comments: true
 date: 2016-04-26 19:11:11
 ---
 
-If you're unfamiliar with what a Code Kata is, check out my previous post [Code Kata: TDD and Run-length Encoding](/2016/04/19/code-kata-tdd-and-run-length-encoding/)
+If you're unfamiliar with what a Code Kata is, check out my previous post [Code Kata: TDD and Run-length Encoding](/2016/04/23/code-kata-tdd-and-run-length-encoding/)
 
 The goal for this kata is to learn an unfamiliar data structure. It's called a bloom filter. I've read the Wikipedia article and have used them, but until I've made it myself I don't understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It's just like calculus. There's a world of difference between merely memorizing a formula and having a deep, intuitive understanding.
 <!-- more -->
