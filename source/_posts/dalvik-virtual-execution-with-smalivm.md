@@ -27,7 +27,7 @@ To see some slides for a talk I've done on this already, check out: [Android Deo
 
 # Example SmaliVM Usage
 
-I was advised by my [marketing team](/images/Salesman-1.png) that I should include a simple yet impressive example of smalivm usage. This gives you the impression that I've neatly boiled down a complex problem into a simple, easy to use interface which will solve all your problems in just a few lines. Here:
+I was advised by my [marketing team](/images/dalvik-virtual-execution-with-smalivm/Salesman-1.png) that I should include a simple yet impressive example of smalivm usage. This gives you the impression that I've neatly boiled down a complex problem into a simple, easy to use interface which will solve all your problems in just a few lines. Here:
 
 ```java
 String smaliOrDexPath = "classes.dex";
