@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Dalvik Virtual Execution with SmaliVM | Caleb Fenton&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing cod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dalvik Virtual Execution with SmaliVM">
+<meta property="og:url" content="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/index.html">
+<meta property="og:site_name" content="Caleb Fenton's Blog">
+<meta property="og:description" content="Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing cod">
+<meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-dumbMath.png">
+<meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy.png">
+<meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy2.png">
+<meta property="og:updated_time" content="2016-04-30T19:12:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dalvik Virtual Execution with SmaliVM">
+<meta name="twitter:description" content="Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing cod">
+<meta name="twitter:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-dumbMath.png">
+<meta name="twitter:creator" content="@CalebFenton">
+  
+    <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74177443-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Think Like An Attacker</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/rss2.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://CalebFenton.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-dalvik-virtual-execution-with-smalivm" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/" class="article-date">
+  <time datetime="2016-04-30T07:00:00.000Z" itemprop="datePublished">2016-04-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Dalvik Virtual Execution with SmaliVM
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing code on a real machine can get messy, especially if it’s malicious. But what can you do if you want to understand a lot of malicious code? What if it’s obfuscated and even harder for your brain? Maybe you want to do some fancy analysis so you can accurately know when certain methods are called? Well, for this there’s executing on a <em>virtual</em> machine, i.e. virtual execution. There are many different ways of implementing a virtual machine. You could simulate an entire computer like  VirtualBox and QEMU or you could simulate a smaller subset. The general idea is the same between all types: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.<br><a id="more"></a></p>
+<h1 id="What_is_SmaliVM_3F"><a href="#What_is_SmaliVM_3F" class="headerlink" title="What is SmaliVM?"></a>What is SmaliVM?</h1><p>SmaliVM is a virtual machine which emulates the Dalvik instruction set. It allows you to run Android apps in a limited and controlled way. Unlike the actual Dalvik virtual machine on an Android device, smalivm can execute methods <em>even if it doesn’t know the arguments</em>. You can tell it to execute <code>foo(String s)</code> without giving it <code>s</code>. You might be wondering, “What happens if you have something like <code>if (s == null)</code> Does smalivm explode into little bits?” Ahh, that’s where the fun begins. If a conditional is unknown, smalivm assumes it could be either true or false and takes both execution paths (multiverse!). After smalivm runs a method, it returns an execution graph which has a node for each instruction of every possible execution path. Nodes have parents and children and ancestry is defined by execution order. If a node has multiple children, it’s execution path is not entirely certain. Each node can be inspected to learn the method, class, and virtual machine state at that point of the program.</p>
+<h1 id="What_u2019s_the_point_3F"><a href="#What_u2019s_the_point_3F" class="headerlink" title="What’s the point?"></a>What’s the point?</h1><p>I wanted to make a generic deobfuscator. I spent a lot of time squinting at obfuscated malware code. It sucked. So, I made a few specialized deobfuscators; one for each new variant of malware. Any time I solve some problem, I try to generalize the solution. Past experience has taught me this is a badass way fully understand a problem. My first attempt at a general purpose deobfuscator was <a href="https://github.com/CalebFenton/dex-oracle" target="_blank" rel="external">Oracle</a> which I used to analyze a DexGuard protected Obad malware. It looks for patterns in code using regex and tries to simplify them. It gets some extra help by executing certain methods in the analyzed code using reflection on an emulator or device. It works decently and it’s simplicity means it’s easier to add new deobfuscation plugins, but since it uses regex, it’s brittle; one small change in the obfuscator would require modifying a big, mean, ugly regex that would make part of you die if you stared at it for too long.</p>
+<p>Without knowing anything about formal program analysis (or Java, #yolo), I started building what I hoped would be the ultimate generic Android deobfuscator: <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a>. The goal was to implement some instructions so it could execute code, understand what it does, and replace complex patterns with simplified versions. I figured it would take a few weeks of solid work to start using it to kick malware ass. Turns out, virtual execution isn’t the sort of thing that partially works; it either works perfectly or fails spectacularly. All in all, it took ~21k lines of code from 550 commits over 2.5 years to get to a 1.0 release. Had some help from <a href="https://twitter.com/timstrazz" target="_blank" rel="external">@timstrazz</a> (unit tests!), <a href="https://twitter.com/_jsoo_" target="_blank" rel="external">@_jsoo_</a> (bugs!), <a href="https://twitter.com/OngEmil" target="_blank" rel="external">@OngEmil</a> and <a href="https://twitter.com/crufia" target="_blank" rel="external">@crufia</a> (how to java good). Thanks!</p>
+<p>To see some slides for a talk I’ve done on this already, check out: <a href="/2016/04/23/tetcon-2016-android-deobfuscation/">Android Deobfuscation: Tools and Techniques</a></p>
+<h1 id="Example_SmaliVM_Usage"><a href="#Example_SmaliVM_Usage" class="headerlink" title="Example SmaliVM Usage"></a>Example SmaliVM Usage</h1><p>I was advised by my <a href="/images/Salesman-1.png">marketing team</a> that I should include a simple yet impressive example of smalivm usage. This gives you the impression that I’ve neatly boiled down a complex problem into a simple, easy to use interface which will solve all your problems in just a few lines. Here:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String smaliOrDexPath = <span class="string">"classes.dex"</span>;</span><br><span class="line">VirtualMachineFactory vmFactory = <span class="keyword">new</span> VirtualMachineFactory(); <span class="comment">// this is Java, so factory</span></span><br><span class="line">VirtualMachine vm = vmFactory.build(smaliOrDexPath);</span><br><span class="line"></span><br><span class="line">String methodSignature = <span class="string">"Lorg/cf/example/Main;-&gt;foo(Ljava/lang/String;)V"</span>;</span><br><span class="line">ExecutionGraph graph = vm.execute(methodSignature);</span><br></pre></td></tr></table></figure>
+<p>The above code will parse the <code>classes.dex</code> file and execute <code>org.cf.example.Main.foo(String s)</code> without defining what the value of <code>s</code> is. This means that the <code>graph</code> may contain multiple execution paths and if any instructions use <code>s</code> the values won’t be known.</p>
+<p>To execute with an actual argument, you just spawn a context and setup the method state:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">VirtualMachineFactory vmFactory = <span class="keyword">new</span> VirtualMachineFactory();</span><br><span class="line">VirtualMachine vm = vmFactory.build(<span class="string">"classes.dex"</span>);</span><br><span class="line"></span><br><span class="line">String methodSignature = <span class="string">"Lorg/cf/example/Main;-&gt;foo(Ljava/lang/String;)V"</span>;</span><br><span class="line">ExecutionContext ectx = vm.spawnRootExecutionContext(methodSignature);</span><br><span class="line">MethodState mState = ectx.getMethodState();</span><br><span class="line">mState.assignParameter(<span class="number">0</span>, <span class="string">"wubalubadubdub"</span>, <span class="string">"Ljava/lang/String;"</span>);</span><br><span class="line"></span><br><span class="line">ExecutionGraph graph = vm.execute(methodSignature, ectx);</span><br></pre></td></tr></table></figure>
+<p>The <code>graph</code> object will contain a whole bunch of stuff you could dig into to figure out exactly what happens at every instruction.</p>
+<h1 id="The_Execution_Graph"><a href="#The_Execution_Graph" class="headerlink" title="The Execution Graph"></a>The Execution Graph</h1><p>Executing a method with smalivm returns an execution graph which contains everything that Simplify needs to optimize the code, which is just about everything. Consider the following Smali code:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> dumbMath()I</span><br><span class="line"><span class="keyword">    .locals</span> 2</span><br><span class="line"></span><br><span class="line">   <span class="built_in"> const/4 </span>v0, 0x3</span><br><span class="line">   <span class="built_in"> const/4 </span>v1, 0x5</span><br><span class="line">   <span class="built_in"> add-int/2addr </span>v0, v1</span><br><span class="line"></span><br><span class="line">   <span class="built_in"> return </span>v0<span class="keyword"></span><br><span class="line">.end method</span></span><br></pre></td></tr></table></figure>
+<p>If you’re unfamiliar with Smali, <em>how did you find this blog and why are you still here?</em>, otherwise you should know <code>dumbMath()I</code> returns 8. Here’s a simplified version of what the execution graph would look like.</p>
+<p><img src="/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-dumbMath.png" alt=""></p>
+<p>It’s simple. Each node is an instruction and contains the values for all registers (after the instruction executes). Looking up register values enables most of the optimizations in Simplify.</p>
+<p>Nodes are indexed by address, but it’s not part of these graph images to keep them simple.</p>
+<p>Now I want to show you what a conditional looks like:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> sometimesReturnTwo(I)I</span><br><span class="line"><span class="keyword">    .locals</span> 1</span><br><span class="line"></span><br><span class="line">   <span class="built_in"> const/4 </span>v0, 0x1</span><br><span class="line">   <span class="built_in"> if-eq </span>p0, v0,<span class="keyword"> :end</span></span><br><span class="line"></span><br><span class="line">   <span class="built_in"> add-int/2addr </span>v0, v0</span><br><span class="line"></span><br><span class="line">   <span class="keyword"> :end</span></span><br><span class="line">   <span class="built_in"> return </span>v0<span class="keyword"></span><br><span class="line">.end method</span></span><br></pre></td></tr></table></figure>
+<p>If <code>p0</code> equals <code>0x1</code> then it returns <code>v0</code> which is 1. Otherwise, it returns 2. If you execute this method with a set value for <code>p0</code> of <code>0x1</code>, the execution graph will look like:</p>
+<p><img src="/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy.png" alt=""></p>
+<p>If you don’t provide any value for <code>p0</code>, it’s unknown and the execution graph is:</p>
+<p><img src="/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy2.png" alt=""></p>
+<p>Now you can start to see how graph analysis gets complicated. The <code>if-eq p0, v0, :end</code> node has two children. This means that there is a multiverse; there are multiple execution paths; there’s ambiguity in the behavior of the method. SmaliVM executes both paths. Either the return value is 1 or it’s 2. If a particular address in a graph has multiple nodes in the “node pile” then you can be sure there was either a loop or there was some conditional uncertainty.</p>
+<p>You can get the return value of the method with Java code similar to:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HeapItem item = graph.getTerminatingRegisterConsensus(MethodState.ReturnRegister);</span><br><span class="line">item.getValue() <span class="comment">// UnknownValue - means there was no consensus</span></span><br><span class="line">item.getType() <span class="comment">// I - type inferred from method return value</span></span><br></pre></td></tr></table></figure>
+<p>The <code>ExecutionGraph#getTerminatingRegisterConsensus(int register)</code> method will conveniently determine all of the terminating addresses for a method since there may be multiple return statements or exceptions. But you could also use the more generic <code>ExecutionGraph#getRegisterConsensus(int address, int register)</code>.</p>
+<h1 id="Unknown_Values"><a href="#Unknown_Values" class="headerlink" title="Unknown Values"></a>Unknown Values</h1><p>Values which aren’t known are represented by an <code>UnknownValue</code> object. For example, if you execute a method without providing arguments, then <code>UnknownValue</code> objects are used as place holders. Other ways you might run into <code>UnknownValue</code>s:</p>
+<ul>
+<li>return value of blacklisted method, e.g. file and network I/O</li>
+<li>return value of method which fails to execute</li>
+<li><code>iget</code> instructions - Non-static member value lookups are tricky because smalivm prefers to be correct even if that means having more unknown values. It’s very hard to know if an object’s members are modified in a separate thread.</li>
+<li>mutable arguments to a method which can’t be executed - Since smalivm gave up on the method, it can’t be sure they weren’t mutated.</li>
+</ul>
+<p>All operations are <em>aware</em> of <code>UnknownValue</code>s and most operations that involve them result in a new <code>UnknownValue</code>. Check it:</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">x</span> = UnknownValue;</span><br><span class="line"><span class="attr">y</span> = <span class="number">10</span>;</span><br><span class="line"><span class="attr">z</span> = x + y; // z is unknown!</span><br></pre></td></tr></table></figure>
+<h1 id="Loops"><a href="#Loops" class="headerlink" title="Loops"></a>Loops</h1><p>When simulating a language which has loops and where you might not know the value of every variable, you run into the problem of not being able to determine when a loop finishes. Here’s a simple example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">loopy</span><span class="params">(<span class="keyword">int</span> iterations)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; iterations; i++) &#123;</span><br><span class="line">        x += x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>If you simulate the above code without knowing what <code>iterations</code> is, you can’t be sure when the <code>for</code> loop condition of <code>i &lt; iterations</code> will be true.</p>
+<p>Story time: When I first encountered this problem, I’d already solved several seemingly impossible problems so I figured there was probably some clever way to solve this in general. Maybe I could carefully analyze the conditionals? Maybe I could look for loop invariants, or take into account maximum values, or maybe somehow extrapolate constraints on the range of values a method was likely to receive. I’d been working on it for about two days when a friend walked by, saw me starting at my notebook and asked what I was doing. After I gave a quick explanation of the project and problem he said, without any sarcasm, “Oh, cool! Yeah, that’s the halting problem. Turing proved it was unsolvable, but good luck!” and he walked away.</p>
+<p>So I deal with loops the same way everyone else does – with configurable limits! For example, you can set the maximum:</p>
+<ol>
+<li>number of times to execute a particular instruction</li>
+<li>number of times a method can be called</li>
+<li>call depth</li>
+<li>execution time</li>
+</ol>
+<p>With these limits in place, if the above code was executed, smalivm would “give up” after several tens of thousands of iterations, correctly assuming it’s impossible to know when it would finish. If <code>loopy</code> was the entry point method, the <code>graph</code> return value would end up as <code>null</code>, since it failed. But if <code>loopy</code> was called as part of the flow of some other method, it would return an unknown value to the calling method and any operations that interacted with that value would then also be marked unknown.</p>
+<h1 id="Side_Effects"><a href="#Side_Effects" class="headerlink" title="Side Effects"></a>Side Effects</h1><p>A method is said to have side effects if it affects the state of something outside the method. This could be anything from network or file IO, calling an unsafe method (i.e. probably does some I/O), changes class or object state, etc. and smalivm keeps track of the side effects of each instruction.</p>
+<p>SmaliVM has three categories of side effects:</p>
+<ol>
+<li>none - reflected, emulated, or whitelisted methods and safe ops, e.g. const/4</li>
+<li>weak - not white listed, used when there <em>may</em> be a side effect</li>
+<li>strong - changes something like a class or object member</li>
+</ol>
+<p>Simplify uses side effect strength to know if it’s OK to remove code. If method A calls method B, and B just does some math and returns the result, then it may be possible to simply inline the return value of B inside of A and avoid calling B all together. To understand inlining, consider this code:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">A() &#123;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">int</span> y = B(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">B(<span class="keyword">int</span> x) &#123;</span><br><span class="line">    <span class="keyword">return</span> x ** x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Since <code>B()</code> does jack all except some math and has no side effects, it can be inlined:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A() &#123;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">int</span> y = <span class="number">25</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>On the smali level, the <code>invoke</code> instruction is replaced with a <code>const*</code> instruction. However, if a method calls another method which writes to the file system, well then it can’t be removed because Simplify can’t be sure removing that method won’t alter the behavior of the program. This’ll be explained a lot more in future posts about how Simplify works.</p>
+<h1 id="Exception_Handling"><a href="#Exception_Handling" class="headerlink" title="Exception Handling"></a>Exception Handling</h1><p>Exception is handling adds all kinds of complexity. If someone ever tells you they wrote a program which emulates Java or Dalvik code and you want to be a dick, smugly ask them how they handle exceptions. Also, ask them how the handle multi-threadding, but that’s for another post.</p>
+<p>You have to build each instruction so it knows when to throw an exception and how to make it look real. Then, as you’re walking along the instructions executing stuff, you have to be aware of where to jump if you hit an exception, e.g. <code>try / catch</code> blocks. The real kicker is that exceptions have to bubble up the call stack. If you call method A which calls method B which calls method C which throws an exception, the ultimate handler for that exception might be method A.</p>
+<p>As of now, exception handling is mostly working and if there’s some major bugs it should be possible to fix without major re-designs. Fingers crossed, yo.</p>
+<p>Also, if an instruction is executed with unknown values, it’s assumed the instruction throws an exception. This can cause a lot of ambiguity in the execution paths, but it’s the only way to really ensure correctness.</p>
+<h1 id="Deobfuscation"><a href="#Deobfuscation" class="headerlink" title="Deobfuscation"></a>Deobfuscation</h1><p>This post is already really long, but I wanted to show you an example of the obfuscation that originally motivated smalivm:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doBadStuff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">int</span> y;</span><br><span class="line">    x = Integer.valueOf(<span class="string">"5"</span>)</span><br><span class="line">    y = Integer.valueOf(<span class="string">"10"</span>)</span><br><span class="line">    x = x * y;</span><br><span class="line">    x += <span class="number">5</span>;</span><br><span class="line">    x /= <span class="number">3</span>;</span><br><span class="line">    hackYourPhoneLOL(<span class="string">"backdoor"</span>);</span><br><span class="line">    x = y;</span><br><span class="line">    y = x + <span class="number">10</span>;</span><br><span class="line">    y /= <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>This is a semi-realistic example of a type of obfuscation called “arithmetic white noise” because it’s just a bunch of bullshit math operations that don’t actually affect the state of the app outside the method. In other words, it has no side effects. The math stuff doesn’t affect the return value of the method since there isn’t one, and it doesn’t affect the <code>hackYourPhoneLOL()</code> method. Just looking at the code, you can figure out you could just rewrite much simpler and not affect the semantics (behavior, what it does):</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doBadStuff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    hackYourPhoneLOL(<span class="string">"backdoor"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>I’ll be diving deeper into this in later posts.</p>
+<h1 id="Hooking_Methods"><a href="#Hooking_Methods" class="headerlink" title="Hooking Methods"></a>Hooking Methods</h1><p>Hooking methods is pretty easy. You just need to make a class which implements <code>MethodStateMethod</code> if it only needs access to local method state or <code>ExecutionContextMethod</code> if it needs access to the entire virtual machine state. Here is hook for <code>System.out.println()</code> :</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">java_io_PrintStream_println</span> <span class="keyword">implements</span> <span class="title">MethodStateMethod</span>, <span class="title">UnknownValuesMethod</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(VirtualMachine vm, MethodState mState)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Virtual method, register 0 is System.out (or something else)</span></span><br><span class="line">        HeapItem item = mState.peekParameter(<span class="number">1</span>);</span><br><span class="line">        Object value = item.getValue();</span><br><span class="line">        String valueStr = (String) value;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Actually print out any println's executed.</span></span><br><span class="line">        System.out.println(valueStr);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> SideEffect.<span class="function">Level <span class="title">getSideEffectLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Do not optimize this away.</span></span><br><span class="line">        <span class="keyword">return</span> SideEffect.Level.STRONG;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Set&lt;VirtualException&gt; <span class="title">getExceptions</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> HashSet&lt;VirtualException&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>And here’s how to configure the hook:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String hookSignature = <span class="string">"Ljava/io/PrintStream;-&gt;println(Ljava/lang/String;)V"</span>;</span><br><span class="line">MethodEmulator.addMethod(hookSignature, java_io_PrintStream_println.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Build and execute VM</span></span><br></pre></td></tr></table></figure>
+<h1 id="Optimizations"><a href="#Optimizations" class="headerlink" title="Optimizations"></a>Optimizations</h1><p>The code isn’t really optimized right now because I’ve favored working on correctness. But there are a few optimizations that are important for understanding how smalivm works.</p>
+<h2 id="Sparse_Contexts"><a href="#Sparse_Contexts" class="headerlink" title="Sparse Contexts"></a>Sparse Contexts</h2><p>As you’ve seen in the execution graph section, nodes have parent / child relationships. Rather than store all of the values for every register in every node, only changes are stored. This saves a ton of space, but if you want to know the value of a particular register at some node, you may have to dig through its parents, grandparents (ancestors) until you find a node which has it. This is a memory / time trade off. It accounts for a lot of processing time, but without it, graphs would blow out the heap constantly.</p>
+<h2 id="Reflection"><a href="#Reflection" class="headerlink" title="Reflection"></a>Reflection</h2><p>Any time smalivm needs to execute a method which is part of the Java API and is safe to execute, it’ll use Java reflection to execute it. For a method to be safe, it can’t have any side effects and basically can’t be used to a clever malicious person to own your system. For example, smalivm will reflect <code>Integer.valueOf()</code>, all <code>String</code> and <code>StringBuilder</code> methods, and some others. This is useful for two reasons:</p>
+<ol>
+<li>it’s way faster</li>
+<li>Java API code has fewer bugs than mine</li>
+</ol>
+<h2 id="Dynamic_Class_Generation"><a href="#Dynamic_Class_Generation" class="headerlink" title="Dynamic Class Generation"></a>Dynamic Class Generation</h2><p>For all input classes, smalivm will try to build a realistic looking Java <code>Class</code> object for that class. It should have all the same methods, fields, access flags, etc. Whenever smalivm executes code that gets a <code>Class</code> object for an input class, it provides the dynamically generated <code>Class</code> object. This allows smalivm to reflect Java API methods which take classes defined <em>by the input Smali or DEX</em>.</p>
+<h1 id="Other_Emulators"><a href="#Other_Emulators" class="headerlink" title="Other Emulators"></a>Other Emulators</h1><p>The main related emulator I’m aware of is <a href="http://www.unicorn-engine.org/" target="_blank" rel="external">Unicorn</a> which is super cool and you should check it out. It does a lot more than smalivm, but it’s based on QEMU so it supports lots of different architectures but not the DalvikVM or JavaVM.</p>
+<h1 id="Future_Ideas"><a href="#Future_Ideas" class="headerlink" title="Future Ideas"></a>Future Ideas</h1><p>I have some ideas that I think would be cool but I haven’t had much time to implement them.</p>
+<h2 id="Interactive_Debugger"><a href="#Interactive_Debugger" class="headerlink" title="Interactive Debugger"></a>Interactive Debugger</h2><p>I’ve used smalivm to debug Android apps, but it required me knowing a lot about how the code works and setting lots of break points in my IDE. It should be possible to generalize some of smalivm’s functionality and wrap it up in a nice little debugging UI. One would be able to inspect or modify values, step through the code instruction by instruction, or set break points, watch registers, dynamically hook methods, set return values for methods, and so much more. Since smalivm only has one project that uses it right now, adding another would really help smooth the edges and clean up the cobwebs around the code base, and would really make the library more generalized and easier to use.</p>
+<h2 id="Android_Component_Lifecycle_Awareness"><a href="#Android_Component_Lifecycle_Awareness" class="headerlink" title="Android Component Lifecycle Awareness"></a>Android Component Lifecycle Awareness</h2><p>Right now smalivm executes methods in a somewhat random order which is easy but it has a lot of downsides. The main drawback is that instance variables are difficult to know. Consider an Android activity that sets up some instance variables in the <code>onCreate()</code> method. Later, they’re accessed in <code>someHelperMethod()</code>. Since smalivm may execute <code>someHelperMethod()</code> first, it never gets the instance variables setup properly. For this and a few other reasons, smalivm doesn’t track instance variables at all.</p>
+<p>If smalivm was smart enough to know that any time it executes a method for an activity, it should first execute other methods which would ordinarily be executed firsts, e.g. <code>onCreate()</code>, <code>attachBaseContext()</code>, etc., then it would be possible to much more reliably determine instance variable values.</p>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>Thanks for getting this far, even if you skipped to the end without reading anything. I hope you found it interesting and you give smalivm and Simplify a look. Maybe you can make use of it. If you do, holla.</p>
+<p>Stay tuned for future posts which will explain how Simplify uses smalivm to deobfuscate.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="cinnj0t3n0003b7aos0jz27kz" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/deobfuscation/">deobfuscation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smali/">smali</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/">smalivm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Why Most Vulnerabilities Are Never Disclosed</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/code-kata/" style="font-size: 12.5px;">code-kata</a> <a href="/tags/dalvik/" style="font-size: 17.5px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12.5px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/open-source/" style="font-size: 12.5px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 15px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12.5px;">security</a> <a href="/tags/simplify/" style="font-size: 12.5px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 10px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/">Dalvik Virtual Execution with SmaliVM</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/">Why Most Vulnerabilities Are Never Disclosed</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/26/code-kata-bloom-filter/">Code Kata: Bloom Filter</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/24/reversing-an-open-source-vulnerability/">Reversing an Open Source Vulnerability</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Caleb Fenton<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'calebfenton';
+  
+  var disqus_url = 'https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
