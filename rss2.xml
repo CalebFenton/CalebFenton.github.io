@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2016-04-30T19:12:15.000Z</updated>
+  <updated>2016-04-30T19:17:48.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -20,14 +20,14 @@
     <link href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/"/>
     <id>https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/</id>
     <published>2016-04-30T07:00:00.000Z</published>
-    <updated>2016-04-30T19:12:15.000Z</updated>
+    <updated>2016-04-30T19:17:48.000Z</updated>
     
     <content type="html">&lt;p&gt;Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing code on a real machine can get messy, especially if it’s malicious. But what can you do if you want to understand a lot of malicious code? What if it’s obfuscated and even harder for your brain? Maybe you want to do some fancy analysis so you can accurately know when certain methods are called? Well, for this there’s executing on a &lt;em&gt;virtual&lt;/em&gt; machine, i.e. virtual execution. There are many different ways of implementing a virtual machine. You could simulate an entire computer like  VirtualBox and QEMU or you could simulate a smaller subset. The general idea is the same between all types: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&quot;What_is_SmaliVM_3F&quot;&gt;&lt;a href=&quot;#What_is_SmaliVM_3F&quot; class=&quot;headerlink&quot; title=&quot;What is SmaliVM?&quot;&gt;&lt;/a&gt;What is SmaliVM?&lt;/h1&gt;&lt;p&gt;SmaliVM is a virtual machine which emulates the Dalvik instruction set. It allows you to run Android apps in a limited and controlled way. Unlike the actual Dalvik virtual machine on an Android device, smalivm can execute methods &lt;em&gt;even if it doesn’t know the arguments&lt;/em&gt;. You can tell it to execute &lt;code&gt;foo(String s)&lt;/code&gt; without giving it &lt;code&gt;s&lt;/code&gt;. You might be wondering, “What happens if you have something like &lt;code&gt;if (s == null)&lt;/code&gt; Does smalivm explode into little bits?” Ahh, that’s where the fun begins. If a conditional is unknown, smalivm assumes it could be either true or false and takes both execution paths (multiverse!). After smalivm runs a method, it returns an execution graph which has a node for each instruction of every possible execution path. Nodes have parents and children and ancestry is defined by execution order. If a node has multiple children, it’s execution path is not entirely certain. Each node can be inspected to learn the method, class, and virtual machine state at that point of the program.&lt;/p&gt;
 &lt;h1 id=&quot;What_u2019s_the_point_3F&quot;&gt;&lt;a href=&quot;#What_u2019s_the_point_3F&quot; class=&quot;headerlink&quot; title=&quot;What’s the point?&quot;&gt;&lt;/a&gt;What’s the point?&lt;/h1&gt;&lt;p&gt;I wanted to make a generic deobfuscator. I spent a lot of time squinting at obfuscated malware code. It sucked. So, I made a few specialized deobfuscators; one for each new variant of malware. Any time I solve some problem, I try to generalize the solution. Past experience has taught me this is a badass way fully understand a problem. My first attempt at a general purpose deobfuscator was &lt;a href=&quot;https://github.com/CalebFenton/dex-oracle&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Oracle&lt;/a&gt; which I used to analyze a DexGuard protected Obad malware. It looks for patterns in code using regex and tries to simplify them. It gets some extra help by executing certain methods in the analyzed code using reflection on an emulator or device. It works decently and it’s simplicity means it’s easier to add new deobfuscation plugins, but since it uses regex, it’s brittle; one small change in the obfuscator would require modifying a big, mean, ugly regex that would make part of you die if you stared at it for too long.&lt;/p&gt;
 &lt;p&gt;Without knowing anything about formal program analysis (or Java, #yolo), I started building what I hoped would be the ultimate generic Android deobfuscator: &lt;a href=&quot;https://github.com/CalebFenton/simplify&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Simplify&lt;/a&gt;. The goal was to implement some instructions so it could execute code, understand what it does, and replace complex patterns with simplified versions. I figured it would take a few weeks of solid work to start using it to kick malware ass. Turns out, virtual execution isn’t the sort of thing that partially works; it either works perfectly or fails spectacularly. All in all, it took ~21k lines of code from 550 commits over 2.5 years to get to a 1.0 release. Had some help from &lt;a href=&quot;https://twitter.com/timstrazz&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;@timstrazz&lt;/a&gt; (unit tests!), &lt;a href=&quot;https://twitter.com/_jsoo_&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;@_jsoo_&lt;/a&gt; (bugs!), &lt;a href=&quot;https://twitter.com/OngEmil&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;@OngEmil&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/crufia&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;@crufia&lt;/a&gt; (how to java good). Thanks!&lt;/p&gt;
 &lt;p&gt;To see some slides for a talk I’ve done on this already, check out: &lt;a href=&quot;/2016/04/23/tetcon-2016-android-deobfuscation/&quot;&gt;Android Deobfuscation: Tools and Techniques&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;Example_SmaliVM_Usage&quot;&gt;&lt;a href=&quot;#Example_SmaliVM_Usage&quot; class=&quot;headerlink&quot; title=&quot;Example SmaliVM Usage&quot;&gt;&lt;/a&gt;Example SmaliVM Usage&lt;/h1&gt;&lt;p&gt;I was advised by my &lt;a href=&quot;/images/Salesman-1.png&quot;&gt;marketing team&lt;/a&gt; that I should include a simple yet impressive example of smalivm usage. This gives you the impression that I’ve neatly boiled down a complex problem into a simple, easy to use interface which will solve all your problems in just a few lines. Here:&lt;/p&gt;
+&lt;h1 id=&quot;Example_SmaliVM_Usage&quot;&gt;&lt;a href=&quot;#Example_SmaliVM_Usage&quot; class=&quot;headerlink&quot; title=&quot;Example SmaliVM Usage&quot;&gt;&lt;/a&gt;Example SmaliVM Usage&lt;/h1&gt;&lt;p&gt;I was advised by my &lt;a href=&quot;/images/dalvik-virtual-execution-with-smalivm/Salesman-1.png&quot;&gt;marketing team&lt;/a&gt; that I should include a simple yet impressive example of smalivm usage. This gives you the impression that I’ve neatly boiled down a complex problem into a simple, easy to use interface which will solve all your problems in just a few lines. Here:&lt;/p&gt;
 &lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;String smaliOrDexPath = &lt;span class=&quot;string&quot;&gt;&quot;classes.dex&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;VirtualMachineFactory vmFactory = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; VirtualMachineFactory(); &lt;span class=&quot;comment&quot;&gt;// this is Java, so factory&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;VirtualMachine vm = vmFactory.build(smaliOrDexPath);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;String methodSignature = &lt;span class=&quot;string&quot;&gt;&quot;Lorg/cf/example/Main;-&amp;gt;foo(Ljava/lang/String;)V&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;ExecutionGraph graph = vm.execute(methodSignature);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;The above code will parse the &lt;code&gt;classes.dex&lt;/code&gt; file and execute &lt;code&gt;org.cf.example.Main.foo(String s)&lt;/code&gt; without defining what the value of &lt;code&gt;s&lt;/code&gt; is. This means that the &lt;code&gt;graph&lt;/code&gt; may contain multiple execution paths and if any instructions use &lt;code&gt;s&lt;/code&gt; the values won’t be known.&lt;/p&gt;
 &lt;p&gt;To execute with an actual argument, you just spawn a context and setup the method state:&lt;/p&gt;
@@ -119,6 +119,8 @@
     </summary>
     
     
+      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
+    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
@@ -128,8 +130,6 @@
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
       <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
-      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
     
   </entry>
   
@@ -437,11 +437,11 @@
     </summary>
     
     
+      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
+    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
-      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
     
       <category term="dex-oracle" scheme="https://CalebFenton.github.io/tags/dex-oracle/"/>
     
@@ -481,9 +481,9 @@
     </summary>
     
     
-      <category term="reversing" scheme="https://CalebFenton.github.io/tags/reversing/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="reversing" scheme="https://CalebFenton.github.io/tags/reversing/"/>
     
   </entry>
   
