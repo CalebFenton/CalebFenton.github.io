@@ -7,10 +7,10 @@ tags:
   - deobfuscation
   - android
 comments: true
-date: 2016-05-06 00:00
+date: 2016-04-30 00:00
 ---
 
-Sometimes it's useful to know what code does without executing it. One way to do this is to read the code with your eyeballs and run it with your brain but that takes too long and it's really hard. Actually executing code can get messy, especially if it's malicious. But what can you do if you have a lot of obfuscated code and want to know what it does? Or if you want to do some fancy analysis so you can accurately know when certain methods are called? Well, one option is to kinda execute it on a _virtual_ machine (virtual execution). There are many different ways of implementing a virtual machine but the general principal is simple: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.
+Sometimes it's useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it's really hard, and executing code on a real machine can get messy, especially if it's malicious. But what can you do if you want to understand a lot of malicious code? What if it's obfuscated and even harder for your brain? Maybe you want to do some fancy analysis so you can accurately know when certain methods are called? Well, for this there's executing on a _virtual_ machine, i.e. virtual execution. There are many different ways of implementing a virtual machine. You could simulate an entire computer like  VirtualBox and QEMU or you could simulate a smaller subset. The general idea is the same between all types: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.
 <!-- more -->
 
 # What is SmaliVM?
@@ -58,9 +58,7 @@ The `graph` object will contain a whole bunch of stuff you could dig into to fig
 
 # The Execution Graph
 
-This section will have lots of pictures and code to help explain what's in a graph.
-
-Consider the following Smali code:
+Executing a method with smalivm returns an execution graph which contains everything that Simplify needs to optimize the code, which is just about everything. Consider the following Smali code:
 
 ```smali
 .method public static dumbMath()I
@@ -78,7 +76,9 @@ If you're unfamiliar with Smali, _how did you find this blog and why are you sti
 
 ![](/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-dumbMath.png)
 
-You can see it's pretty simple. Each node has access to the values for all registers at that point after the instruction has been executed. This is the main type of inspection done by Simplify to do optimizations and deobfuscation. Nodes are indexed by address, but it's not on the graph to keep it simple.
+It's simple. Each node is an instruction and contains the values for all registers (after the instruction executes). Looking up register values enables most of the optimizations in Simplify.
+
+Nodes are indexed by address, but it's not part of these graph images to keep them simple.
 
 Now I want to show you what a conditional looks like:
 
@@ -100,11 +100,11 @@ If `p0` equals `0x1` then it returns `v0` which is 1. Otherwise, it returns 2. I
 
 ![](/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy.png)
 
-If you don't provide any value for `p0`, it is unknown and the execution graph is:
+If you don't provide any value for `p0`, it's unknown and the execution graph is:
 
 ![](/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy2.png)
 
-Now you can see the type of complexity that can make graph analysis difficult. You can see that the `if-eq p0, v0, :end` node has two children. This means that there is a multiverse; there are multiple execution paths; there's ambiguity in the behavior of the method. SmaliVM executes both paths, so either the return value is 1 or it's 2. If a particular address in a graph has multiple nodes in the "node pile" then you can be sure there was either a loop or there was some conditional uncertainty.
+Now you can start to see how graph analysis gets complicated. The `if-eq p0, v0, :end` node has two children. This means that there is a multiverse; there are multiple execution paths; there's ambiguity in the behavior of the method. SmaliVM executes both paths. Either the return value is 1 or it's 2. If a particular address in a graph has multiple nodes in the "node pile" then you can be sure there was either a loop or there was some conditional uncertainty.
 
 You can get the return value of the method with Java code similar to:
 
@@ -114,7 +114,7 @@ item.getValue() // UnknownValue - means there was no consensus
 item.getType() // I - type inferred from method return value
 ```
 
-The `ExecutionGraph#getTerminatingRegisterConsensus()` method will conveniently determine all of the terminating addresses for a method, since there may be multiple return statements or exceptions. But you could also use the more generic `ExecutionGraph#getRegisterConsensus(int address, int register)`.
+The `ExecutionGraph#getTerminatingRegisterConsensus(int register)` method will conveniently determine all of the terminating addresses for a method since there may be multiple return statements or exceptions. But you could also use the more generic `ExecutionGraph#getRegisterConsensus(int address, int register)`.
 
 # Unknown Values
 
@@ -128,7 +128,7 @@ Values which aren't known are represented by an `UnknownValue` object. For examp
 All operations are _aware_ of `UnknownValue`s and most operations that involve them result in a new `UnknownValue`. Check it:
 
 ```
-x = UnknownValue
+x = UnknownValue;
 y = 10;
 z = x + y; // z is unknown!
 ```
@@ -148,7 +148,9 @@ private int loopy(int iterations) {
 }
 ```
 
-If you simulate the above code without knowing what `iterations` is, you can't be sure when the `for` loop condition of `i < iterations` will be true. I had solved about a dozen seemingly impossible (at least to me) problems by this point, so I figured there was probably some clever way to solve this in general. Maybe I could carefully analyze the conditionals? Maybe I could look for loop invariants, or take into account maximum values, or maybe somehow extrapolate constraints on the range of values a method was likely to receive. I worked on it for about two days when a friend walked by and asked what I was doing. After I gave a quick explanation of the project and problem he said, without any sarcasm, "Oh, cool! Yeah, that's the halting problem. Turing proved it was unsolvable, but good luck!" and he walked away.
+If you simulate the above code without knowing what `iterations` is, you can't be sure when the `for` loop condition of `i < iterations` will be true.
+
+Story time: When I first encountered this problem, I'd already solved several seemingly impossible problems so I figured there was probably some clever way to solve this in general. Maybe I could carefully analyze the conditionals? Maybe I could look for loop invariants, or take into account maximum values, or maybe somehow extrapolate constraints on the range of values a method was likely to receive. I'd been working on it for about two days when a friend walked by, saw me starting at my notebook and asked what I was doing. After I gave a quick explanation of the project and problem he said, without any sarcasm, "Oh, cool! Yeah, that's the halting problem. Turing proved it was unsolvable, but good luck!" and he walked away.
 
 So I deal with loops the same way everyone else does -- with configurable limits! For example, you can set the maximum:
 
@@ -157,7 +159,7 @@ So I deal with loops the same way everyone else does -- with configurable limits
 3. call depth
 4. execution time
 
-With these limits in place, if the above code was executed, smalivm would "give up" after several tens of thousands of iterations, correctly assuming it's impossible to know when it would finish. If `loopy` was the entry point method, the `graph` would be `null`, but if `loopy` was called as part of the flow of some other method, it would return an unknown value. Any operations that interacted with that value would then also be marked unknown.
+With these limits in place, if the above code was executed, smalivm would "give up" after several tens of thousands of iterations, correctly assuming it's impossible to know when it would finish. If `loopy` was the entry point method, the `graph` return value would end up as `null`, since it failed. But if `loopy` was called as part of the flow of some other method, it would return an unknown value to the calling method and any operations that interacted with that value would then also be marked unknown.
 
 # Side Effects
 
@@ -167,13 +169,35 @@ SmaliVM has three categories of side effects:
 
 1. none - reflected, emulated, or whitelisted methods and safe ops, e.g. const/4
 2. weak - not white listed, used when there _may_ be a side effect
-3. strong - yup, this changes something like a class or object member
+3. strong - changes something like a class or object member
 
-The side effects are used as hints to Simplify on weather or not it's safe to remove something. If a method calls another method which just does some math and returns the result, then that called method has no side effects. If the return value is known, then the `invoke` instruction can be replaced with a constant. However, if a method calls another method which writes to the file system, well then it can't be removed because Simplify can't be sure removing that method won't alter the behavior of the program. This'll be explained a lot more in future posts about how Simplify works.
+Simplify uses side effect strength to know if it's OK to remove code. If method A calls method B, and B just does some math and returns the result, then it may be possible to simply inline the return value of B inside of A and avoid calling B all together. To understand inlining, consider this code:
+
+```java
+A() {
+    int x = 5;
+    int y = B(x);
+}
+
+B(int x) {
+    return x ** x;
+}
+```
+
+Since `B()` does jack all except some math and has no side effects, it can be inlined:
+
+```java
+A() {
+    int x = 5;
+    int y = 25;
+}
+```
+
+On the smali level, the `invoke` instruction is replaced with a `const*` instruction. However, if a method calls another method which writes to the file system, well then it can't be removed because Simplify can't be sure removing that method won't alter the behavior of the program. This'll be explained a lot more in future posts about how Simplify works.
 
 # Exception Handling
 
-Exception is handling adds all kinds of complexity. If someone ever tells you they wrote a program which emulates Java or Dalvik code and you want to be a dick, smugly ask them how they handle exceptions.
+Exception is handling adds all kinds of complexity. If someone ever tells you they wrote a program which emulates Java or Dalvik code and you want to be a dick, smugly ask them how they handle exceptions. Also, ask them how the handle multi-threadding, but that's for another post.
 
 You have to build each instruction so it knows when to throw an exception and how to make it look real. Then, as you're walking along the instructions executing stuff, you have to be aware of where to jump if you hit an exception, e.g. `try / catch` blocks. The real kicker is that exceptions have to bubble up the call stack. If you call method A which calls method B which calls method C which throws an exception, the ultimate handler for that exception might be method A.
 
