@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Why Most Vulnerabilities Are Never Disclosed | Caleb Fenton&#39;s Blog</title>
+  <title>Tag: business | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely terrible at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Why Most Vulnerabilities Are Never Disclosed">
-<meta property="og:url" content="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/index.html">
+  <meta name="description" content="Reverse engineering, computer security, programming, and hacks.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Caleb Fenton's Blog">
+<meta property="og:url" content="https://CalebFenton.github.io/tags/business/index.html">
 <meta property="og:site_name" content="Caleb Fenton's Blog">
-<meta property="og:description" content="When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely terrible at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and">
-<meta property="og:updated_time" content="2016-04-30T18:53:31.000Z">
+<meta property="og:description" content="Reverse engineering, computer security, programming, and hacks.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Why Most Vulnerabilities Are Never Disclosed">
-<meta name="twitter:description" content="When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely terrible at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and">
+<meta name="twitter:title" content="Caleb Fenton's Blog">
+<meta name="twitter:description" content="Reverse engineering, computer security, programming, and hacks.">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -98,85 +97,39 @@ ga('send', 'pageview');
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-why-most-vulnerabilities-are-never-disclosed" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" class="article-date">
-  <time datetime="2016-04-29T07:00:00.000Z" itemprop="datePublished">2016-04-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      Why Most Vulnerabilities Are Never Disclosed
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2016" class="archive-year">2016</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2016/06/18/what-is-a-company/" class="archive-article-date">
+  <time datetime="2016-06-18T07:00:00.000Z" itemprop="datePublished">Jun 18</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2016/06/18/what-is-a-company/">What is a company?</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely <em>terrible</em> at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to <a href="http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html" target="_blank" rel="external">validate an email address</a> or <a href="http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/" target="_blank" rel="external">properly deal with names</a>. That fact we get anything to work at all is amazing</p>
-<p>The bottom line is that if developers are writing code, they’re writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or <a href="http://0day.today/" target="_blank" rel="external">sold</a>. For reasons which I shall explain, I believe that <em>most</em> security vulnerabilities are fixed but <em>never disclosed</em>.</p>
-<a id="more"></a>
-<h2 id="Why-does-disclosure-matter"><a href="#Why-does-disclosure-matter" class="headerlink" title="Why does disclosure matter?"></a>Why does disclosure matter?</h2><p>It all has to do with getting people and businesses to update. The cost of updating a library can be <a href="/2016/04/22/reversing-an-open-source-vulnerability">quite high</a>, especially at larger organizations. It’s not a good value to update if only to get a few more features and a few less bugs but getting <em>owned</em> <a href="https://www.privacyandsecuritymatters.com/2015/02/target-data-breach-price-tag-252-million-and-counting/" target="_blank" rel="external">is</a> <a href="http://www.networkworld.com/article/2879814/data-center/sony-hack-cost-15-million-but-earnings-unaffected.html" target="_blank" rel="external">expensive</a> and it makes perfect sense to update if it means not getting owned.</p>
-<p>If most vulnerabilities are never disclosed, businesses may neglect to update vulnerable code. Attackers could exploit this by searching for fixed but undisclosed vulnerabilities.</p>
-<h2 id="Why-aren’t-vulnerabilities-disclosed"><a href="#Why-aren’t-vulnerabilities-disclosed" class="headerlink" title="Why aren’t vulnerabilities disclosed?"></a>Why aren’t vulnerabilities disclosed?</h2><p>There are several forces at play which might cause a vulnerability to slip through the cracks.</p>
-<h3 id="Overlooked-Bug"><a href="#Overlooked-Bug" class="headerlink" title="Overlooked Bug"></a>Overlooked Bug</h3><p>The most obvious possibility is that the security implications of a bug weren’t obvious when the developer fixed it. I have no idea of knowing how common this is relative to the other reasons but it has to happen. Developers can’t be expected to do a full security audit for every bug they fix. Even if there was some review system in place, figuring out how to exploit a bug is <em>highly non-trivial</em>, especially for a large or complex app.</p>
-<h3 id="Lack-of-Awareness"><a href="#Lack-of-Awareness" class="headerlink" title="Lack of Awareness"></a>Lack of Awareness</h3><p>A developer may not be aware of how important it is to disclose every vulnerability. It’s not immediately obvious why it’s important, especially if you’re an inexperienced developer. I believe this is the most common reason for undisclosed vulnerability fixes. In my experience, this is most common in trendy, new projects, i.e.  NPM modules and Ruby gems. Mature projects run by established, organized development communities are more likely to already be familiar with the importance of disclosure. For example, Apache has a pretty good track record of disclosing any vulnerabilities with public advisories any time there’s a release which includes a security fix.</p>
-<h3 id="Lack-of-Resources"><a href="#Lack-of-Resources" class="headerlink" title="Lack of Resources"></a>Lack of Resources</h3><p>Even if a developer understands the importance of disclosure, they may not have time or desire to jump through all the hoops to do a proper disclosure. Instead, maybe they just mention that they fixed some security issues in their change logs.</p>
-<p>A proper disclosure would include requesting a Common Vulnerability and Exposure ID (CVE-ID) or by announcing the issue to a language or framework specific advisory such as <a href="https://github.com/rubysec/ruby-advisory-db" target="_blank" rel="external">Ruby Advisories</a> or <a href="https://nodesecurity.io/advisories" target="_blank" rel="external">Node Security Advisories</a>. Announcing to any of these channels would help to quickly spread the word about a vulnerability, but it requires doing a lot more than writing and committing code and if a developer is maintaining a project in their spare time, they might not be keen to do all this extra work.</p>
-<p>There has been some frustration recently with the CVE system due to researchers being denied CVE-IDs for certain types of issues or because CVE-ID requests were never responded to. More info: <a href="https://cve.mitre.org/data/board/archives/2016-03/msg00002.html" target="_blank" rel="external">Concerns about CVE coverage shrinking</a> and <a href="https://www.nowsecure.com/blog/2015/09/16/ruminations-on-app-cves/" target="_blank" rel="external">Ruminations on App CVEs</a>.</p>
-<h3 id="Lack-of-Humility"><a href="#Lack-of-Humility" class="headerlink" title="Lack of Humility"></a>Lack of Humility</h3><p>Imagine that you spend a lot of time on a side project and enjoy the admiration and respect of your peers. Then one day you find you’ve made a mistake and didn’t notice a vulnerability in your code. Maybe it was a big, dumb mistake, too, and now everyone might be getting owned because of your stupid mistake. It takes a special kind of someone to get over that and admit it openly; it takes humility and bravery. If it’s a group of developers, the community needs to be healthy and understanding.</p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>I believe this is an important issue for developers and businesses to understand, but I don’t think the sky is falling. Companies are increasingly using open source code and this is a security issue people should be thinking about.</p>
-<p>We’re working on tools that help us collect and identify commits to open source projects which fix undisclosed vulnerabilities. We’ll be able to use this information to better protect our users. Initial tests turned up a few dozen vulnerabilities before I had to work on something else. The idea seems sound. I can’t mention any specific details right now, but we’ll be publishing the results and specific details soon.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="cipm1jt2i000olcrafnxt3ddv" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Dalvik Virtual Execution with SmaliVM
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/04/26/code-kata-bloom-filter/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Code Kata: Bloom Filter</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
+  
+  
+    </div></section>
+  
 </section>
         
           <aside id="sidebar">
@@ -265,13 +218,11 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/';
-  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
