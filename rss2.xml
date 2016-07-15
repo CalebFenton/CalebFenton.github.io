@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2016-07-09T02:04:25.000Z</updated>
+  <updated>2016-07-15T05:26:16.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/"/>
     <id>https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/</id>
     <published>2016-07-08T07:00:00.000Z</published>
-    <updated>2016-07-09T02:04:25.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;When &lt;a href=&quot;https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/&quot;&gt;smalivm&lt;/a&gt; is virtually executing code, sometimes it needs to pass around Java Class objects. If it’s a Java API class like &lt;code&gt;String&lt;/code&gt; or &lt;code&gt;LinkedLis&lt;/code&gt;t, that’s no problem because smalivm is running in a JVM and has access to those classes already. But what if the class is of a type that’s from the app it’s trying to run? That class only exists in virtual execution imagination land, and if I don’t want to rewrite everything and implement core JVM stuff myself, I need to dynamically create classes.&lt;/p&gt;
 &lt;p&gt;What this means is, when you pass smalivm an input DEX, it’ll create a real life Java class which talks and walks just like the DEX class you give it, except it’ll be inert and soulless, without any code. This way it can pass around the dry husk of a Java class, and if input DEX code wants to check the number of names of methods or do tricky reflection stuff, all those properties are there.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -64,7 +64,7 @@
     <link href="https://CalebFenton.github.io/2016/06/18/what-is-a-company/"/>
     <id>https://CalebFenton.github.io/2016/06/18/what-is-a-company/</id>
     <published>2016-06-18T07:00:00.000Z</published>
-    <updated>2016-06-19T03:12:00.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;People throw around the phrase “company culture” a lot. There are tons of articles on LinkedIn and Medium about “How to 10x Your Company Culture”, “The 7 Mistakes Managers Make Which Harm Culture”, “12 Steps to Improving Culture”, and so on. Some articles are really good and many are at least interesting, but I always felt like they all make assumptions that limit creativity in their approaches to understand and improve culture. Companies are just people. &lt;/p&gt;
 &lt;p&gt;I’d always been a bit of a loner, and maybe that’s why when I started working it was endlessly fascinating for me to watch the company with the camera pulled way back as if I was an alien trying to understand the fundamental forces which made the organization work. I observed and mused about how to understand companies from first principals for about a decade until one day I made some unexpected conceptual connections that really pulled back the curtain and helped me understand culture differently. And it’s all thanks to &lt;em&gt;online video games&lt;/em&gt;.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -115,7 +115,7 @@
     <link href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/"/>
     <id>https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/</id>
     <published>2016-04-30T07:00:00.000Z</published>
-    <updated>2016-04-30T19:17:48.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing code on a real machine can get messy, especially if it’s malicious. But what can you do if you want to understand a lot of malicious code? What if it’s obfuscated and even harder for your brain? Maybe you want to do some fancy analysis so you can accurately know when certain methods are called? Well, for this there’s executing on a &lt;em&gt;virtual&lt;/em&gt; machine, i.e. virtual execution. There are many different ways of implementing a virtual machine. You could simulate an entire computer like  VirtualBox and QEMU or you could simulate a smaller subset. The general idea is the same between all types: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&quot;What-is-SmaliVM&quot;&gt;&lt;a href=&quot;#What-is-SmaliVM&quot; class=&quot;headerlink&quot; title=&quot;What is SmaliVM?&quot;&gt;&lt;/a&gt;What is SmaliVM?&lt;/h1&gt;&lt;p&gt;SmaliVM is a virtual machine which emulates the Dalvik instruction set. It allows you to run Android apps in a limited and controlled way. Unlike the actual Dalvik virtual machine on an Android device, smalivm can execute methods &lt;em&gt;even if it doesn’t know the arguments&lt;/em&gt;. You can tell it to execute &lt;code&gt;foo(String s)&lt;/code&gt; without giving it &lt;code&gt;s&lt;/code&gt;. You might be wondering, “What happens if you have something like &lt;code&gt;if (s == null)&lt;/code&gt; Does smalivm explode into little bits?” Ahh, that’s where the fun begins. If a conditional is unknown, smalivm assumes it could be either true or false and takes both execution paths (multiverse!). After smalivm runs a method, it returns an execution graph which has a node for each instruction of every possible execution path. Nodes have parents and children and ancestry is defined by execution order. If a node has multiple children, it’s execution path is not entirely certain. Each node can be inspected to learn the method, class, and virtual machine state at that point of the program.&lt;/p&gt;
@@ -220,11 +220,11 @@
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
-      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
       <category term="smali" scheme="https://CalebFenton.github.io/tags/smali/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
   </entry>
   
@@ -233,7 +233,7 @@
     <link href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/"/>
     <id>https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/</id>
     <published>2016-04-29T07:00:00.000Z</published>
-    <updated>2016-04-30T18:53:31.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely &lt;em&gt;terrible&lt;/em&gt; at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to &lt;a href=&quot;http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;validate an email address&lt;/a&gt; or &lt;a href=&quot;http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;properly deal with names&lt;/a&gt;. That fact we get anything to work at all is amazing&lt;/p&gt;
 &lt;p&gt;The bottom line is that if developers are writing code, they’re writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or &lt;a href=&quot;http://0day.today/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;sold&lt;/a&gt;. For reasons which I shall explain, I believe that &lt;em&gt;most&lt;/em&gt; security vulnerabilities are fixed but &lt;em&gt;never disclosed&lt;/em&gt;.&lt;/p&gt;
@@ -270,7 +270,7 @@
     <link href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/"/>
     <id>https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/</id>
     <published>2016-04-27T02:11:11.000Z</published>
-    <updated>2016-04-27T20:13:46.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;If you’re unfamiliar with what a Code Kata is, check out my previous post &lt;a href=&quot;/2016/04/23/code-kata-tdd-and-run-length-encoding/&quot;&gt;Code Kata: TDD and Run-length Encoding&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -338,7 +338,7 @@
     <link href="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/"/>
     <id>https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/</id>
     <published>2016-04-24T07:00:00.000Z</published>
-    <updated>2016-04-23T01:32:46.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;Vulnerability disclosures rarely include enough technical detail to reproduce the exploit. This is a &lt;em&gt;good&lt;/em&gt; thing. It wouldn’t do to arm every script kiddie with exact details of how to write an exploit with every disclosure. However, there are times when someone like an application security engineer or security researcher need to “reverse engineer” the disclosure to reconstruct the technical detail in order to fully understand the vulnerability or write an exploit to test systems for weakness.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&quot;Why-is-this-useful&quot;&gt;&lt;a href=&quot;#Why-is-this-useful&quot; class=&quot;headerlink&quot; title=&quot;Why is this useful?&quot;&gt;&lt;/a&gt;Why is this useful?&lt;/h1&gt;&lt;p&gt;When a vulnerability is found in an open source project, it’s often in a library. A vulnerability in a library could potentially affect &lt;em&gt;many&lt;/em&gt; applications, but it’s notoriously difficult to tell if an application is actually vulnerable just by using the vulnerable library. The application may not actually use any of the vulnerable code or be configured in such a way as to be vulnerable. Of course, this itself might not be obvious because the vulnerability disclosure may not fully explain these details, or it may even be wrong and say that a library is vulnerable when the vulnerable code is in a dependency of the library! A company may be hesitant to upgrade a vulnerable library because of the cost, especially at large companies which have a lot of procedures in place around code changes. We’ve had customers tell us:&lt;/p&gt;
@@ -401,7 +401,7 @@
     <link href="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/"/>
     <id>https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/</id>
     <published>2016-04-24T02:26:04.000Z</published>
-    <updated>2016-04-23T01:32:30.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;A &lt;em&gt;kata&lt;/em&gt; is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A &lt;em&gt;code kata&lt;/em&gt; is is a training method for developing skill in programming. Take something you do frequently, or wish to do better, strip away everything not essential, and practice it repeatedly.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;I was introduced to code katas by &lt;a href=&quot;https://twitter.com/OngEmil&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;@OngEmil&lt;/a&gt; who’s one of the best engineers I’ve ever met. The law of broscience teaches us that “Emil is good implies his advice is true”, so I took it seriously and started practicing and I feel like they’re a useful learning tool to understand.&lt;/p&gt;
@@ -510,7 +510,7 @@
     <link href="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/"/>
     <id>https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/</id>
     <published>2016-04-23T07:00:00.000Z</published>
-    <updated>2016-04-23T18:40:07.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;I gave a talk at &lt;a href=&quot;https://tetcon.org&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;TetCon 2016&lt;/a&gt; about Android obfuscation and deobfuscation.&lt;/p&gt;
 &lt;p&gt;The talks at TetCon were great and the people there were super nice. I got all kinds of new ideas and spent the entire flight home furiously coding. Super motivating to hear from and talk to other people working on similar problems. Thanks to the organizers and volunteers Thai for making everything happen.&lt;/p&gt;
@@ -547,7 +547,7 @@
     <link href="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/"/>
     <id>https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/</id>
     <published>2016-02-28T15:41:03.000Z</published>
-    <updated>2016-02-28T16:11:44.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;While reviewing new Android reverse engineering questions on Stack Overflow, I came across this request to &lt;a href=&quot;http://stackoverflow.com/questions/35070003/decompile-xapk-file&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;decompile an &lt;code&gt;.xapk&lt;/code&gt;&lt;/a&gt;. A brief, non-technical description of the format is described on &lt;a href=&quot;https://apkpure.com/xapk.htm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;APKPure’s website&lt;/a&gt;:&lt;/p&gt;
 &lt;blockquote&gt;
@@ -587,7 +587,7 @@
     <link href="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/"/>
     <id>https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/</id>
     <published>2016-02-21T20:44:39.000Z</published>
-    <updated>2016-04-18T23:08:45.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;The-this-Reference&quot;&gt;&lt;a href=&quot;#The-this-Reference&quot; class=&quot;headerlink&quot; title=&quot;The this Reference&quot;&gt;&lt;/a&gt;The &lt;code&gt;this&lt;/code&gt; Reference&lt;/h2&gt;&lt;p&gt;For every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the &lt;code&gt;this&lt;/code&gt; reference. I wanted to know if it was legal to reassign the register value.&lt;/p&gt;
 &lt;p&gt;Just so I’m sure you know what I’m talking about, here’s a simple Java class with an instance method called &lt;code&gt;instanceMethod&lt;/code&gt;:&lt;/p&gt;
@@ -624,9 +624,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
@@ -635,7 +635,7 @@
     <link href="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/"/>
     <id>https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/</id>
     <published>2016-02-17T03:44:39.000Z</published>
-    <updated>2016-04-18T23:08:42.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;The-Problem&quot;&gt;&lt;a href=&quot;#The-Problem&quot; class=&quot;headerlink&quot; title=&quot;The Problem&quot;&gt;&lt;/a&gt;The Problem&lt;/h2&gt;&lt;p&gt;Dalvik doesn’t have a proper null type. A null is &lt;a href=&quot;https://github.com/android/platform_dalvik/blob/master/dx/src/com/android/dx/rop/cst/CstKnownNull.java#L92&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;represented by a &lt;code&gt;0&lt;/code&gt;&lt;/a&gt;. Consider this example Smali code:&lt;br&gt;&lt;code&gt;const/4 v0, 0x0&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;It could actually represent a few of different types:&lt;/p&gt;
@@ -697,9 +697,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
@@ -708,7 +708,7 @@
     <link href="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/"/>
     <id>https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/</id>
     <published>2016-02-08T04:13:40.000Z</published>
-    <updated>2016-02-17T03:47:05.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;p&gt;Everyone knows anti-virus products suck and you can say anti-virus sucks for many different reasons and at different levels. You could start with obvious, surface level reasons: anti-virus software (AV) sucks because it’s slow, klunky, self-advertising garbage that slows your machine down. From there, you could move on to more perceptive complaints such as how it hardly ever detects new malware and almost certainly will not detect fancypants, bespoke, advanced persistent threats (APT). You could still deeper and claim that there’s something wrong with an industry that thrives on selling people fear and selling companies mere compliance so their insurance doesn’t laugh in their faces when they try to collect after getting their gibson’s backdoor hacked.&lt;/p&gt;
 &lt;p&gt;The obvious question is then &lt;em&gt;why&lt;/em&gt; do AV products suck? Malware is a big problem that costs people money and heartache all the time. Why isn’t this solved better? Need to understand the problem at the most fundamental level. For me, this means understanding the condition in terms of economics principals–incentives, constraints, market forces at work, and so on. Once you understand something at this level, you can usually extrapolate most of the symptoms yourself and, importantly, you’ll have a much better idea of how to actually &lt;em&gt;fix&lt;/em&gt; it. This brings me to my main thesis: &lt;strong&gt;AV software sucks because it’s impossible for the market to be informed and to meaningfully differentiate between products and objectively determine which one is better.&lt;/strong&gt; Because of this, there isn’t much incentive for companies to make lean, clean, optimized, AV products with amazing, complex detection capabilities and behavior analysis. They can’t compete on quality, because people can’t tell the difference between great and crap, so they have to compete on sales and advertising.&lt;/p&gt;
@@ -773,7 +773,7 @@
     <link href="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/"/>
     <id>https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/</id>
     <published>2015-12-22T04:13:40.000Z</published>
-    <updated>2016-02-17T19:02:10.000Z</updated>
+    <updated>2016-07-15T05:26:16.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;Why&quot;&gt;&lt;a href=&quot;#Why&quot; class=&quot;headerlink&quot; title=&quot;Why&quot;&gt;&lt;/a&gt;Why&lt;/h2&gt;&lt;p&gt;While working on a new class loading system for &lt;a href=&quot;https://github.com/CalebFenton/simplify/tree/master/smalivm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SmaliVM&lt;/a&gt;, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as &lt;code&gt;Ljava/lang/Object;&lt;/code&gt;. I’d originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be &lt;em&gt;stupid&lt;/em&gt;.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;If Dalvik let apps redefine framework classes, it has huge security implications. Sure, each app runs it its own zygote-spawned sandbox, but what if somewhere, somehow, my malicious app’s DEX file was loaded by an app with system or root access? I could just backdoor &lt;code&gt;Ljava/lang/Object;&lt;/code&gt;. Even if that’s not possible, I’m sure I could think of something nefarious if you gave me the ability to backdoor any class.&lt;/p&gt;
@@ -805,9 +805,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
