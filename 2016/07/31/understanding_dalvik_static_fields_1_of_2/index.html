@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Understanding Dalvik Class Fields part 1 of 2 | Caleb Fenton&#39;s Blog</title>
+  <title>Understanding Dalvik Static Fields part 1 of 2 | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="This story starts with someone reporting a very well written and concise issue for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Understanding Dalvik Class Fields part 1 of 2">
-<meta property="og:url" content="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/index.html">
+<meta property="og:title" content="Understanding Dalvik Static Fields part 1 of 2">
+<meta property="og:url" content="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/index.html">
 <meta property="og:site_name" content="Caleb Fenton's Blog">
 <meta property="og:description" content="This story starts with someone reporting a very well written and concise issue for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case">
-<meta property="og:image" content="https://CalebFenton.github.io/images/understanding-dalvik-fields/black_magic.png">
-<meta property="og:updated_time" content="2016-07-31T23:30:03.000Z">
+<meta property="og:image" content="https://CalebFenton.github.io/images/understanding-dalvik-static-fields/black_magic.png">
+<meta property="og:updated_time" content="2016-07-31T23:31:22.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Understanding Dalvik Class Fields part 1 of 2">
+<meta name="twitter:title" content="Understanding Dalvik Static Fields part 1 of 2">
 <meta name="twitter:description" content="This story starts with someone reporting a very well written and concise issue for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case">
-<meta name="twitter:image" content="https://CalebFenton.github.io/images/understanding-dalvik-fields/black_magic.png">
+<meta name="twitter:image" content="https://CalebFenton.github.io/images/understanding-dalvik-static-fields/black_magic.png">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -100,9 +100,9 @@ ga('send', 'pageview');
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-understanding_dalvik_class_fields_1_of_2" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-understanding_dalvik_static_fields_1_of_2" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/" class="article-date">
+    <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/" class="article-date">
   <time datetime="2016-07-31T07:00:00.000Z" itemprop="datePublished">2016-07-31</time>
 </a>
     
@@ -114,7 +114,7 @@ ga('send', 'pageview');
         
   
     <h1 class="article-title" itemprop="name">
-      Understanding Dalvik Class Fields part 1 of 2
+      Understanding Dalvik Static Fields part 1 of 2
     </h1>
   
 
@@ -137,7 +137,7 @@ ga('send', 'pageview');
 <p>Now you can generate Smali from the Java, but you still need to execute it, right? Enter <code>runsmali</code>:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">function</span> <span class="function"><span class="title">func_runsmali</span></span>() &#123;</div><div class="line">  <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span> ] || [ -z <span class="string">"<span class="variable">$&#123;2&#125;</span>"</span> ]; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"usage: runsmali &lt;smali file or dir&gt; &lt;class&gt; [adb device]"</span></div><div class="line">    <span class="built_in">return</span></div><div class="line">  <span class="keyword">fi</span></div><div class="line"></div><div class="line">  smali <span class="variable">$1</span> -o classes.dex</div><div class="line">  zip runsmali.zip classes.dex</div><div class="line">  rm classes.dex</div><div class="line"></div><div class="line">  <span class="comment"># SUCH ROBUST. MUCH RELIABLE.</span></div><div class="line">  TEMP_ADB_PATH=<span class="string">"/data/local"</span></div><div class="line">  OUTPUT=`adb shell ls <span class="variable">$TEMP_ADB_PATH</span>`</div><div class="line">  <span class="keyword">if</span> [[ <span class="variable">$OUTPUT</span> == *<span class="string">"Permission denied"</span>* ]]</div><div class="line">  <span class="keyword">then</span></div><div class="line">    TEMP_ADB_PATH=<span class="string">"/data/local/tmp"</span></div><div class="line">  <span class="keyword">fi</span></div><div class="line"></div><div class="line">  <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$&#123;3&#125;</span>"</span> ]; <span class="keyword">then</span></div><div class="line">    adb push runsmali.zip <span class="variable">$TEMP_ADB_PATH</span></div><div class="line">  <span class="keyword">else</span></div><div class="line">    adb push <span class="_">-s</span> <span class="variable">$3</span> runsmali.zip <span class="variable">$TEMP_ADB_PATH</span></div><div class="line">  <span class="keyword">fi</span></div><div class="line">  rm runsmali.zip</div><div class="line"></div><div class="line">  <span class="built_in">echo</span> <span class="string">"EXECUTING: <span class="variable">$2</span>"</span></div><div class="line">  adb shell dalvikvm -cp <span class="variable">$TEMP_ADB_PATH</span>/runsmali.zip <span class="variable">$2</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">alias</span> runsmali=func_runsmali</div></pre></td></tr></table></figure>
 <p>Ideally, this should be in Python and installable using <code>pip</code>. It’s a rainy day project, and since it doesn’t rain in California, it might be a while before I get to it. Also, about Python packages, friends, let me tell you that Python packaging is a <em>DARK ART</em>. You want to know the best practices? Fuck you. That’s what they are. It’s a mess. Ruby Gems are <em>much</em>, but Ruby isn’t installed on everyone’s machine like Python is.</p>
-<p><img src="/images/understanding-dalvik-fields/black_magic.png" alt=""></p>
+<p><img src="/images/understanding-dalvik-static-fields/black_magic.png" alt=""></p>
 <blockquote>
 <p>Disclaimer: Coding in Python is a joy, and I don’t dislike the language at all. There’s just some confusing shit if you’re new and trying to learn, like Python 2 vs Python 3 and all the different package distribution tools.</p>
 </blockquote>
@@ -150,9 +150,9 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/" data-id="cirb8pg77000o7uaob505hjnd" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/" data-id="cirb8ro4s000pkeaoc7pccy1i" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
@@ -220,7 +220,7 @@ ga('send', 'pageview');
       <ul>
         
           <li>
-            <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/">Understanding Dalvik Class Fields part 1 of 2</a>
+            <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields part 1 of 2</a>
           </li>
         
           <li>
@@ -268,7 +268,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/';
+  var disqus_url = 'https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/';
   
   (function(){
     var dsq = document.createElement('script');
