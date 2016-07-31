@@ -82,7 +82,7 @@ Nodes are indexed by address, but it's not part of these graph images to keep th
 
 Now I want to show you what a conditional looks like:
 
-```
+```smali
 .method public static sometimesReturnTwo(I)I
     .locals 1
 
@@ -127,7 +127,7 @@ Values which aren't known are represented by an `UnknownValue` object. For examp
 
 All operations are _aware_ of `UnknownValue`s and most operations that involve them result in a new `UnknownValue`. Check it:
 
-```
+```java
 x = UnknownValue;
 y = 10;
 z = x + y; // z is unknown!
