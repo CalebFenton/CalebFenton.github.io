@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-dumbMath.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy2.png">
-<meta property="og:updated_time" content="2016-07-15T05:26:16.000Z">
+<meta property="og:updated_time" content="2016-07-15T06:04:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dalvik Virtual Execution with SmaliVM">
 <meta name="twitter:description" content="Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing cod">
@@ -159,7 +159,7 @@ ga('send', 'pageview');
 <li>mutable arguments to a method which can’t be executed - Since smalivm gave up on the method, it can’t be sure they weren’t mutated.</li>
 </ul>
 <p>All operations are <em>aware</em> of <code>UnknownValue</code>s and most operations that involve them result in a new <code>UnknownValue</code>. Check it:</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">x</span> = UnknownValue;</div><div class="line"><span class="attr">y</span> = <span class="number">10</span>;</div><div class="line"><span class="attr">z</span> = x + y; // z is unknown!</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">x = UnknownValue;</div><div class="line">y = <span class="number">10</span>;</div><div class="line">z = x + y; <span class="comment">// z is unknown!</span></div></pre></td></tr></table></figure>
 <h1 id="Loops"><a href="#Loops" class="headerlink" title="Loops"></a>Loops</h1><p>When simulating a language which has loops and where you might not know the value of every variable, you run into the problem of not being able to determine when a loop finishes. Here’s a simple example:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">loopy</span><span class="params">(<span class="keyword">int</span> iterations)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> x = <span class="number">1</span>;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; iterations; i++) &#123;</div><div class="line">        x += x;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> x;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>If you simulate the above code without knowing what <code>iterations</code> is, you can’t be sure when the <code>for</code> loop condition of <code>i &lt; iterations</code> will be true.</p>
@@ -216,7 +216,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="ciqnbfq5q000cntaommqtal3n" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="cirb8ht79000ngsaomrd501mv" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -265,7 +265,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -283,7 +283,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -293,6 +293,10 @@ ga('send', 'pageview');
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/">Understanding Dalvik Class Fields part 1 of 2</a>
+          </li>
         
           <li>
             <a href="/2016/07/08/death-and-the-java-class-loader/">Death and the Java Class Loader</a>
@@ -308,10 +312,6 @@ ga('send', 'pageview');
         
           <li>
             <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/">Why Most Vulnerabilities Are Never Disclosed</a>
-          </li>
-        
-          <li>
-            <a href="/2016/04/26/code-kata-bloom-filter/">Code Kata: Bloom Filter</a>
           </li>
         
       </ul>

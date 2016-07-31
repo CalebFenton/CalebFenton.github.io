@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Understanding Dalvik Class Fields part 1 of 2 | Caleb Fenton&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="This story starts with someone reporting a very well written and concise issue for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understanding Dalvik Class Fields part 1 of 2">
+<meta property="og:url" content="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/index.html">
+<meta property="og:site_name" content="Caleb Fenton's Blog">
+<meta property="og:description" content="This story starts with someone reporting a very well written and concise issue for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case">
+<meta property="og:image" content="https://CalebFenton.github.io/images/understanding-dalvik-fields/black_magic.png">
+<meta property="og:updated_time" content="2016-07-31T23:24:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Understanding Dalvik Class Fields part 1 of 2">
+<meta name="twitter:description" content="This story starts with someone reporting a very well written and concise issue for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case">
+<meta name="twitter:image" content="https://CalebFenton.github.io/images/understanding-dalvik-fields/black_magic.png">
+<meta name="twitter:creator" content="@CalebFenton">
+  
+    <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74177443-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Think Like An Attacker</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/rss2.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://CalebFenton.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-understanding_dalvik_class_fields_1_of_2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/" class="article-date">
+  <time datetime="2016-07-31T07:00:00.000Z" itemprop="datePublished">2016-07-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Understanding Dalvik Class Fields part 1 of 2
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>This story starts with <a href="https://github.com/teDDyGH" target="_blank" rel="external">someone</a> reporting a very well written and concise <a href="https://github.com/CalebFenton/simplify/issues/50" target="_blank" rel="external">issue</a> for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case you didn’t know, you can initialize a static field in smali like this:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.field</span><span class="keyword"> private</span><span class="keyword"> static</span> someInt:I = 5</div></pre></td></tr></table></figure>
+<p>I’d seen that smali supported this format years ago, and included it in my <a href="https://github.com/ShaneWilton/sublime-smali" target="_blank" rel="external">Smali syntax definitions for Sublime</a>, but I couldn’t ever produce a DEX which used this. Whenever I had a simple, primitive static field, <code>dx</code> would generate bytecode which initialized the field in the class initializer <code>&lt;clinit&gt;</code>.</p>
+<p>Ok, so now I needed to support this in smalivm which means I had to figure out <em>exactly</em> how everything worked, what was valid, what was invalid, and how each type (float, long, int, …) looks. Yay!</p>
+<a id="more"></a>
+<p>Long ago, when I tried to create a DEX which had these “inline static field literals”, the reason I failed may have been because I was either using an older version of <code>dx</code> or I was invoking it weirdly (looking at you <code>--no-optimize</code>). If some versions just didn’t use inline literals, it could be an interesting signature for compiler fingerprinting for <a href="https://github.com/rednaga/APKiD" target="_blank" rel="external">APKiD</a>.</p>
+<p>When thinking about this problem, I realized I didn’t think very carefully about the values of uninitialized fields. Originally, I was assuming an <code>UnknownValue</code> for all fields until they were initialized. However, I know Java treats Objects as <code>null</code> and primitives as something sensible like <code>0</code> for numerics and <code>false</code> for boolean. I felt absolutely confident that Dalvik worked the same way, so of course I setup a way of testing it to be absolutely super confident + 1. So, I wrote some Java:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">InitTests</span> </span>&#123;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> someInt;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">char</span> someChar;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    System.out.println(<span class="string">"someInt = "</span> + someInt);</div><div class="line">    System.out.println(<span class="string">"someChar = "</span> + someChar);</div><div class="line">    System.out.println(<span class="string">"is it eql? "</span> + (someChar == <span class="string">'\0'</span>));</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>This will test the default value of <code>int</code> and <code>char</code>. I bet you didn’t think about <code>char</code> when I mentioned default values of primitives earlier! Oh no, you were probably smugly thinking “of course an <code>int</code> is 0, that just makes sense, duh!” but what about <code>char</code>, huh? I figured it’d probably be a null character, but I so infrequently use those in Javaland that I wasn’t even sure <code>&#39;\0&#39;</code> would work. Turns out, it does.</p>
+<p>So I have all this Java. How am I going to run this on a Dalivk VM? You might be thinking, “Oh! I know this one! I’ll make an Android project, add this code as a class, wire it up to get executed when the main activity loads, and throw it on an emulator!” If that’s what you thought, give yourself an “<strong>F</strong>“ because <strong>F</strong>uck that. Way too slow. Enter <code>java2smali</code>.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Need javac, baksmali and dx on your path, bro</span></div><div class="line"><span class="keyword">function</span> <span class="function"><span class="title">func_java2smali</span></span>() &#123;</div><div class="line">  <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span> ]; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"usage: java2smali &lt;java file&gt;"</span></div><div class="line">    <span class="built_in">return</span></div><div class="line">  <span class="keyword">fi</span></div><div class="line"></div><div class="line">  filename=$(basename <span class="variable">$1</span> .java)</div><div class="line">  outDir=$(shasum <span class="variable">$1</span> | awk <span class="string">'&#123;print $1&#125;'</span>)</div><div class="line"></div><div class="line">  <span class="comment"># Generate debug info in case we keep the dex</span></div><div class="line">  javac -g -cp <span class="variable">$ANDROID_PLATFORM</span>/android.jar <span class="variable">$1</span></div><div class="line">  dx --dex --no-strict --no-optimize --output=<span class="variable">$filename</span>.dex <span class="variable">$filename</span>.class</div><div class="line">  baksmali --sequential-labels --use-locals <span class="variable">$filename</span>.dex -o <span class="variable">$outDir</span></div><div class="line"></div><div class="line">  cp -R <span class="variable">$outDir</span>/**/*.smali .</div><div class="line"></div><div class="line">  rm -r <span class="variable">$outDir</span></div><div class="line">  rm <span class="variable">$filename</span>.class</div><div class="line">  rm <span class="variable">$filename</span>.dex</div><div class="line">&#125;</div><div class="line"><span class="built_in">alias</span> java2smali=func_java2smali</div></pre></td></tr></table></figure>
+<p>This bad bitch will convert your easy to read and write Java code into Smali. It has some limitations. Namely, it’s written in Bash, so a small percentage of you may go mad if you look at it too long. It also doesn’t work super good with multiple files or inner classes.</p>
+<p>Now you can generate Smali from the Java, but you still need to execute it, right? Enter <code>runsmali</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">function</span> <span class="function"><span class="title">func_runsmali</span></span>() &#123;</div><div class="line">  <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span> ] || [ -z <span class="string">"<span class="variable">$&#123;2&#125;</span>"</span> ]; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"usage: runsmali &lt;smali file or dir&gt; &lt;class&gt; [adb device]"</span></div><div class="line">    <span class="built_in">return</span></div><div class="line">  <span class="keyword">fi</span></div><div class="line"></div><div class="line">  smali <span class="variable">$1</span> -o classes.dex</div><div class="line">  zip runsmali.zip classes.dex</div><div class="line">  rm classes.dex</div><div class="line"></div><div class="line">  <span class="comment"># SUCH ROBUST. MUCH RELIABLE.</span></div><div class="line">  TEMP_ADB_PATH=<span class="string">"/data/local"</span></div><div class="line">  OUTPUT=`adb shell ls <span class="variable">$TEMP_ADB_PATH</span>`</div><div class="line">  <span class="keyword">if</span> [[ <span class="variable">$OUTPUT</span> == *<span class="string">"Permission denied"</span>* ]]</div><div class="line">  <span class="keyword">then</span></div><div class="line">    TEMP_ADB_PATH=<span class="string">"/data/local/tmp"</span></div><div class="line">  <span class="keyword">fi</span></div><div class="line"></div><div class="line">  <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$&#123;3&#125;</span>"</span> ]; <span class="keyword">then</span></div><div class="line">    adb push runsmali.zip <span class="variable">$TEMP_ADB_PATH</span></div><div class="line">  <span class="keyword">else</span></div><div class="line">    adb push <span class="_">-s</span> <span class="variable">$3</span> runsmali.zip <span class="variable">$TEMP_ADB_PATH</span></div><div class="line">  <span class="keyword">fi</span></div><div class="line">  rm runsmali.zip</div><div class="line"></div><div class="line">  <span class="built_in">echo</span> <span class="string">"EXECUTING: <span class="variable">$2</span>"</span></div><div class="line">  adb shell dalvikvm -cp <span class="variable">$TEMP_ADB_PATH</span>/runsmali.zip <span class="variable">$2</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">alias</span> runsmali=func_runsmali</div></pre></td></tr></table></figure>
+<p>Ideally, this should be in Python and installable using <code>pip</code>. It’s a rainy day project, and since it doesn’t rain in California, it might be a while before I get to it. Also, about Python packages, friends, let me tell you that Python packaging is a <em>DARK ART</em>. You want to know the best practices? Fuck you. That’s what they are. It’s a mess. Ruby Gems are <em>much</em>, but Ruby isn’t installed on everyone’s machine like Python is.</p>
+<p><img src="/images/understanding-dalvik-fields/black_magic.png" alt=""></p>
+<blockquote>
+<p>Disclaimer: Coding in Python is a joy, and I don’t dislike the language at all. There’s just some confusing shit if you’re new and trying to learn, like Python 2 vs Python 3 and all the different package distribution tools.</p>
+</blockquote>
+<p>Anyway, just fire up an emulator and use <code>runsmali</code> to take care of invoking the dalvikvm and get the output:</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ runsmali InitTests.smali InitTests</div><div class="line">  adding: classes.dex (deflated <span class="number">44</span>%)</div><div class="line">[<span class="number">100</span>%] /data/<span class="keyword">local</span>/runsmali.zip</div><div class="line">EXECUTING: InitTests</div><div class="line">someInt = <span class="number">0</span></div><div class="line">someChar =</div><div class="line"><span class="keyword">is</span> <span class="keyword">it</span> eql? <span class="literal">true</span></div></pre></td></tr></table></figure>
+<p>I wanted to know how to initialize all of the different types, so I had to go digging through the syntax to know everything that was valid. I started <a href="https://github.com/JesusFreke/smali/blob/master/smali/src/main/antlr/smaliParser.g#L481" target="_blank" rel="external">here</a> where <code>FIELD_DIRECTIVE</code> is defined. This led me to some literal parsing code <a href="https://github.com/JesusFreke/smali/blob/master/smali/src/main/antlr/smaliTreeWalker.g#L267" target="_blank" rel="external">here</a>. Ultimately, I found <a href="https://github.com/JesusFreke/smali/blob/master/smali/src/main/jflex/smaliLexer.jflex#L288" target="_blank" rel="external">this</a> which told me how type signifiers are defined. I also stumbled across <a href="https://github.com/JesusFreke/smali/blob/master/smali/src/main/jflex/smaliLexer.jflex#L203" target="_blank" rel="external">this</a> which showed me <code>float</code>s and <code>double</code>s can be <code>NaN</code> in addition to numeric literals. That leaves us with these all as valid static field literals:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myInt:I = -4</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myShort:S = 0xDEADS</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myBoolean:Z = false</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myChar:C = '\n'</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myLong:J = 1000000000l</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myOtherLong:J = 0x42424242L</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myFloat:F = NaN</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myFloat2:F = NaNf</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myOtherFloat:F = 3.14159265357</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myOtherFloat2:F = 3.14159265357f</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myDouble:D = 10000000.9d</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myObject:<span class="class">Ljava/lang/Object;</span> = null</div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myString:<span class="class">Ljava/lang/String;</span> = <span class="string">"Neuro from the nerves, the \"</span>silver\<span class="string">" paths."</span></div><div class="line"><span class="keyword">.field</span><span class="keyword"> static</span> myByte:B = 0x5t</div></pre></td></tr></table></figure>
+<p>In the next post on this topic, I’ll talk about inheritance and valid ways of referencing fields.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/" data-id="cirb8ht7b000pgsaov3ydbqji" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/07/08/death-and-the-java-class-loader/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Death and the Java Class Loader</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12.5px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 17.5px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12.5px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/open-source/" style="font-size: 12.5px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 17.5px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12.5px;">security</a> <a href="/tags/simplify/" style="font-size: 15px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12.5px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/">Understanding Dalvik Class Fields part 1 of 2</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/08/death-and-the-java-class-loader/">Death and the Java Class Loader</a>
+          </li>
+        
+          <li>
+            <a href="/2016/06/18/what-is-a-company/">What is a company?</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/">Dalvik Virtual Execution with SmaliVM</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/">Why Most Vulnerabilities Are Never Disclosed</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Caleb Fenton<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'calebfenton';
+  
+  var disqus_url = 'https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

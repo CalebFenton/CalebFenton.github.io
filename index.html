@@ -99,6 +99,54 @@ ga('send', 'pageview');
       <div class="outer">
         <section id="main">
   
+    <article id="post-understanding_dalvik_class_fields_1_of_2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/" class="article-date">
+  <time datetime="2016-07-31T07:00:00.000Z" itemprop="datePublished">2016-07-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/">Understanding Dalvik Class Fields part 1 of 2</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>This story starts with <a href="https://github.com/teDDyGH">someone</a> reporting a very well written and concise <a href="https://github.com/CalebFenton/simplify/issues/50">issue</a> for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case you didn’t know, you can initialize a static field in smali like this:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.field</span><span class="keyword"> private</span><span class="keyword"> static</span> someInt:I = 5</div></pre></td></tr></table></figure>
+<p>I’d seen that smali supported this format years ago, and included it in my <a href="https://github.com/ShaneWilton/sublime-smali">Smali syntax definitions for Sublime</a>, but I couldn’t ever produce a DEX which used this. Whenever I had a simple, primitive static field, <code>dx</code> would generate bytecode which initialized the field in the class initializer <code>&lt;clinit&gt;</code>.</p>
+<p>Ok, so now I needed to support this in smalivm which means I had to figure out <em>exactly</em> how everything worked, what was valid, what was invalid, and how each type (float, long, int, …) looks. Yay!</p>
+        
+          <p class="article-more-link">
+            <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/" data-id="cirb8ht7b000pgsaov3ydbqji" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_class_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-death-and-the-java-class-loader" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/07/08/death-and-the-java-class-loader/" class="article-date">
@@ -131,7 +179,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="ciqnbfq5p000antaozzkmpgcl" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="cirb8ht78000lgsaoxhn4q9o0" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -177,7 +225,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/06/18/what-is-a-company/" data-id="ciqnbfq60000ontaoi7np7tva" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/06/18/what-is-a-company/" data-id="cirb8ht7j000ygsaopyh8nvor" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/06/18/what-is-a-company/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -222,7 +270,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="ciqnbfq5q000cntaommqtal3n" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="cirb8ht79000ngsaomrd501mv" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -268,7 +316,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="ciqnbfq64000untaoskoa3m3t" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="cirb8ht7n0013gsaotu8al2ua" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -314,7 +362,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="ciqnbfq5k0006ntaob8y433ls" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="cirb8ht6p0008gsaoqy5xk5pd" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -359,7 +407,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/" data-id="ciqnbfq5x000kntaoa74m5951" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/" data-id="cirb8ht7m0011gsaozow5nbb7" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -404,7 +452,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="ciqnbfq5n0009ntaoj5wa2wja" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="cirb8ht73000igsaoi5j87efo" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -455,7 +503,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/" data-id="ciqnbfq5y000mntaopf0menw2" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/" data-id="cirb8ht7e000wgsao21cnqd55" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -502,59 +550,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/" data-id="ciqnbfq5s000dntaohkmh1vvp" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/" data-id="cirb8ht70000hgsao3v772feq" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reversing/">reversing</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-how-does-dalvik-handle-this-registers" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/02/21/how-does-dalvik-handle-this-registers/" class="article-date">
-  <time datetime="2016-02-21T20:44:39.000Z" itemprop="datePublished">2016-02-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/21/how-does-dalvik-handle-this-registers/">How does Dalvik handle &#39;this&#39; registers?</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="The-this-Reference"><a href="#The-this-Reference" class="headerlink" title="The this Reference"></a>The <code>this</code> Reference</h2><p>For every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the <code>this</code> reference. I wanted to know if it was legal to reassign the register value.</p>
-<p>Just so I’m sure you know what I’m talking about, here’s a simple Java class with an instance method called <code>instanceMethod</code>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Instance</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">5</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">instanceMethod</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.number;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-        
-          <p class="article-more-link">
-            <a href="/2016/02/21/how-does-dalvik-handle-this-registers/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/" data-id="ciqnbfq5x000hntao6wnfasoc" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
 
     </footer>
   </div>
@@ -578,7 +579,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -596,7 +597,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -606,6 +607,10 @@ ga('send', 'pageview');
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/07/31/understanding_dalvik_class_fields_1_of_2/">Understanding Dalvik Class Fields part 1 of 2</a>
+          </li>
         
           <li>
             <a href="/2016/07/08/death-and-the-java-class-loader/">Death and the Java Class Loader</a>
@@ -621,10 +626,6 @@ ga('send', 'pageview');
         
           <li>
             <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/">Why Most Vulnerabilities Are Never Disclosed</a>
-          </li>
-        
-          <li>
-            <a href="/2016/04/26/code-kata-bloom-filter/">Code Kata: Bloom Filter</a>
           </li>
         
       </ul>
