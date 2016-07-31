@@ -69,8 +69,8 @@ theme: landscape
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:CalebFenton/CalebFenton.github.io.git
-  branch: master
+  repo:
+    github: git@github.com:CalebFenton/CalebFenton.github.io.git
 
 feed:
   type: atom
