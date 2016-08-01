@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Caleb Fenton&#39;s Blog</title>
-  <subtitle>Think Like An Attacker</subtitle>
+  <subtitle>Break Stuff To Make It Better</subtitle>
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
@@ -60,9 +60,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
   </entry>
   
@@ -271,11 +271,11 @@
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
+      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
+    
       <category term="smali" scheme="https://CalebFenton.github.io/tags/smali/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
-    
-      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
   </entry>
   
@@ -675,9 +675,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
   </entry>
   
@@ -748,9 +748,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
   </entry>
   
@@ -856,9 +856,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
   </entry>
   
