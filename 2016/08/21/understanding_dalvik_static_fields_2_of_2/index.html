@@ -13,7 +13,7 @@
 <meta property="og:description" content="In the first part of this series on Dalvik class fields, I wrote about how Dalvik handles static field literals. This article is focused on how field inheritance works and exploring all the different">
 <meta property="og:image" content="https://CalebFenton.github.io/images/understanding-dalvik-static-fields/read-the-code.gif">
 <meta property="og:image" content="https://CalebFenton.github.io/images/understanding-dalvik-static-fields/tea-and-pizza.png">
-<meta property="og:updated_time" content="2016-08-21T16:14:02.000Z">
+<meta property="og:updated_time" content="2016-08-21T23:56:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Understanding Dalvik Static Fields part 2 of 2">
 <meta name="twitter:description" content="In the first part of this series on Dalvik class fields, I wrote about how Dalvik handles static field literals. This article is focused on how field inheritance works and exploring all the different">
@@ -149,7 +149,7 @@ ga('send', 'pageview');
 </ul>
 <h2 id="Fixing-Simplify"><a href="#Fixing-Simplify" class="headerlink" title="Fixing Simplify"></a>Fixing Simplify</h2><p>The way smalivm (the virtual machine powering Simplify) dealt with field inheritance was stupid. It would simply add all fields from all ancestors regardless of public / private to any child class. This was really wasteful of space, but the real kicker is that smalivm wasn’t statically initializing (<code>&lt;clinit&gt;</code>) super classes when inherited fields were accessed since it wasn’t obvious in any data structure where the fields for a class came from.</p>
 <p>The naive fix was to keep fields in their defined classes and just be sure to <code>&lt;clinit&gt;</code> ancestor classes appropriately. In this case, that means whenever <code>ChildClass</code> is instantiated, all of its ancestor classes are statically initialized. But this fix created a lot of complexity. Since child classes no longer had any reference at all to inherited fields, any time a field was accessed, it was often necessary to check ancestor classes, which was expensive.</p>
-<p>I sipped my tea and thought about how much I just wanted this damned feature to work and be done with it. I’d been obsessing over fixing this bug since it was originally reported. The solution wasn’t in my head. So I kept sipping my tea. Still now solution. Maybe it was the two slices of cold pizza I ate while stuck in traffic this morning?while driving to work? Traffic was horrible but having pizza really takes the edge off, you know? But it made my brain slow.</p>
+<p>I sipped my tea and thought about how much I just wanted this damned feature to work and be done with it. I’d been obsessing over fixing this bug since it was originally reported. The solution wasn’t in my head. Keep sipping my tea. Still no solution. Maybe it was the two slices of cold pizza I ate while stuck in traffic this morning? Don’t judge me. Traffic was horrible. That pizza really took the edge off. Try it. But I think it made my brain slow.</p>
 <p><img src="/images/understanding-dalvik-static-fields/tea-and-pizza.png" alt="t and zah"></p>
 <p>Then I got an idea from <a href="https://sable.github.io/soot/" target="_blank" rel="external">Soot</a> and <a href="http://www.cs.umd.edu/~jfoster/papers/cs-tr-5022.pdf" target="_blank" rel="external">SymDroid</a>. Soot can convert Java bytecode to a simpler form they call <a href="http://www.sable.mcgill.ca/publications/techreports/sable-tr-1998-4.ps" target="_blank" rel="external">jimple</a> and SymDroid uses something similar called <em>µ-Dalvik</em>. The idea is that you can simplify bytecode up front so that later analysis is less complex and easier. Smalivm does something like this already in that every binary math operation such as add, subtract, multiply, etc. are handled by one op internally: <a href="https://github.com/CalebFenton/simplify/blob/master/smalivm/src/main/java/org/cf/smalivm/opcode/BinaryMathOp.java" target="_blank" rel="external">BinaryMathOp</a>. In this case, for field references, I could simply resolve all references such that they refer to the defining class when building the initial graph of the method. This way, the execution can assume any field reference is pointing at the defining class, and extra lookups to ancestors won’t be necessary.</p>
 <p>I hope you’ve enjoyed this two part series which I wrote by painstakingly reassembling scattered notes and code fragments taken while suffering what appears to have been a severe fever dream hallucination. Hope it was educational!</p>
@@ -157,7 +157,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cis4testk000obkao53hnvdkf" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cis59vua1000r5naoxxqoyxa2" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
