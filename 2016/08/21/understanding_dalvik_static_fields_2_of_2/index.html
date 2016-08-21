@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Understanding Dalvik Static Fields part 2 of 2 | Caleb Fenton&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="In the first part of this series on Dalvik class fields, I wrote about how Dalvik handles static field literals. This article is focused on how field inheritance works and exploring all the different">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understanding Dalvik Static Fields part 2 of 2">
+<meta property="og:url" content="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/index.html">
+<meta property="og:site_name" content="Caleb Fenton's Blog">
+<meta property="og:description" content="In the first part of this series on Dalvik class fields, I wrote about how Dalvik handles static field literals. This article is focused on how field inheritance works and exploring all the different">
+<meta property="og:image" content="https://CalebFenton.github.io/images/understanding-dalvik-static-fields/read-the-code.gif">
+<meta property="og:image" content="https://CalebFenton.github.io/images/understanding-dalvik-static-fields/tea-and-pizza.png">
+<meta property="og:updated_time" content="2016-08-21T16:14:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Understanding Dalvik Static Fields part 2 of 2">
+<meta name="twitter:description" content="In the first part of this series on Dalvik class fields, I wrote about how Dalvik handles static field literals. This article is focused on how field inheritance works and exploring all the different">
+<meta name="twitter:image" content="https://CalebFenton.github.io/images/understanding-dalvik-static-fields/read-the-code.gif">
+<meta name="twitter:creator" content="@CalebFenton">
+  
+    <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74177443-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/rss2.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://CalebFenton.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-understanding_dalvik_static_fields_2_of_2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/" class="article-date">
+  <time datetime="2016-08-21T07:00:00.000Z" itemprop="datePublished">2016-08-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Understanding Dalvik Static Fields part 2 of 2
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>In the <a href="2016/07/31/understanding_dalvik_static_fields_1_of_2/">first part</a> of this series on Dalvik class fields, I wrote about how Dalvik handles static field literals. This article is focused on how field inheritance works and exploring all the different but equally valid ways of referencing fields at the bytecode level.</p>
+<p>If you are familiar with Java, you probably already understand how Java field inheritance looks and behaves at the source code level, but btyecode is less strict and potentially more ambiguous (at least to humans) than source. JVM languages like Scala and Groovy compile to the same bytecode as Java, but both have very different source code restrictions.<br><a id="more"></a></p>
+<p>Since I’m doing this for <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a>, the first question is what are <em>all</em> the different ways static field references can look so I can test they’re handled correctly. Here’s an example field reference:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class">Lorg/cf/ChildClass;</span>-&gt;myIntField:I</div></pre></td></tr></table></figure>
+<p>The above code is in the Smali language, which isn’t technically bytecode, but it’s a much higher fidelity representation of it than, say, a decompilation or Java. The above code looks like a reference to a field of <code>ChildClass</code>, but what if <code>myIntField</code> is not defined in <code>ChildClass</code> but rather in a parent class? Can you still reference it like this or does it have to be explicit like:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class">Lorg/cf/ParentClass;</span>-&gt;myIntField:I</div></pre></td></tr></table></figure>
+<p>My intuition is that it makes perfect sense to reference parent fields by the child class which inherits the fields or by the parent class directly. But there could be tons of technical reasons why only reference to the parent class is permitted. Maybe it’s ever so slightly faster?</p>
+<h2 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h2><p>The way I tested everything was to create three classes: <code>ChildClass</code>, <code>ParentClass</code>, and <code>GrandparentClass</code>. Create a directory and give it a clever name like <code>inheri-tests</code> and place all of these files there.</p>
+<h3 id="ChildClass-smali"><a href="#ChildClass-smali" class="headerlink" title="ChildClass.smali"></a>ChildClass.smali</h3><figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">Lchild_class;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Lparent_class;</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> constructor</span> &lt;init&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 0</div><div class="line"><span class="keyword">    .prologue</span></div><div class="line"><span class="keyword">    .line</span> 3</div><div class="line">   <span class="built_in"> invoke-direct </span>&#123;p0&#125;, <span class="class">Lparent_class;</span>-&gt;&lt;init&gt;()V</div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> getsGrandparentFieldLiteral()I</div><div class="line"><span class="keyword">    .locals</span> 1</div><div class="line"></div><div class="line">   <span class="built_in"> sget </span>v0, <span class="class">Lgrandparent_class;</span>-&gt;grandparentFieldLiteral:I</div><div class="line">   <span class="built_in"> const/4 </span>v0, 0x0</div><div class="line">   <span class="built_in"> return </span>v0<span class="keyword"></span></div><div class="line">.end method</div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> getsGrandparentField()I</div><div class="line"><span class="keyword">    .locals</span> 1</div><div class="line"></div><div class="line">   <span class="built_in"> sget </span>v0, <span class="class">Lparent_class;</span>-&gt;grandparentField:I</div><div class="line">   <span class="built_in"> const/4 </span>v0, 0x0</div><div class="line">   <span class="built_in"> return </span>v0<span class="keyword"></span></div><div class="line">.end method</div></pre></td></tr></table></figure>
+<h3 id="ParentClass-smali"><a href="#ParentClass-smali" class="headerlink" title="ParentClass.smali"></a>ParentClass.smali</h3><figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span> <span class="class">Lparent_class;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Lgrandparent_class;</span></div><div class="line"></div><div class="line"><span class="keyword">.field</span><span class="keyword"> public</span><span class="keyword"> static</span> parentField:I</div><div class="line"><span class="keyword">.field</span><span class="keyword"> public</span><span class="keyword"> static</span> fieldLiteral:I = 0x2</div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> constructor</span> &lt;init&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 0</div><div class="line"><span class="keyword">    .prologue</span></div><div class="line"><span class="keyword">    .line</span> 3</div><div class="line">   <span class="built_in"> invoke-direct </span>&#123;p0&#125;, <span class="class">Ljava/lang/grandparent_class;</span>-&gt;&lt;init&gt;()V</div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> getsGrandparentFieldLiteral()I</div><div class="line"><span class="keyword">    .locals</span> 1</div><div class="line">   <span class="built_in"> sget </span>v0, <span class="class">Lparent_class;</span>-&gt;grandparentFieldLiteral:I</div><div class="line">   <span class="built_in"> return </span>v0<span class="keyword"></span></div><div class="line">.end method</div></pre></td></tr></table></figure>
+<h3 id="GrandparentClass-smali"><a href="#GrandparentClass-smali" class="headerlink" title="GrandparentClass.smali"></a>GrandparentClass.smali</h3><figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span> <span class="class">Lgrandparent_class;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.field</span><span class="keyword"> public</span><span class="keyword"> static</span> grandparentField:I</div><div class="line"><span class="keyword">.field</span><span class="keyword"> public</span><span class="keyword"> static</span> grandparentFieldLiteral:I = 0x5</div><div class="line"><span class="keyword">.field</span><span class="keyword"> public</span><span class="keyword"> static</span> fieldLiteral:I = 0x3</div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> constructor</span> &lt;clinit&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 1</div><div class="line"></div><div class="line">   <span class="built_in"> const/4 </span>v0, 0x4</div><div class="line">   <span class="built_in"> sput </span>v0, <span class="class">Lgrandparent_class;</span>-&gt;grandparentField:I</div><div class="line"></div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> constructor</span> &lt;init&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 0</div><div class="line"><span class="keyword">    .prologue</span></div><div class="line"><span class="keyword">    .line</span> 3</div><div class="line">   <span class="built_in"> invoke-direct </span>&#123;p0&#125;, <span class="class">Ljava/lang/Object;</span>-&gt;&lt;init&gt;()V</div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div></pre></td></tr></table></figure>
+<h3 id="Driver-java"><a href="#Driver-java" class="headerlink" title="Driver.java"></a>Driver.java</h3><p>With all three simple Smali classes setup, I needed a Driver class with a <code>main(String[])</code> method which could be executed from the command line. For that, I created this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Driver</span> </span>&#123;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">child_class</span> </span>&#123;</div><div class="line">    <span class="comment">// Dummy class so it'll compile</span></div><div class="line">    <span class="keyword">static</span> <span class="keyword">int</span> fieldLiteral = <span class="number">0</span>;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getsGrandparentField</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getsGrandparentFieldLiteral</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> </span>&#123;</div><div class="line">    child_class.getsGrandparentFieldLiteral();</div><div class="line">    System.out.println(<span class="string">"field literal: "</span> + child_class.fieldLiteral);</div><div class="line">    System.out.println(<span class="string">"grandparent field: "</span> + child_class.getsGrandparentField());</div><div class="line">    System.out.println(<span class="string">"grandparent field literal: "</span> + child_class.getsGrandparentFieldLiteral());</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<div align="center"><br><img src="/images/understanding-dalvik-static-fields/read-the-code.gif" alt="READ IT"><br><strong>READ THE CODE</strong><br></div>
+
+<h3 id="Running-the-Test"><a href="#Running-the-Test" class="headerlink" title="Running the Test"></a>Running the Test</h3><p>Compile <code>Driver</code>, remove the dummy child class, and change references to the dummy class to point at our <code>ChildClass</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">java2smali Driver.java</div><div class="line">rm Driver\<span class="variable">$child_class</span>.class</div><div class="line">sed -i <span class="_">-e</span> <span class="string">'s/Driver\$//g'</span> Driver.smali</div></pre></td></tr></table></figure>
+<p>For the source for <code>runsmali</code> and <code>java2smali</code>, check out <a href="2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields part 1 of 2</a>.</p>
+<p>Next, compile all of the Smali files into a classes.dex and run the Driver class:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ runsmali inheri-tests Driver</div><div class="line">  adding: classes.dex (deflated 53%)</div><div class="line">[100%] /data/<span class="built_in">local</span>/runsmali.zip</div><div class="line">EXECUTING: Driver</div><div class="line">field literal: 2</div><div class="line">grandparent field: 4</div><div class="line">grandparent field literal: 5</div></pre></td></tr></table></figure>
+<h3 id="The-Results"><a href="#The-Results" class="headerlink" title="The Results"></a>The Results</h3><ul>
+<li><code>ChildClass</code> inherited <code>fieldLiteral</code> from <code>ParentClass</code> even though it was also in <code>GrandparentClass</code>. Fields are inherited from the nearest ancestor.</li>
+<li>You can reference fields however you want as long as the object is an instance of whatever is being referenced and has the field defined at runtime. This means maximum ambiguity when parsing, which sucks.</li>
+</ul>
+<h2 id="Fixing-Simplify"><a href="#Fixing-Simplify" class="headerlink" title="Fixing Simplify"></a>Fixing Simplify</h2><p>The way smalivm (the virtual machine powering Simplify) dealt with field inheritance was stupid. It would simply add all fields from all ancestors regardless of public / private to any child class. This was really wasteful of space, but the real kicker is that smalivm wasn’t statically initializing (<code>&lt;clinit&gt;</code>) super classes when inherited fields were accessed since it wasn’t obvious in any data structure where the fields for a class came from.</p>
+<p>The naive fix was to keep fields in their defined classes and just be sure to <code>&lt;clinit&gt;</code> ancestor classes appropriately. In this case, that means whenever <code>ChildClass</code> is instantiated, all of its ancestor classes are statically initialized. But this fix created a lot of complexity. Since child classes no longer had any reference at all to inherited fields, any time a field was accessed, it was often necessary to check ancestor classes, which was expensive.</p>
+<p>I sipped my tea and thought about how much I just wanted this damned feature to work and be done with it. I’d been obsessing over fixing this bug since it was originally reported. The solution wasn’t in my head. So I kept sipping my tea. Still now solution. Maybe it was the two slices of cold pizza I ate while stuck in traffic this morning?while driving to work? Traffic was horrible but having pizza really takes the edge off, you know? But it made my brain slow.</p>
+<p><img src="/images/understanding-dalvik-static-fields/tea-and-pizza.png" alt="t and zah"></p>
+<p>Then I got an idea from <a href="https://sable.github.io/soot/" target="_blank" rel="external">Soot</a> and <a href="http://www.cs.umd.edu/~jfoster/papers/cs-tr-5022.pdf" target="_blank" rel="external">SymDroid</a>. Soot can convert Java bytecode to a simpler form they call <a href="http://www.sable.mcgill.ca/publications/techreports/sable-tr-1998-4.ps" target="_blank" rel="external">jimple</a> and SymDroid uses something similar called <em>µ-Dalvik</em>. The idea is that you can simplify bytecode up front so that later analysis is less complex and easier. Smalivm does something like this already in that every binary math operation such as add, subtract, multiply, etc. are handled by one op internally: <a href="https://github.com/CalebFenton/simplify/blob/master/smalivm/src/main/java/org/cf/smalivm/opcode/BinaryMathOp.java" target="_blank" rel="external">BinaryMathOp</a>. In this case, for field references, I could simply resolve all references such that they refer to the defining class when building the initial graph of the method. This way, the execution can assume any field reference is pointing at the defining class, and extra lookups to ancestors won’t be necessary.</p>
+<p>I hope you’ve enjoyed this two part series which I wrote by painstakingly reassembling scattered notes and code fragments taken while suffering what appears to have been a severe fever dream hallucination. Hope it was educational!</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cis4testk000obkao53hnvdkf" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Understanding Dalvik Static Fields part 1 of 2</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12.5px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 17.5px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12.5px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/open-source/" style="font-size: 12.5px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 17.5px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12.5px;">security</a> <a href="/tags/simplify/" style="font-size: 15px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12.5px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/">Understanding Dalvik Static Fields part 2 of 2</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields part 1 of 2</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/08/death-and-the-java-class-loader/">Death and the Java Class Loader</a>
+          </li>
+        
+          <li>
+            <a href="/2016/06/18/what-is-a-company/">What is a company?</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/">Dalvik Virtual Execution with SmaliVM</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    <div id="twitter-feed" class="widget-wrap">
+  <h3 class="widget-title">Twitter Feed</h3>
+  <div class="widget">
+    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Caleb Fenton<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'calebfenton';
+  
+  var disqus_url = 'https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
