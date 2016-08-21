@@ -177,7 +177,7 @@ The way smalivm (the virtual machine powering Simplify) dealt with field inherit
 
 The naive fix was to keep fields in their defined classes and just be sure to `<clinit>` ancestor classes appropriately. In this case, that means whenever `ChildClass` is instantiated, all of its ancestor classes are statically initialized. But this fix created a lot of complexity. Since child classes no longer had any reference at all to inherited fields, any time a field was accessed, it was often necessary to check ancestor classes, which was expensive.
 
-I sipped my tea and thought about how much I just wanted this damned feature to work and be done with it. I'd been obsessing over fixing this bug since it was originally reported. The solution wasn't in my head. So I kept sipping my tea. Still now solution. Maybe it was the two slices of cold pizza I ate while stuck in traffic this morning?while driving to work? Traffic was horrible but having pizza really takes the edge off, you know? But it made my brain slow.
+I sipped my tea and thought about how much I just wanted this damned feature to work and be done with it. I'd been obsessing over fixing this bug since it was originally reported. The solution wasn't in my head. Keep sipping my tea. Still no solution. Maybe it was the two slices of cold pizza I ate while stuck in traffic this morning? Don't judge me. Traffic was horrible. That pizza really took the edge off. Try it. But I think it made my brain slow.
 
 ![t and zah](/images/understanding-dalvik-static-fields/tea-and-pizza.png)
 
