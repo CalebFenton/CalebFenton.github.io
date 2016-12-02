@@ -47,7 +47,7 @@ VirtualMachineFactory vmFactory = new VirtualMachineFactory();
 VirtualMachine vm = vmFactory.build("classes.dex");
 
 String methodSignature = "Lorg/cf/example/Main;->foo(Ljava/lang/String;)V";
-ExecutionContext ectx = vm.spawnRootExecutionContext(methodSignature);
+ExecutionContext ectx = vm.spawnRootContext(methodSignature);
 MethodState mState = ectx.getMethodState();
 mState.assignParameter(0, "wubalubadubdub", "Ljava/lang/String;");
 
