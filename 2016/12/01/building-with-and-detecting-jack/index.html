@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Caleb Fenton&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Building with and Detecting JackRecently, I needed to write a bunch of Smali to use in tests for Simplify. Writing Smali is pretty easy, but it’s tedious, and I needed to do tricky stuff with nested c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Caleb Fenton's Blog">
+<meta property="og:url" content="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/index.html">
+<meta property="og:site_name" content="Caleb Fenton's Blog">
+<meta property="og:description" content="Building with and Detecting JackRecently, I needed to write a bunch of Smali to use in tests for Simplify. Writing Smali is pretty easy, but it’s tedious, and I needed to do tricky stuff with nested c">
+<meta property="og:image" content="https://CalebFenton.github.io/images/building-with-and-detecting-jack/dx-dex.png">
+<meta property="og:image" content="https://CalebFenton.github.io/images/building-with-and-detecting-jack/jack-dex.png">
+<meta property="og:updated_time" content="2016-12-02T03:06:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Caleb Fenton's Blog">
+<meta name="twitter:description" content="Building with and Detecting JackRecently, I needed to write a bunch of Smali to use in tests for Simplify. Writing Smali is pretty easy, but it’s tedious, and I needed to do tricky stuff with nested c">
+<meta name="twitter:image" content="https://CalebFenton.github.io/images/building-with-and-detecting-jack/dx-dex.png">
+<meta name="twitter:creator" content="@CalebFenton">
+  
+    <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74177443-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/rss2.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://CalebFenton.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-building-with-and-detecting-jack" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/01/building-with-and-detecting-jack/" class="article-date">
+  <time datetime="2016-12-02T03:06:00.000Z" itemprop="datePublished">2016-12-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Building-with-and-Detecting-Jack"><a href="#Building-with-and-Detecting-Jack" class="headerlink" title="Building with and Detecting Jack"></a>Building with and Detecting Jack</h1><p>Recently, I needed to write a bunch of Smali to use in tests for <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a>. Writing Smali is pretty easy, but it’s tedious, and I needed to do tricky stuff with nested classes. As I mentioned in a <a href="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/">previous post</a> it’s possible to setup an alias to quickly compile Java code to Dalvik. This way, you can prototype Java quickly and compile it without worrying about Smali syntax. In this post, I want to show how to use a new tool called <a href="https://source.android.com/source/jack.html" target="_blank" rel="external"><code>jack</code></a> which takes the place of <code>dx</code>.<br><a id="more"></a></p>
+<h2 id="Building-with-Jack"><a href="#Building-with-Jack" class="headerlink" title="Building with Jack"></a>Building with Jack</h2><p>The previous decompiler is <code>dx</code> which operates on Java <em>.class</em> files. Jack works directly on Java source code. It looks like dx isn’t supported anymore and it doesn’t work with newer Java versions. In fact, the reason I had to learn about Jack at all is because my old <code>java2smali</code> alias was giving me the following error:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ dx --dex AndroidException.class</div><div class="line"></div><div class="line">PARSE ERROR:</div><div class="line">unsupported class file version 52.0</div><div class="line">...while parsing AndroidException.class</div><div class="line">1 error; aborting</div></pre></td></tr></table></figure>
+<p>Looks like <code>dx</code> doesn’t support Java 8 classes. After a few milliseconds panic, I calmed down and started looking through the <code>build-tools</code> directory of the most recent Android platform I had installed:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">echo</span> <span class="variable">$ANDROID_BUILD_TOOLS</span></div><div class="line">/Users/caleb/android-sdk/build-tools/25.0.0</div></pre></td></tr></table></figure>
+<p>This is where I found <code>jack.jar</code>. Running it gives this nice, long, interesting help message:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">$ java -jar <span class="variable">$ANDROID_BUILD_TOOLS</span>/jack.jar --help</div><div class="line">Usage: &lt;options&gt; &lt;<span class="built_in">source</span> files&gt;</div><div class="line"></div><div class="line">Options:</div><div class="line"> @&lt;FILE&gt;                                          : <span class="built_in">read</span> <span class="built_in">command</span> line from file</div><div class="line"> --config-jarjar &lt;FILE&gt;                           : use jarjar rules files (default: none)</div><div class="line"> --config-proguard &lt;FILE&gt;                         : use a proguard flags file (default: none)</div><div class="line">                                                    (repeatable)</div><div class="line"> --help                                           : display <span class="built_in">help</span></div><div class="line"> --help-properties                                : display properties list</div><div class="line"> --import &lt;FILE&gt;                                  : import the given file into the output</div><div class="line">                                                    (repeatable)</div><div class="line"> --import-meta &lt;DIRECTORY&gt;                        : import the given directory into the output as</div><div class="line">                                                    meta-files (repeatable)</div><div class="line"> --import-resource &lt;DIRECTORY&gt;                    : import the given directory into the output as</div><div class="line">                                                    resource files (repeatable)</div><div class="line"> --incremental-folder &lt;DIRECTORY&gt;                 : directory used <span class="keyword">for</span> incremental data</div><div class="line"> --list-plugins                                   : display all available plugins</div><div class="line"> --multi-dex [NONE | NATIVE | LEGACY]             : whether to split code into multiple dex files</div><div class="line">                                                    (default: none)</div><div class="line"> --output-dex &lt;DIRECTORY&gt;                         : output dex files and resources to the directory</div><div class="line"> --output-jack &lt;FILE&gt;                             : output jack library file</div><div class="line"> --plugin &lt;NAME&gt;[,&lt;NAME&gt;...]                      : jack plugin names</div><div class="line"> --pluginpath &lt;PATH&gt;                              : jack plugin classpath</div><div class="line"> --processor &lt;NAME&gt;[,&lt;NAME&gt;...]                   : annotation processor class names</div><div class="line"> --processorpath &lt;PATH&gt;                           : annotation processor classpath</div><div class="line"> --verbose [ERROR | WARNING | INFO | DEBUG |      : <span class="built_in">set</span> verbosity (default: warning)</div><div class="line"> TRACE]</div><div class="line"> --version                                        : display version</div><div class="line"> -A &lt;option&gt;=&lt;value&gt;                              : <span class="built_in">set</span> option <span class="keyword">for</span> annotation processors</div><div class="line">                                                    (repeatable)</div><div class="line"> -D &lt;property&gt;=&lt;value&gt;                            : <span class="built_in">set</span> value <span class="keyword">for</span> the given property (repeatable)</div><div class="line"> -cp (--classpath) &lt;PATH&gt;                         : <span class="built_in">set</span> classpath</div><div class="line"> -g                                               : emit debug infos</div></pre></td></tr></table></figure>
+<p>The main difference between <code>jack.jar</code> and <code>dx</code> is that, since Jack operates on Java source, it needs access to some Java runtime files. I assumed <code>rt.jar</code> would be enough. Here’s an example of how to use it with a file called <code>Hello.java</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mkdir temp_dex</div><div class="line">java -jar <span class="variable">$ANDROID_BUILD_TOOLS</span>/jack.jar -cp `/usr/libexec/java_home`/jre/lib/rt.jar --output-dex temp_dex AndroidException.java</div><div class="line">baksmali d -o temp_smali temp_dex/classes.dex</div></pre></td></tr></table></figure>
+<p>This is tweaked to work on a Mac, but it should be easy to translate to Linux or Windows.</p>
+<h2 id="Detecting-Jack-Created-Files"><a href="#Detecting-Jack-Created-Files" class="headerlink" title="Detecting Jack Created Files"></a>Detecting Jack Created Files</h2><p>I was curious if it was possible to fingerprint Jack built <em>.dex</em> files. If so, I wanted to add the fingerprints to the database in <a href="https://github.com/rednaga/APKiD" target="_blank" rel="external">APKiD</a>. To find how the files are different, I built two <em>.dex</em> files from the same Java but using different tools. In this case, <code>dx</code> and <code>jack.jar</code>.</p>
+<p>Here’s a small <em>.dex</em> file created with <code>dx</code>:</p>
+<p><img src="/images/building-with-and-detecting-jack/dx-dex.png" alt=""></p>
+<p>Here’s the same Java converted with <code>jack.jar</code>:</p>
+<p><img src="/images/building-with-and-detecting-jack/jack-dex.png" alt=""></p>
+<p>See that cute little <code>emitter: jack-4.12</code>? Looks like Jack intentionally watermarks files it creates. It might be able to turn it off with a command line parameter, but I haven’t looked. Here are the rules I added to APKiD to detect Jack: <a href="https://github.com/rednaga/APKiD/commit/ccca5ed519b7b2551a3205686be364c26020f1cd#diff-1731ed362177d8429d827a2b6ef3786bR131" target="_blank" rel="external">https://github.com/rednaga/APKiD/commit/ccca5ed519b7b2551a3205686be364c26020f1cd#diff-1731ed362177d8429d827a2b6ef3786bR131</a>.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/" data-id="ciw77klew0007dwaoltpb37pb" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Understanding Dalvik Static Fields part 2 of 2</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12.5px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 17.5px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12.5px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/open-source/" style="font-size: 12.5px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 17.5px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12.5px;">security</a> <a href="/tags/simplify/" style="font-size: 15px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12.5px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/12/01/building-with-and-detecting-jack/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/">Understanding Dalvik Static Fields part 2 of 2</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields part 1 of 2</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/08/death-and-the-java-class-loader/">Death and the Java Class Loader</a>
+          </li>
+        
+          <li>
+            <a href="/2016/06/18/what-is-a-company/">What is a company?</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    <div id="twitter-feed" class="widget-wrap">
+  <h3 class="widget-title">Twitter Feed</h3>
+  <div class="widget">
+    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Caleb Fenton<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'calebfenton';
+  
+  var disqus_url = 'https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

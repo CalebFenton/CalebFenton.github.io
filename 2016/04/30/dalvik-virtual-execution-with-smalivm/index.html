@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-dumbMath.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/dalvik-virtual-execution-with-smalivm/ExecutionGraph-loopy2.png">
-<meta property="og:updated_time" content="2016-07-15T06:04:08.000Z">
+<meta property="og:updated_time" content="2016-12-02T03:06:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dalvik Virtual Execution with SmaliVM">
 <meta name="twitter:description" content="Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing cod">
@@ -133,7 +133,7 @@ ga('send', 'pageview');
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">String smaliOrDexPath = <span class="string">"classes.dex"</span>;</div><div class="line">VirtualMachineFactory vmFactory = <span class="keyword">new</span> VirtualMachineFactory(); <span class="comment">// this is Java, so factory</span></div><div class="line">VirtualMachine vm = vmFactory.build(smaliOrDexPath);</div><div class="line"></div><div class="line">String methodSignature = <span class="string">"Lorg/cf/example/Main;-&gt;foo(Ljava/lang/String;)V"</span>;</div><div class="line">ExecutionGraph graph = vm.execute(methodSignature);</div></pre></td></tr></table></figure>
 <p>The above code will parse the <code>classes.dex</code> file and execute <code>org.cf.example.Main.foo(String s)</code> without defining what the value of <code>s</code> is. This means that the <code>graph</code> may contain multiple execution paths and if any instructions use <code>s</code> the values won’t be known.</p>
 <p>To execute with an actual argument, you just spawn a context and setup the method state:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">VirtualMachineFactory vmFactory = <span class="keyword">new</span> VirtualMachineFactory();</div><div class="line">VirtualMachine vm = vmFactory.build(<span class="string">"classes.dex"</span>);</div><div class="line"></div><div class="line">String methodSignature = <span class="string">"Lorg/cf/example/Main;-&gt;foo(Ljava/lang/String;)V"</span>;</div><div class="line">ExecutionContext ectx = vm.spawnRootExecutionContext(methodSignature);</div><div class="line">MethodState mState = ectx.getMethodState();</div><div class="line">mState.assignParameter(<span class="number">0</span>, <span class="string">"wubalubadubdub"</span>, <span class="string">"Ljava/lang/String;"</span>);</div><div class="line"></div><div class="line">ExecutionGraph graph = vm.execute(methodSignature, ectx);</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">VirtualMachineFactory vmFactory = <span class="keyword">new</span> VirtualMachineFactory();</div><div class="line">VirtualMachine vm = vmFactory.build(<span class="string">"classes.dex"</span>);</div><div class="line"></div><div class="line">String methodSignature = <span class="string">"Lorg/cf/example/Main;-&gt;foo(Ljava/lang/String;)V"</span>;</div><div class="line">ExecutionContext ectx = vm.spawnRootContext(methodSignature);</div><div class="line">MethodState mState = ectx.getMethodState();</div><div class="line">mState.assignParameter(<span class="number">0</span>, <span class="string">"wubalubadubdub"</span>, <span class="string">"Ljava/lang/String;"</span>);</div><div class="line"></div><div class="line">ExecutionGraph graph = vm.execute(methodSignature, ectx);</div></pre></td></tr></table></figure>
 <p>The <code>graph</code> object will contain a whole bunch of stuff you could dig into to figure out exactly what happens at every instruction.</p>
 <h1 id="The-Execution-Graph"><a href="#The-Execution-Graph" class="headerlink" title="The Execution Graph"></a>The Execution Graph</h1><p>Executing a method with smalivm returns an execution graph which contains everything that Simplify needs to optimize the code, which is just about everything. Consider the following Smali code:</p>
 <figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> dumbMath()I</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"></div><div class="line">   <span class="built_in"> const/4 </span>v0, 0x3</div><div class="line">   <span class="built_in"> const/4 </span>v1, 0x5</div><div class="line">   <span class="built_in"> add-int/2addr </span>v0, v1</div><div class="line"></div><div class="line">   <span class="built_in"> return </span>v0<span class="keyword"></span></div><div class="line">.end method</div></pre></td></tr></table></figure>
@@ -216,7 +216,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="cis59vu9k000a5naoobc47z3i" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="ciw77klex0009dwao1vbdqj82" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -283,7 +283,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -293,6 +293,10 @@ ga('send', 'pageview');
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/12/01/building-with-and-detecting-jack/">(no title)</a>
+          </li>
         
           <li>
             <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/">Understanding Dalvik Static Fields part 2 of 2</a>
@@ -308,10 +312,6 @@ ga('send', 'pageview');
         
           <li>
             <a href="/2016/06/18/what-is-a-company/">What is a company?</a>
-          </li>
-        
-          <li>
-            <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/">Dalvik Virtual Execution with SmaliVM</a>
           </li>
         
       </ul>
