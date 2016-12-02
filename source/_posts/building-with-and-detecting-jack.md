@@ -1,10 +1,13 @@
 # Building with and Detecting Jack
 
-Recently, I needed to write a bunch of Smali to use in tests for [Simplify](https://github.com/CalebFenton/simplify). Writing Smali is pretty easy, but it's tedious, and I needed to do tricky stuff with nested classes. As I mentioned in a [previous post](https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/) it's possible to setup an alias to quickly compile Java code to Dalvik. This way, you can prototype Java quickly and compile it without worrying about Smali syntax. In this post, I want to show how to use a new tool called [`jack`](https://source.android.com/source/jack.html) which takes the place of `dx`.
+Recently, I needed to write a bunch of Smali to use in tests for [Simplify](https://github.com/CalebFenton/simplify). Smali syntax is simple but tedious and I needed to do some tricky, uncommon stuff and I wasn't even sure how it looks in Smali. Luckily, it's pretty easy to write Java and convert it to Smali with a small alias and I discuss the details in a [previous post](https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/). This makes it easy to quickly prototype code in Java and then convert it to Smali to see how it looks without worrying about the details of Smali syntax. In this post, I want to show how to use a new Android compiler called [`jack`](https://source.android.com/source/jack.html) which takes the place of `dx`.
 <!-- more -->
 
 ## Building with Jack
-The previous decompiler is `dx` which operates on Java _.class_ files. Jack works directly on Java source code. It looks like dx isn't supported anymore and it doesn't work with newer Java versions. In fact, the reason I had to learn about Jack at all is because my old `java2smali` alias was giving me the following error:
+
+The original Android compiler is `dx` and it works by translating Java _.class_ files to Dalvik executables (_.dex_). Jack, however, compiles Java source code, so you don't need to invoke `javac` at all.
+
+I originally had to learn about Jack because it looks like `dx` doesn't support newer Java _.class_ versions. I tried converting a Java 8 compiled class and `dx` gave me the following error:
 
 ```bash
 $ dx --dex AndroidException.class
@@ -15,14 +18,18 @@ unsupported class file version 52.0
 1 error; aborting
 ```
 
-Looks like `dx` doesn't support Java 8 classes. After a few milliseconds panic, I calmed down and started looking through the `build-tools` directory of the most recent Android platform I had installed:
+This was a problem. I was trying to fix a bug which exposed another bug which exposed 4 or 5 things I could be doing much cleaner which in turn led to even more stuff I wanted to fix _first_ before fixing the original bugs. It's a bit like this:
+
+![](http://i.imgur.com/t0XHtgJ.gif)
+
+By the time I saw the `dx` error, I had about blown my stack. After a few milliseconds panic, I calmed down and started looking through the `build-tools` directory of the most recent Android platform I had installed. I knew that Android must be able to convert Java 8 classes to _.dex_ because people are making Android apps using it.
 
 ```bash
 $ echo $ANDROID_BUILD_TOOLS
 /Users/caleb/android-sdk/build-tools/25.0.0
 ```
 
-This is where I found `jack.jar`. Running it gives this nice, long, interesting help message:
+Lo and behold, there's this `jack.jar`. I ran it just to see what it did and it gave this nice, long, helpful help message:
 
 ```bash
 $ java -jar $ANDROID_BUILD_TOOLS/jack.jar --help
@@ -73,7 +80,7 @@ This is tweaked to work on a Mac, but it should be easy to translate to Linux or
 
 ## Detecting Jack Created Files
 
-I was curious if it was possible to fingerprint Jack built _.dex_ files. If so, I wanted to add the fingerprints to the database in [APKiD](https://github.com/rednaga/APKiD). To find how the files are different, I built two _.dex_ files from the same Java but using different tools. In this case, `dx` and `jack.jar`.
+I was curious if it was possible to fingerprint Jack-built _.dex_ files. There's a lot of useful stuff you can do with [compiler fingerprinting](http://rednaga.io/2016/07/30/apkid_and_android_compiler_fingerprinting/) such as detecting malware. I wanted to add the fingerprints to the database in [APKiD](https://github.com/rednaga/APKiD). To find how the files are different, I built two _.dex_ files from the same Java but using different tools. In this case, `dx` and `jack.jar`.
 
 Here's a small _.dex_ file created with `dx`:
 
