@@ -1,6 +1,11 @@
-# Building with and Detecting Jack
+title: "Building with and Detecting Jack"
+tags:
+  - android
+comments: true
+date: 2016-12-01 00:13:37
+---
 
-Recently, I needed to write a bunch of Smali to use in tests for [Simplify](https://github.com/CalebFenton/simplify). Smali syntax is simple but tedious and I needed to do some tricky, uncommon stuff and I wasn't even sure how it looks in Smali. Luckily, it's pretty easy to write Java and convert it to Smali with a small alias and I discuss the details in a [previous post](https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/). This makes it easy to quickly prototype code in Java and then convert it to Smali to see how it looks without worrying about the details of Smali syntax. In this post, I want to show how to use a new Android compiler called [`jack`](https://source.android.com/source/jack.html) which takes the place of `dx`.
+Recently, I needed to write a bunch of Smali code to use in tests for [Simplify](https://github.com/CalebFenton/simplify). While, Smali syntax is simple and fairly easy to write, it's also tedious and I needed to do some tricky, uncommon stuff. I wasn't even sure how to do it in Smali. Luckily, it's pretty easy to write Java and convert it to Smali. I've talked about how to make a small alias to do this and go over some other use cases in a [previous post](https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/). Writing Java and converting to Smali makes it easy to quickly prototype lots of Smali code without worrying about Smali syntax or conventions. In this post, I want to show how to use a new Android compiler called [`jack`](https://source.android.com/source/jack.html) which takes the place of `dx` and you'll need to know how to use if you want to continue converting Java to Smali.
 <!-- more -->
 
 ## Building with Jack
@@ -84,10 +89,112 @@ I was curious if it was possible to fingerprint Jack-built _.dex_ files. There's
 
 Here's a small _.dex_ file created with `dx`:
 
-![](/images/building-with-and-detecting-jack/dx-dex.png)
+![dx generated dex](/images/building-with-and-detecting-jack/dx-dex.png)
 
 Here's the same Java converted with `jack.jar`:
 
-![](/images/building-with-and-detecting-jack/jack-dex.png)
+![jack generated dex](/images/building-with-and-detecting-jack/jack-dex.png)
 
 See that cute little `emitter: jack-4.12`? Looks like Jack intentionally watermarks files it creates. It might be able to turn it off with a command line parameter, but I haven't looked. Here are the rules I added to APKiD to detect Jack: [https://github.com/rednaga/APKiD/commit/ccca5ed519b7b2551a3205686be364c26020f1cd#diff-1731ed362177d8429d827a2b6ef3786bR131](https://github.com/rednaga/APKiD/commit/ccca5ed519b7b2551a3205686be364c26020f1cd#diff-1731ed362177d8429d827a2b6ef3786bR131).
+
+
+### Update 12-06-2016 - Improved Jack Detection
+
+Shortly after announcing this blog on Twitter, [@iBotPeaches](https://twitter.com/iBotPeaches) (Apktool developer) was kind enough to [point out](https://twitter.com/iBotPeaches/status/804772366266015744) another distinguishing characteristic of Jack-generated DEX files which is described here: [https://github.com/iBotPeaches/Apktool/issues/1354](https://github.com/iBotPeaches/Apktool/issues/1354).
+
+The new Jack compiler changes the names of [compiler generated `access$000` methods](http://vanillajava.blogspot.com/2011/07/java-secret-generated-methods.html) to names like `-set0()`, `-get0()`, and `-wrap0()`. To build some _.dex_ files for testing, here's some Java code:
+
+```java
+public class OuterClass {
+  private static final int myInt;
+
+  private static void baz() {
+  }
+
+  static class InnerClass {
+    private void foo() {
+      // -set0()
+      myInt = 5;
+    }
+
+    private void bar() {
+      // -get0()
+      System.out.println(myInt);
+    }
+
+    private void qux() {
+      // -wrap0()
+      baz();
+    }
+  }
+}
+```
+
+I saved this as `OuterClass.java` and compiled it explicitly with Java 1.7 because 1.8 isn't supported by `dx`:
+
+```bash
+`/usr/libexec/java_home -v 1.7`/bin/javac OuterClass.java
+dx --dex --output=dx.dex *.class
+```
+
+Then, I used `javap` to get the names of the `javac` generated method names:
+
+```
+$ javap OuterClass.class
+Compiled from "OuterClass.java"
+public class OuterClass {
+  public OuterClass();
+  static int access$002(int);
+  static int access$000();
+  static void access$100();
+}
+```
+
+Yup, it's all `access$00\d` stuff, so Jack must be the one changing these. No idea why it does this apart from making it a bit more clear what their function is, i.e. it's easier to guess the behavior of `-set0(int)` than `access$002(int)`.
+
+To get a Jack compiled version of `OuterClass`:
+
+```bash
+mkdir jack
+java -jar $ANDROID_BUILD_TOOLS/jack.jar -cp `/usr/libexec/java_home -v 1.7`/jre/lib/rt.jar OuterClass.java --output-dex jack
+```
+
+Now, to examine the differences in method names by looking at the strings:
+
+![dx and jack strings](/images/building-with-and-detecting-jack/dx_and_jack_juxtaposed.png)
+
+Ok, seems obvious enough. I could look for these two sets of strings to figure out the compiler. But what happens if you use `dexmerge` to combine the `dx` and `jack.jar` produced _.dex_ files?
+
+Here's the alias I use for `dexmerge`:
+
+```bash
+$ alias dexmerge
+dexmerge='java -cp $ANDROID_BUILD_TOOLS/lib/dx.jar com.android.dx.merge.DexMerger'
+
+$ echo $ANDROID_BUILD_TOOLS
+/Users/caleb/android-sdk/build-tools/25.0.0
+```
+
+In case you're curious, here's the usage:
+
+```
+$ dexmerge
+Usage: DexMerger <out.dex> <a.dex> <b.dex> ...
+
+If a class is defined in several dex, the class found in the first dex will be used.
+```
+
+My guess was that this would merge all the strings but the only the code in the first _.dex_ would be kept, leaving several strings unreferenced. Unreferenced strings might actually be an interesting heuristic for finding [weird](http://i.imgur.com/V7Htnoe.gif) _.dex_ files, but it's not something you could do without some disassembly.
+
+```bash
+$ dexmerge merge.dex dx.dex jack/classes.dex
+Merged dex #1 (2 defs/1.3KiB)
+Merged dex #2 (2 defs/1.3KiB)
+Result is 2 defs/2.5KiB. Took 0.0s
+```
+
+Lo, and behold, the strings from each are retained:
+
+![dexmerge strings](/images/building-with-and-detecting-jack/dexmerge.png)
+
+This _.dex_ has an interesting history. If you know what to look for, you could tell quite a bit about how it was made which may help you infer how technically sophisticated the creator was and what tools and environment they were using. You'd know straight away that it's the result of `dexmerge` because of the [map type ordering](https://hitcon.org/2016/CMT/slide/day1-r0-e-1.pdf) (search `ABNORMAL_TYPE_ORDER` (note to self: number slides in the future)). You would also know parts of the file were created with `dx` or dexlib 2.x and parts were created with `jack.jar`.
