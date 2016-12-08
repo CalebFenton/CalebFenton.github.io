@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2016-12-02T18:09:52.000Z</updated>
+  <updated>2016-12-08T00:57:10.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -16,13 +16,13 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
+    <title>Building with and Detecting Jack</title>
     <link href="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/"/>
     <id>https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/</id>
-    <published>2016-12-02T03:06:00.000Z</published>
-    <updated>2016-12-02T18:09:52.000Z</updated>
+    <published>2016-12-01T08:13:37.000Z</published>
+    <updated>2016-12-08T00:57:10.000Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="Building-with-and-Detecting-Jack"><a href="#Building-with-and-Detecting-Jack" class="headerlink" title="Building with and Detecting Jack"></a>Building with and Detecting Jack</h1><p>Recently, I needed to write a bunch of Smali to use in tests for <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a>. Smali syntax is simple but tedious and I needed to do some tricky, uncommon stuff and I wasn’t even sure how it looks in Smali. Luckily, it’s pretty easy to write Java and convert it to Smali with a small alias and I discuss the details in a <a href="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/">previous post</a>. This makes it easy to quickly prototype code in Java and then convert it to Smali to see how it looks without worrying about the details of Smali syntax. In this post, I want to show how to use a new Android compiler called <a href="https://source.android.com/source/jack.html" target="_blank" rel="external"><code>jack</code></a> which takes the place of <code>dx</code>.<br><a id="more"></a></p>
+    <content type="html"><![CDATA[<p>Recently, I needed to write a bunch of Smali code to use in tests for <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a>. While, Smali syntax is simple and fairly easy to write, it’s also tedious and I needed to do some tricky, uncommon stuff. I wasn’t even sure how to do it in Smali. Luckily, it’s pretty easy to write Java and convert it to Smali. I’ve talked about how to make a small alias to do this and go over some other use cases in a <a href="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/">previous post</a>. Writing Java and converting to Smali makes it easy to quickly prototype lots of Smali code without worrying about Smali syntax or conventions. In this post, I want to show how to use a new Android compiler called <a href="https://source.android.com/source/jack.html" target="_blank" rel="external"><code>jack</code></a> which takes the place of <code>dx</code> and you’ll need to know how to use if you want to continue converting Java to Smali.<br><a id="more"></a></p>
 <h2 id="Building-with-Jack"><a href="#Building-with-Jack" class="headerlink" title="Building with Jack"></a>Building with Jack</h2><p>The original Android compiler is <code>dx</code> and it works by translating Java <em>.class</em> files to Dalvik executables (<em>.dex</em>). Jack, however, compiles Java source code, so you don’t need to invoke <code>javac</code> at all.</p>
 <p>I originally had to learn about Jack because it looks like <code>dx</code> doesn’t support newer Java <em>.class</em> versions. I tried converting a Java 8 compiled class and <code>dx</code> gave me the following error:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ dx --dex AndroidException.class</div><div class="line"></div><div class="line">PARSE ERROR:</div><div class="line">unsupported class file version 52.0</div><div class="line">...while parsing AndroidException.class</div><div class="line">1 error; aborting</div></pre></td></tr></table></figure>
@@ -37,18 +37,42 @@
 <p>This is tweaked to work on a Mac, but it should be easy to translate to Linux or Windows.</p>
 <h2 id="Detecting-Jack-Created-Files"><a href="#Detecting-Jack-Created-Files" class="headerlink" title="Detecting Jack Created Files"></a>Detecting Jack Created Files</h2><p>I was curious if it was possible to fingerprint Jack-built <em>.dex</em> files. There’s a lot of useful stuff you can do with <a href="http://rednaga.io/2016/07/30/apkid_and_android_compiler_fingerprinting/" target="_blank" rel="external">compiler fingerprinting</a> such as detecting malware. I wanted to add the fingerprints to the database in <a href="https://github.com/rednaga/APKiD" target="_blank" rel="external">APKiD</a>. To find how the files are different, I built two <em>.dex</em> files from the same Java but using different tools. In this case, <code>dx</code> and <code>jack.jar</code>.</p>
 <p>Here’s a small <em>.dex</em> file created with <code>dx</code>:</p>
-<p><img src="/images/building-with-and-detecting-jack/dx-dex.png" alt=""></p>
+<p><img src="/images/building-with-and-detecting-jack/dx-dex.png" alt="dx generated dex"></p>
 <p>Here’s the same Java converted with <code>jack.jar</code>:</p>
-<p><img src="/images/building-with-and-detecting-jack/jack-dex.png" alt=""></p>
+<p><img src="/images/building-with-and-detecting-jack/jack-dex.png" alt="jack generated dex"></p>
 <p>See that cute little <code>emitter: jack-4.12</code>? Looks like Jack intentionally watermarks files it creates. It might be able to turn it off with a command line parameter, but I haven’t looked. Here are the rules I added to APKiD to detect Jack: <a href="https://github.com/rednaga/APKiD/commit/ccca5ed519b7b2551a3205686be364c26020f1cd#diff-1731ed362177d8429d827a2b6ef3786bR131" target="_blank" rel="external">https://github.com/rednaga/APKiD/commit/ccca5ed519b7b2551a3205686be364c26020f1cd#diff-1731ed362177d8429d827a2b6ef3786bR131</a>.</p>
+<h3 id="Update-12-06-2016-Improved-Jack-Detection"><a href="#Update-12-06-2016-Improved-Jack-Detection" class="headerlink" title="Update 12-06-2016 - Improved Jack Detection"></a>Update 12-06-2016 - Improved Jack Detection</h3><p>Shortly after announcing this blog on Twitter, <a href="https://twitter.com/iBotPeaches" target="_blank" rel="external">@iBotPeaches</a> (Apktool developer) was kind enough to <a href="https://twitter.com/iBotPeaches/status/804772366266015744" target="_blank" rel="external">point out</a> another distinguishing characteristic of Jack-generated DEX files which is described here: <a href="https://github.com/iBotPeaches/Apktool/issues/1354" target="_blank" rel="external">https://github.com/iBotPeaches/Apktool/issues/1354</a>.</p>
+<p>The new Jack compiler changes the names of <a href="http://vanillajava.blogspot.com/2011/07/java-secret-generated-methods.html" target="_blank" rel="external">compiler generated <code>access$000</code> methods</a> to names like <code>-set0()</code>, <code>-get0()</code>, and <code>-wrap0()</code>. To build some <em>.dex</em> files for testing, here’s some Java code:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OuterClass</span> </span>&#123;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> myInt;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">baz</span><span class="params">()</span> </span>&#123;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">InnerClass</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="comment">// -set0()</span></div><div class="line">      myInt = <span class="number">5</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="comment">// -get0()</span></div><div class="line">      System.out.println(myInt);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">qux</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="comment">// -wrap0()</span></div><div class="line">      baz();</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>I saved this as <code>OuterClass.java</code> and compiled it explicitly with Java 1.7 because 1.8 isn’t supported by <code>dx</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">`/usr/libexec/java_home -v 1.7`/bin/javac OuterClass.java</div><div class="line">dx --dex --output=dx.dex *.class</div></pre></td></tr></table></figure>
+<p>Then, I used <code>javap</code> to get the names of the <code>javac</code> generated method names:</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ javap OuterClass.class</div><div class="line">Compiled <span class="keyword">from</span> <span class="string">"OuterClass.java"</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OuterClass</span> &#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="title">OuterClass</span>(<span class="params"></span>)</span>;</div><div class="line">  <span class="keyword">static</span> <span class="keyword">int</span> access$<span class="number">002</span>(<span class="keyword">int</span>);</div><div class="line">  <span class="keyword">static</span> <span class="keyword">int</span> access$<span class="number">000</span>();</div><div class="line">  <span class="keyword">static</span> <span class="keyword">void</span> access$<span class="number">100</span>();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Yup, it’s all <code>access$00\d</code> stuff, so Jack must be the one changing these. No idea why it does this apart from making it a bit more clear what their function is, i.e. it’s easier to guess the behavior of <code>-set0(int)</code> than <code>access$002(int)</code>.</p>
+<p>To get a Jack compiled version of <code>OuterClass</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir jack</div><div class="line">java -jar <span class="variable">$ANDROID_BUILD_TOOLS</span>/jack.jar -cp `/usr/libexec/java_home -v 1.7`/jre/lib/rt.jar OuterClass.java --output-dex jack</div></pre></td></tr></table></figure>
+<p>Now, to examine the differences in method names by looking at the strings:</p>
+<p><img src="/images/building-with-and-detecting-jack/dx_and_jack_juxtaposed.png" alt="dx and jack strings"></p>
+<p>Ok, seems obvious enough. I could look for these two sets of strings to figure out the compiler. But what happens if you use <code>dexmerge</code> to combine the <code>dx</code> and <code>jack.jar</code> produced <em>.dex</em> files?</p>
+<p>Here’s the alias I use for <code>dexmerge</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">alias</span> dexmerge</div><div class="line">dexmerge=<span class="string">'java -cp $ANDROID_BUILD_TOOLS/lib/dx.jar com.android.dx.merge.DexMerger'</span></div><div class="line"></div><div class="line">$ <span class="built_in">echo</span> <span class="variable">$ANDROID_BUILD_TOOLS</span></div><div class="line">/Users/caleb/android-sdk/build-tools/25.0.0</div></pre></td></tr></table></figure>
+<p>In case you’re curious, here’s the usage:</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ dexmerge</div><div class="line">Usage: DexMerger &lt;out.dex&gt; &lt;<span class="selector-tag">a</span>.dex&gt; &lt;<span class="selector-tag">b</span>.dex&gt; ...</div><div class="line"></div><div class="line">If <span class="selector-tag">a</span> class is defined <span class="keyword">in</span> several dex, the class found <span class="keyword">in</span> the first dex will be used.</div></pre></td></tr></table></figure>
+<p>My guess was that this would merge all the strings but the only the code in the first <em>.dex</em> would be kept, leaving several strings unreferenced. Unreferenced strings might actually be an interesting heuristic for finding <a href="http://i.imgur.com/V7Htnoe.gif" target="_blank" rel="external">weird</a> <em>.dex</em> files, but it’s not something you could do without some disassembly.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ dexmerge merge.dex dx.dex jack/classes.dex</div><div class="line">Merged dex <span class="comment">#1 (2 defs/1.3KiB)</span></div><div class="line">Merged dex <span class="comment">#2 (2 defs/1.3KiB)</span></div><div class="line">Result is 2 defs/2.5KiB. Took 0.0s</div></pre></td></tr></table></figure>
+<p>Lo, and behold, the strings from each are retained:</p>
+<p><img src="/images/building-with-and-detecting-jack/dexmerge.png" alt="dexmerge strings"></p>
+<p>This <em>.dex</em> has an interesting history. If you know what to look for, you could tell quite a bit about how it was made which may help you infer how technically sophisticated the creator was and what tools and environment they were using. You’d know straight away that it’s the result of <code>dexmerge</code> because of the <a href="https://hitcon.org/2016/CMT/slide/day1-r0-e-1.pdf" target="_blank" rel="external">map type ordering</a> (search <code>ABNORMAL_TYPE_ORDER</code> (note to self: number slides in the future)). You would also know parts of the file were created with <code>dx</code> or dexlib 2.x and parts were created with <code>jack.jar</code>.</p>
 ]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;Building-with-and-Detecting-Jack&quot;&gt;&lt;a href=&quot;#Building-with-and-Detecting-Jack&quot; class=&quot;headerlink&quot; title=&quot;Building with and Detecting Jack&quot;&gt;&lt;/a&gt;Building with and Detecting Jack&lt;/h1&gt;&lt;p&gt;Recently, I needed to write a bunch of Smali to use in tests for &lt;a href=&quot;https://github.com/CalebFenton/simplify&quot;&gt;Simplify&lt;/a&gt;. Smali syntax is simple but tedious and I needed to do some tricky, uncommon stuff and I wasn’t even sure how it looks in Smali. Luckily, it’s pretty easy to write Java and convert it to Smali with a small alias and I discuss the details in a &lt;a href=&quot;https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/&quot;&gt;previous post&lt;/a&gt;. This makes it easy to quickly prototype code in Java and then convert it to Smali to see how it looks without worrying about the details of Smali syntax. In this post, I want to show how to use a new Android compiler called &lt;a href=&quot;https://source.android.com/source/jack.html&quot;&gt;&lt;code&gt;jack&lt;/code&gt;&lt;/a&gt; which takes the place of &lt;code&gt;dx&lt;/code&gt;.&lt;br&gt;
+      &lt;p&gt;Recently, I needed to write a bunch of Smali code to use in tests for &lt;a href=&quot;https://github.com/CalebFenton/simplify&quot;&gt;Simplify&lt;/a&gt;. While, Smali syntax is simple and fairly easy to write, it’s also tedious and I needed to do some tricky, uncommon stuff. I wasn’t even sure how to do it in Smali. Luckily, it’s pretty easy to write Java and convert it to Smali. I’ve talked about how to make a small alias to do this and go over some other use cases in a &lt;a href=&quot;https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/&quot;&gt;previous post&lt;/a&gt;. Writing Java and converting to Smali makes it easy to quickly prototype lots of Smali code without worrying about Smali syntax or conventions. In this post, I want to show how to use a new Android compiler called &lt;a href=&quot;https://source.android.com/source/jack.html&quot;&gt;&lt;code&gt;jack&lt;/code&gt;&lt;/a&gt; which takes the place of &lt;code&gt;dx&lt;/code&gt; and you’ll need to know how to use if you want to continue converting Java to Smali.&lt;br&gt;
     
     </summary>
     
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
   </entry>
   
@@ -101,9 +125,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
@@ -152,9 +176,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
@@ -363,11 +387,11 @@
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
-      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
       <category term="smali" scheme="https://CalebFenton.github.io/tags/smali/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
   </entry>
   
@@ -767,9 +791,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
@@ -840,9 +864,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
@@ -948,9 +972,9 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
