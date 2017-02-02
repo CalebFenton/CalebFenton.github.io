@@ -7,7 +7,7 @@ comments: true
 date: 2016-07-08 00:00
 ---
 
-When [smalivm](https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/) is virtually executing code, sometimes it needs to pass around Java Class objects. If it's a Java API class like `String` or `LinkedLis`t, that's no problem because smalivm is running in a JVM and has access to those classes already. But what if the class is of a type that's from the app it's trying to run? That class only exists in virtual execution imagination land, and if I don't want to rewrite everything and implement core JVM stuff myself, I need to dynamically create classes.
+When [smalivm](https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/) is virtually executing code, sometimes it needs to pass around Java Class objects. If it's a Java API class like `String` or `LinkedList`, that's no problem because smalivm is running in a JVM and has access to those classes already. But what if the class is of a type that's from the app it's trying to run? That class only exists in virtual execution imagination land, and if I don't want to rewrite everything and implement core JVM stuff myself, I need to dynamically create classes.
 
 What this means is, when you pass smalivm an input DEX, it'll create a real life Java class which talks and walks just like the DEX class you give it, except it'll be inert and soulless, without any code. This way it can pass around the dry husk of a Java class, and if input DEX code wants to check the number of names of methods or do tricky reflection stuff, all those properties are there.
 <!-- more -->
