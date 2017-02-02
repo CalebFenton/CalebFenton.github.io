@@ -13,7 +13,7 @@
 <meta property="og:description" content="When smalivm is virtually executing code, sometimes it needs to pass around Java Class objects. If it’s a Java API class like String or LinkedList, that’s no problem because smalivm is running in a JV">
 <meta property="og:image" content="https://CalebFenton.github.io/images/death-and-the-java-class-loader/finn-death.gif">
 <meta property="og:image" content="https://CalebFenton.github.io/images/death-and-the-java-class-loader/manly-tears.gif">
-<meta property="og:updated_time" content="2016-07-15T05:26:16.000Z">
+<meta property="og:updated_time" content="2017-02-02T00:50:41.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Death and the Java Class Loader">
 <meta name="twitter:description" content="When smalivm is virtually executing code, sometimes it needs to pass around Java Class objects. If it’s a Java API class like String or LinkedList, that’s no problem because smalivm is running in a JV">
@@ -123,7 +123,7 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>When <a href="https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/">smalivm</a> is virtually executing code, sometimes it needs to pass around Java Class objects. If it’s a Java API class like <code>String</code> or <code>LinkedLis</code>t, that’s no problem because smalivm is running in a JVM and has access to those classes already. But what if the class is of a type that’s from the app it’s trying to run? That class only exists in virtual execution imagination land, and if I don’t want to rewrite everything and implement core JVM stuff myself, I need to dynamically create classes.</p>
+        <p>When <a href="https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/">smalivm</a> is virtually executing code, sometimes it needs to pass around Java Class objects. If it’s a Java API class like <code>String</code> or <code>LinkedList</code>, that’s no problem because smalivm is running in a JVM and has access to those classes already. But what if the class is of a type that’s from the app it’s trying to run? That class only exists in virtual execution imagination land, and if I don’t want to rewrite everything and implement core JVM stuff myself, I need to dynamically create classes.</p>
 <p>What this means is, when you pass smalivm an input DEX, it’ll create a real life Java class which talks and walks just like the DEX class you give it, except it’ll be inert and soulless, without any code. This way it can pass around the dry husk of a Java class, and if input DEX code wants to check the number of names of methods or do tricky reflection stuff, all those properties are there.<br><a id="more"></a></p>
 <p>To accomplish this, I needed to create my own <code>ClassLoader</code>. I heartily recommend anyone to do this because I ended up learning a lot about Java in the process. Fear not comrades, I’m not actually going to write a Java tutorial (LOL), because I have to look at myself in the mirror in the morning and there’s already CodeRanch. If you want to poke around the code though, <a href="https://github.com/CalebFenton/simplify/blob/master/smalivm/src/main/java/org/cf/smalivm/smali/SmaliClassLoader.java" target="_blank" rel="external">be my guest</a>. Most of the ASM code I could find was written by overly clever academics and took my brain a while to parse. I wrote everything like an idiot, so it’s probably easier to understand. A lot of the ASM heavy lifting happens in <a href="https://github.com/CalebFenton/simplify/blob/master/smalivm/src/main/java/org/cf/smalivm/smali/ClassBuilder.java" target="_blank" rel="external">org/cf/smalivm/smali/ClassBuilder</a>.</p>
 <p>I banged out most of the code during a 20 hour international flight. First, I wrestled with <a href="http://bytebuddy.net/#/" target="_blank" rel="external">ByteBuddy</a> for dynamic class generation. It’s a great library, and the maintainer has a lot of documentation and even replied to my questions on Twitter, so he’s cool, but it’s ~<code>1_000</code> more complicated than I needed. It’s the sort of library where stupid simple things are hard and confusing, but impossible stuff is possible and pretty clean. Eventually, I rewrote several hours of <a href="https://github.com/CalebFenton/simplify/blob/69944abc81bd3c3acee96381221eab95be5fb224/smalivm/src/main/java/org/cf/smalivm/smali/ClassBuilder.java" target="_blank" rel="external">complex, frustrated code</a> in 30 minutes just using <a href="http://asm.ow2.org/" target="_blank" rel="external">ASM</a>.</p>
@@ -146,7 +146,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="ciwfracic000dwrao3nybav81" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="ciyno78xs000a09pxlcxyr3x4" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -264,7 +264,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2016 Caleb Fenton<br>
+      &copy; 2017 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
