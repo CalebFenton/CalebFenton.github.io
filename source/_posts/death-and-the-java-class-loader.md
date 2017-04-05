@@ -3,6 +3,7 @@ tags:
   - smalivm
   - simplify
   - research
+  - android
 comments: true
 date: 2016-07-08 00:00
 ---
