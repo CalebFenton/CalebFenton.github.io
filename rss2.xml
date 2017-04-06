@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2017-04-05T23:47:31.000Z</updated>
+  <updated>2017-04-06T17:38:10.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -20,15 +20,23 @@
     <link href="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/"/>
     <id>https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/</id>
     <published>2017-04-05T18:11:11.000Z</published>
-    <updated>2017-04-05T23:47:31.000Z</updated>
+    <updated>2017-04-06T17:38:10.000Z</updated>
     
     <content type="html"><![CDATA[<p>If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need this to create <code>jstring</code>s and other Java objects, lookup classes and fields, etc. It’s not normal for you to have to instantiate a VM from native code because most of the time, if you’re using the Java Native Interface (JNI), you started in Java land and are only dipping into native code land for them sweet, sweet <a href="performance benefits">http://www.androidauthority.com/java-vs-c-app-performance-689081/</a>. However, if you’re reverse engineering or writing an exploit, you’re likely always delving int all kinds of unusual trouble which the developers reasonably believed would never happen or at least would only be a theoretical edge case.</p>
 <p>I recently needed to create a VM from native code to pass Java object arguments to a JNI function. In this post, I want to share what I came up with and why I finally settled on this particular method.<br><a id="more"></a></p>
-<h2 id="Standard-Method"><a href="#Standard-Method" class="headerlink" title="Standard Method"></a>Standard Method</h2><p>The official, standard method is documented here: <a href="How to Create a JVM Instance in JNI">http://www.developer.com/java/data/how-to-create-a-jvm-instance-in-jni.html</a>. Unfortunately, this <em>won’t</em> work in Android because <code>jint JNI_CreateJavaVM(JavaVM**, JNIEnv**, void*)</code> isn’t exported. Even if you’re not familiar with this function, it’s name should be a <a href="https://media.giphy.com/media/l2Sq2AG0wrEXQgLGU/giphy.gif" target="_blank" rel="external">clue</a> that it’s important. If you want to check if it’s not exported yourself, look at <code>jni.h</code> from your Android NDK directory. In my case, it’s in <code>android-sdk/android-ndk-r13b/platforms/android-9/arch-x86/usr/include/jni.h</code>. The relevant code is:</p>
+<h2 id="Standard-Method"><a href="#Standard-Method" class="headerlink" title="Standard Method"></a>Standard Method</h2><p>The official, standard method is documented here: <a href="http://www.developer.com/java/data/how-to-create-a-jvm-instance-in-jni.html" target="_blank" rel="external">How to Create a JVM Instance in JNI</a>. Unfortunately, this <em>won’t</em> work in Android because <code>jint JNI_CreateJavaVM(JavaVM**, JNIEnv**, void*)</code> isn’t exported. Even if you’re not familiar with this function, it’s name should be a <a href="https://media.giphy.com/media/l2Sq2AG0wrEXQgLGU/giphy.gif" target="_blank" rel="external">clue</a> that it’s important. If you want to check if it’s not exported yourself, look at <code>jni.h</code> from your Android NDK directory. In my case, it’s in <code>android-sdk/android-ndk-r13b/platforms/android-9/arch-x86/usr/include/jni.h</code>. The relevant code is:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">if</span> 0  <span class="comment">/* In practice, these are not exported by the NDK so don't declare them */</span></span></div><div class="line"><span class="function">jint <span class="title">JNI_GetDefaultJavaVMInitArgs</span><span class="params">(<span class="keyword">void</span>*)</span></span>;</div><div class="line"><span class="function">jint <span class="title">JNI_CreateJavaVM</span><span class="params">(JavaVM**, JNIEnv**, <span class="keyword">void</span>*)</span></span>;</div><div class="line"><span class="function">jint <span class="title">JNI_GetCreatedJavaVMs</span><span class="params">(JavaVM**, jsize, jsize*)</span></span>;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
 <p>If you try to compile the code, you’ll probably get an error like this:</p>
 <figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">warning: <span class="keyword">implicit</span> declaration of <span class="function"><span class="keyword">function</span></span> <span class="string">'JNI_CreateJavaVM'</span> is invalid <span class="keyword">in</span> C99</div><div class="line">      [-Wimplicit-<span class="function"><span class="keyword">function</span></span>-declaration]</div></pre></td></tr></table></figure>
 <p>The official documentation is still useful for understanding the API and what all those options and arguments do. But if we want to use this on Android, we’re going to have to explicitly load the necessary methods from some library.</p>
+<p>One useful detail this code shows is how to set the VM’s class path. Here’s how it’s done:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">JavaVMOption jvmopt[<span class="number">1</span>];</div><div class="line">jvmopt[<span class="number">0</span>].optionString = <span class="string">"-Djava.class.path="</span> + <span class="string">"."</span>;</div></pre></td></tr></table></figure>
+<p>This sets the class path to the current directory (<code>.</code>). This is needed if you want your VM to access system or app classes. Some early experiments show that setting to a directory doesn’t seem to work. I tried setting to <code>/data/local/tmp</code> and pushing naked <em>DEX</em> files, as well as a <em>JAR</em> containing <em>DEX</em> files and the app’s <em>APK</em>. The <em>only</em> option that worked was setting the <strong>full path</strong> to either the <em>JAR</em>, <em>DEX</em>, or the <em>APK</em>. What was odd is that system classes (i.e. <code>java.lang.String</code>) were not accessible without having at least one valid file in the class path. In other words, <code>(*env)-&gt;FindClass(env, &quot;java.lang.String&quot;)</code> returns <code>0</code> unless there’s at least one file on the class path, even though <code>java.lant.String</code> is defined in the framework.</p>
+<p>To test yourself, push an APK to the emulator or device:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">adb push shim_app.apk /data/<span class="built_in">local</span>/tmp</div></pre></td></tr></table></figure>
+<p>Use this for your <code>JavaVMOption</code>:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">JavaVMOption opt[<span class="number">2</span>];</div><div class="line">opt[<span class="number">0</span>].optionString = <span class="string">"-Djava.class.path=/data/local/tmp/shim_app.apk"</span>;</div><div class="line">opt[<span class="number">1</span>].optionString = <span class="string">"-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y"</span>;</div></pre></td></tr></table></figure>
+<p>You should now be able to use <code>FindClass</code> to load system and app classes.</p>
 <h2 id="UiccUnlock-Method"><a href="#UiccUnlock-Method" class="headerlink" title="UiccUnlock Method"></a>UiccUnlock Method</h2><p>My <a href="https://www.google.com/search?q=android+jni_createjavavm" target="_blank" rel="external">genius cyber-sleuth skills</a> revealed another possible technique. It’s from <a href="https://gist.github.com/tewilove/b65b0b15557c770739d6" target="_blank" rel="external">UiccUnlock.cpp</a> which looks like a quasi-exploit to do a SIM unlock.</p>
 <p>I won’t claim to fully understand what it’s doing, but the interesting part to me is in <code>get_transation_code</code>. Here’s what it does:</p>
 <ul>
@@ -67,9 +75,9 @@
     </summary>
     
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
       <category term="jni" scheme="https://CalebFenton.github.io/tags/jni/"/>
     
@@ -197,9 +205,9 @@
     </summary>
     
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -248,9 +256,9 @@
     </summary>
     
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -292,9 +300,9 @@
     </summary>
     
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
@@ -457,9 +465,9 @@
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
@@ -775,9 +783,9 @@
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
@@ -865,9 +873,9 @@
     </summary>
     
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -938,9 +946,9 @@
     </summary>
     
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -1046,9 +1054,9 @@
     </summary>
     
     
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
