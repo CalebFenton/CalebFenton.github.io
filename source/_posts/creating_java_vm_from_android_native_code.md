@@ -14,7 +14,7 @@ I recently needed to create a VM from native code to pass Java object arguments 
 
 ## Standard Method
 
-The official, standard method is documented here: [http://www.developer.com/java/data/how-to-create-a-jvm-instance-in-jni.html](How to Create a JVM Instance in JNI). Unfortunately, this _won't_ work in Android because `jint JNI_CreateJavaVM(JavaVM**, JNIEnv**, void*)` isn't exported. Even if you're not familiar with this function, it's name should be a [clue](https://media.giphy.com/media/l2Sq2AG0wrEXQgLGU/giphy.gif) that it's important. If you want to check if it's not exported yourself, look at `jni.h` from your Android NDK directory. In my case, it's in `android-sdk/android-ndk-r13b/platforms/android-9/arch-x86/usr/include/jni.h`. The relevant code is:
+The official, standard method is documented here: [How to Create a JVM Instance in JNI](http://www.developer.com/java/data/how-to-create-a-jvm-instance-in-jni.html). Unfortunately, this _won't_ work in Android because `jint JNI_CreateJavaVM(JavaVM**, JNIEnv**, void*)` isn't exported. Even if you're not familiar with this function, it's name should be a [clue](https://media.giphy.com/media/l2Sq2AG0wrEXQgLGU/giphy.gif) that it's important. If you want to check if it's not exported yourself, look at `jni.h` from your Android NDK directory. In my case, it's in `android-sdk/android-ndk-r13b/platforms/android-9/arch-x86/usr/include/jni.h`. The relevant code is:
 
 ```c
 #if 0  /* In practice, these are not exported by the NDK so don't declare them */
@@ -32,6 +32,31 @@ warning: implicit declaration of function 'JNI_CreateJavaVM' is invalid in C99
 ```
 
 The official documentation is still useful for understanding the API and what all those options and arguments do. But if we want to use this on Android, we're going to have to explicitly load the necessary methods from some library.
+
+One useful detail this code shows is how to set the VM's class path. Here's how it's done:
+
+```c
+JavaVMOption jvmopt[1];
+jvmopt[0].optionString = "-Djava.class.path=" + ".";
+```
+
+This sets the class path to the current directory (`.`). This is needed if you want your VM to access system or app classes. Some early experiments show that setting to a directory doesn't seem to work. I tried setting to `/data/local/tmp` and pushing naked *DEX* files, as well as a *JAR* containing *DEX* files and the app's *APK*. The *only* option that worked was setting the **full path** to either the *JAR*, *DEX*, or the *APK*. What was odd is that system classes (i.e. `java.lang.String`) were not accessible without having at least one valid file in the class path. In other words, `(*env)->FindClass(env, "java.lang.String")` returns `0` unless there's at least one file on the class path, even though `java.lant.String` is defined in the framework.
+
+To test yourself, push an APK to the emulator or device:
+
+```bash
+adb push shim_app.apk /data/local/tmp
+```
+
+Use this for your `JavaVMOption`:
+
+```c
+JavaVMOption opt[2];
+opt[0].optionString = "-Djava.class.path=/data/local/tmp/shim_app.apk";
+opt[1].optionString = "-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y";
+```
+
+You should now be able to use `FindClass` to load system and app classes.
 
 ## UiccUnlock Method
 
