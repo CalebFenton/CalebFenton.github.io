@@ -54,9 +54,13 @@ Use this for your `JavaVMOption`:
 JavaVMOption opt[2];
 opt[0].optionString = "-Djava.class.path=/data/local/tmp/shim_app.apk";
 opt[1].optionString = "-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y";
+// ...
+args.nOptions = 2;
 ```
 
 You should now be able to use `FindClass` to load system and app classes.
+
+And if you need to load native libraries in your VM, such as if you load a class which loads a library in it's static initilzer, you can see that path as well with `optionString = "-Djava.library.path=/data/local/tmp"`. There's an example [here](http://docs.oracle.com/javase/7/docs/technotes/guides/jni/jni-12.html#invo).
 
 ## UiccUnlock Method
 
@@ -129,13 +133,16 @@ typedef jint (*registerNatives_t)(JNIEnv* env, jclass clazz);
 
 static int init_jvm(JavaVM **p_vm, JNIEnv **p_env) {
   // https://android.googlesource.com/platform/frameworks/native/+/ce3a0a5/services/surfaceflinger/DdmConnection.cpp
-  JavaVMOption opt;
-  opt.optionString = "-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y";
+  JavaVMOption opt[4];
+  opt[0].optionString = "-Djava.class.path=/data/local/tmp/shim_app.apk";
+  opt[1].optionString = "-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y";
+  opt[2].optionString = "-Djava.library.path=/data/local/tmp";
+  opt[3].optionString = "-verbose:jni"; // may want to remove this, it's noisy
 
   JavaVMInitArgs args;
   args.version = JNI_VERSION_1_6;
-  args.options = &opt;
-  args.nOptions = 1;
+  args.options = opt;
+  args.nOptions = 4;
   args.ignoreUnrecognized = JNI_FALSE;
 
   void *libdvm_dso = dlopen("libdvm.so", RTLD_NOW);
