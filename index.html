@@ -99,73 +99,6 @@ ga('send', 'pageview');
       <div class="outer">
         <section id="main">
   
-    <article id="post-calling_native_methods_with_java_object_arguments_from_the_command_line" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/" class="article-date">
-  <time datetime="2017-04-06T18:11:11.000Z" itemprop="datePublished">2017-04-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/">Calling Native Methods with Java Object Arguments from the Command Line</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mention previus post</p>
-<p>calling native functions with java object arguments from command line</p>
-<p>motivation: red team, wanting to reverse engineer malware, etc.</p>
-<p>start with native shim, use for debugging<br><a href="https://github.com/rednaga/native-shim" target="_blank" rel="external">https://github.com/rednaga/native-shim</a></p>
-<p>add code to create the vm (previous blog post)<br>because the function takes java object arguments like jstring, jint, etc</p>
-<p>create a test app which has the library and also has the function as an instance method</p>
-<p>add the type def for our method</p>
-<p>call it, doesn’t work, need to also call JNI_OnLoad (why??)</p>
-<p>call it, doesn’t work, what the fuck stake shit (include error text for seo)</p>
-<p>use javah to get header</p>
-<p>holy balls it’s an instance method, change type def</p>
-<p>do it again</p>
-<p>use a socket</p>
-<p>emulator -writable-system -avd haxcalibur</p>
-<p>bonus: debugging</p>
-<p>how to do the debugging</p>
-<p>javah -cp /Users/caleb/Downloads/Telegram\ Desktop/musical\ ly_v5.3.3_apkpure.com-dex2jar.jar:/Users/caleb/android-sdk/platforms/android-19/android.jar com.bangcle.comapiprotect.CheckCodeUtil</p>
-<pre><code>printf(&quot;Creating jstring ...\n&quot;);
-jstring json = (*env)-&gt;NewStringUTF(env, &quot;{\&quot;app\&quot;:{\&quot;os\&quot;:\&quot;android 5.1\&quot;,\&quot;version\&quot;:\&quot;5.3.2\&quot;,\&quot;X-Request-ID\&quot;:\&quot;b09266c2-baeb-4f67-8302-da6d8195246b\&quot;,\&quot;slider-show-cookie\&quot;:\&quot;bl8yMDg0OTQwNDc0MjA2OTA0MzI6Y3hzYmNQck95dWR1eVdzSzFTcWRHQT09OjY4NzFiYmM5MjliODNjOGRkYmVlNWMxYWIwNjM2MWFkOjIwODQ5NDA0NzQyMDY5MDQzMg\&quot;,\&quot;method\&quot;:\&quot;PUT\&quot;,\&quot;url\&quot;:\&quot;https://www.musical.ly/rest/v2/musicals/MzMxMjEyMDk1Mjc5OTU5NzgzOTE1NTI/like\&quot;},\&quot;ostype\&quot;:\&quot;and\&quot;,\&quot;imei\&quot;:\&quot;unknown\&quot;,\&quot;mac\&quot;:\&quot;08:00:27:c3:23:22\&quot;,\&quot;model\&quot;:\&quot;SuperCustom Phone\&quot;,\&quot;sdk\&quot;:\&quot;22\&quot;,\&quot;serviceTime\&quot;:\&quot;1490337613841\&quot;,\&quot;uiName\&quot;:\&quot;unknown\&quot;,\&quot;deviceid\&quot;:\&quot;785b4aa7cf404d1faf1b7b0c3f0c526e\&quot;,\&quot;mod\&quot;:\&quot;papaRoach\&quot;}&quot;);
-//jstring json = (*env)-&gt;NewStringUTF(env, &quot;{}&quot;);
-jint version = (jint) 1;
-jstring timestamp = (*env)-&gt;NewStringUTF(env, &quot;1490337613841&quot;);
-printf(&quot;Calling checkcode\n&quot;);
-jstring result = checkcode(env, 0, json, version, timestamp);
-printf(&quot;Converting to char*...\n&quot;);
-const char *str = (*env)-&gt;GetStringUTFChars(env, result, NULL);
-printf(&quot;Result: %s\n&quot;, str);
-</code></pre>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/" data-id="cj15pkbk60006kzupszlj9o90" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jni/">jni</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-creating_java_vm_from_android_native_code" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/04/05/creating_java_vm_from_android_native_code/" class="article-date">
@@ -198,7 +131,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/" data-id="cj15pkbke000ckzup678vq0sz" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/" data-id="cj15pr3rz000e0yuptvfin0zx" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -228,7 +161,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/02/22/no-one-can-buy-all-bitcoins/" data-id="cj15pkbk20002kzup2hzunb7a" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2017/02/22/no-one-can-buy-all-bitcoins/" data-id="cj15pr3qx00010yupkcvsar4p" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2017/02/22/no-one-can-buy-all-bitcoins/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -271,7 +204,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/" data-id="cj15pkbkb0009kzupu6uem432" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/" data-id="cj15pr3rp00080yup26lmiuxm" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -317,7 +250,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cj15pkbkz000tkzupfxio3awm" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cj15pr3s9000z0yuplttlqfor" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -365,7 +298,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/" data-id="cj15pkbkw000rkzup8n7iq4py" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/" data-id="cj15pr3s8000x0yup2uzw8w5x" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -411,7 +344,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="cj15pkbku000nkzupu4eynamr" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="cj15pr3s1000i0yupzhuw7vzt" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -457,7 +390,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/06/18/what-is-a-company/" data-id="cj15pkbl5000ykzup5fezr2rv" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/06/18/what-is-a-company/" data-id="cj15pr3sa00120yupoj1jdq8f" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/06/18/what-is-a-company/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -502,7 +435,7 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="cj15pkbki000fkzupvm9jlw6u" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="cj15pr3s1000g0yuprghhp2e0" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -548,12 +481,58 @@ printf(&quot;Result: %s\n&quot;, str);
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="cj15pkbl60013kzuppp8mkx74" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="cj15pr3sc00160yup17n3glqf" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-code-kata-bloom-filter" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/26/code-kata-bloom-filter/" class="article-date">
+  <time datetime="2016-04-27T02:11:11.000Z" itemprop="datePublished">2016-04-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/26/code-kata-bloom-filter/">Code Kata: Bloom Filter</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>If you’re unfamiliar with what a Code Kata is, check out my previous post <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a></p>
+<p>The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/04/26/code-kata-bloom-filter/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="cj15pr3rs000a0yup6m98loio" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li></ul>
 
     </footer>
   </div>
@@ -577,7 +556,7 @@ printf(&quot;Result: %s\n&quot;, str);
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -586,7 +565,7 @@ printf(&quot;Result: %s\n&quot;, str);
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 16px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/jni/" style="font-size: 12px;">jni</a> <a href="/tags/open-source/" style="font-size: 12px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 18px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12px;">security</a> <a href="/tags/simplify/" style="font-size: 14px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 16px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/jni/" style="font-size: 10px;">jni</a> <a href="/tags/open-source/" style="font-size: 12px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 18px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12px;">security</a> <a href="/tags/simplify/" style="font-size: 14px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
     </div>
   </div>
 
@@ -595,7 +574,7 @@ printf(&quot;Result: %s\n&quot;, str);
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -605,10 +584,6 @@ printf(&quot;Result: %s\n&quot;, str);
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
-        
-          <li>
-            <a href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/">Calling Native Methods with Java Object Arguments from the Command Line</a>
-          </li>
         
           <li>
             <a href="/2017/04/05/creating_java_vm_from_android_native_code/">Creating a Java VM from Android Native Code</a>
@@ -624,6 +599,10 @@ printf(&quot;Result: %s\n&quot;, str);
         
           <li>
             <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/">Understanding Dalvik Static Fields part 2 of 2</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields part 1 of 2</a>
           </li>
         
       </ul>

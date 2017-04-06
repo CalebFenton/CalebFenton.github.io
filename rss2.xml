@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2017-04-06T00:09:29.000Z</updated>
+  <updated>2017-04-05T23:47:31.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -14,59 +14,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>Calling Native Methods with Java Object Arguments from the Command Line</title>
-    <link href="https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/"/>
-    <id>https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/</id>
-    <published>2017-04-06T18:11:11.000Z</published>
-    <updated>2017-04-06T00:09:29.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>mention previus post</p>
-<p>calling native functions with java object arguments from command line</p>
-<p>motivation: red team, wanting to reverse engineer malware, etc.</p>
-<p>start with native shim, use for debugging<br><a href="https://github.com/rednaga/native-shim" target="_blank" rel="external">https://github.com/rednaga/native-shim</a></p>
-<p>add code to create the vm (previous blog post)<br>because the function takes java object arguments like jstring, jint, etc</p>
-<p>create a test app which has the library and also has the function as an instance method</p>
-<p>add the type def for our method</p>
-<p>call it, doesn’t work, need to also call JNI_OnLoad (why??)</p>
-<p>call it, doesn’t work, what the fuck stake shit (include error text for seo)</p>
-<p>use javah to get header</p>
-<p>holy balls it’s an instance method, change type def</p>
-<p>do it again</p>
-<p>use a socket</p>
-<p>emulator -writable-system -avd haxcalibur</p>
-<p>bonus: debugging</p>
-<p>how to do the debugging</p>
-<p>javah -cp /Users/caleb/Downloads/Telegram\ Desktop/musical\ ly_v5.3.3_apkpure.com-dex2jar.jar:/Users/caleb/android-sdk/platforms/android-19/android.jar com.bangcle.comapiprotect.CheckCodeUtil</p>
-<pre><code>printf(&quot;Creating jstring ...\n&quot;);
-jstring json = (*env)-&gt;NewStringUTF(env, &quot;{\&quot;app\&quot;:{\&quot;os\&quot;:\&quot;android 5.1\&quot;,\&quot;version\&quot;:\&quot;5.3.2\&quot;,\&quot;X-Request-ID\&quot;:\&quot;b09266c2-baeb-4f67-8302-da6d8195246b\&quot;,\&quot;slider-show-cookie\&quot;:\&quot;bl8yMDg0OTQwNDc0MjA2OTA0MzI6Y3hzYmNQck95dWR1eVdzSzFTcWRHQT09OjY4NzFiYmM5MjliODNjOGRkYmVlNWMxYWIwNjM2MWFkOjIwODQ5NDA0NzQyMDY5MDQzMg\&quot;,\&quot;method\&quot;:\&quot;PUT\&quot;,\&quot;url\&quot;:\&quot;https://www.musical.ly/rest/v2/musicals/MzMxMjEyMDk1Mjc5OTU5NzgzOTE1NTI/like\&quot;},\&quot;ostype\&quot;:\&quot;and\&quot;,\&quot;imei\&quot;:\&quot;unknown\&quot;,\&quot;mac\&quot;:\&quot;08:00:27:c3:23:22\&quot;,\&quot;model\&quot;:\&quot;SuperCustom Phone\&quot;,\&quot;sdk\&quot;:\&quot;22\&quot;,\&quot;serviceTime\&quot;:\&quot;1490337613841\&quot;,\&quot;uiName\&quot;:\&quot;unknown\&quot;,\&quot;deviceid\&quot;:\&quot;785b4aa7cf404d1faf1b7b0c3f0c526e\&quot;,\&quot;mod\&quot;:\&quot;papaRoach\&quot;}&quot;);
-//jstring json = (*env)-&gt;NewStringUTF(env, &quot;{}&quot;);
-jint version = (jint) 1;
-jstring timestamp = (*env)-&gt;NewStringUTF(env, &quot;1490337613841&quot;);
-printf(&quot;Calling checkcode\n&quot;);
-jstring result = checkcode(env, 0, json, version, timestamp);
-printf(&quot;Converting to char*...\n&quot;);
-const char *str = (*env)-&gt;GetStringUTFChars(env, result, NULL);
-printf(&quot;Result: %s\n&quot;, str);
-</code></pre>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;mention previus post&lt;/p&gt;
-&lt;p&gt;calling native functions with java object arguments from command line&lt;/p&gt;
-&lt;p&gt;motivation: red team, wanting to
-    
-    </summary>
-    
-    
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
-    
-      <category term="jni" scheme="https://CalebFenton.github.io/tags/jni/"/>
-    
-  </entry>
   
   <entry>
     <title>Creating a Java VM from Android Native Code</title>
@@ -120,9 +67,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="jni" scheme="https://CalebFenton.github.io/tags/jni/"/>
     
@@ -250,9 +197,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -301,9 +248,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -345,9 +292,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
@@ -510,9 +457,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
@@ -828,9 +775,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
-    
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="deobfuscation" scheme="https://CalebFenton.github.io/tags/deobfuscation/"/>
     
       <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
@@ -918,9 +865,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -991,9 +938,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
@@ -1099,9 +1046,9 @@ printf(&quot;Result: %s\n&quot;, str);
     </summary>
     
     
-      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
-    
       <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
