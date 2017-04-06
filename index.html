@@ -99,6 +99,147 @@ ga('send', 'pageview');
       <div class="outer">
         <section id="main">
   
+    <article id="post-calling_native_methods_with_java_object_arguments_from_the_command_line" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/" class="article-date">
+  <time datetime="2017-04-06T18:11:11.000Z" itemprop="datePublished">2017-04-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/">Calling Native Methods with Java Object Arguments from the Command Line</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mention previus post</p>
+<p>calling native functions with java object arguments from command line</p>
+<p>motivation: red team, wanting to reverse engineer malware, etc.</p>
+<p>start with native shim, use for debugging<br><a href="https://github.com/rednaga/native-shim" target="_blank" rel="external">https://github.com/rednaga/native-shim</a></p>
+<p>add code to create the vm (previous blog post)<br>because the function takes java object arguments like jstring, jint, etc</p>
+<p>create a test app which has the library and also has the function as an instance method</p>
+<p>add the type def for our method</p>
+<p>call it, doesn’t work, need to also call JNI_OnLoad (why??)</p>
+<p>call it, doesn’t work, what the fuck stake shit (include error text for seo)</p>
+<p>use javah to get header</p>
+<p>holy balls it’s an instance method, change type def</p>
+<p>do it again</p>
+<p>use a socket</p>
+<p>emulator -writable-system -avd haxcalibur</p>
+<p>bonus: debugging</p>
+<p>how to do the debugging</p>
+<p>javah -cp /Users/caleb/Downloads/Telegram\ Desktop/musical\ ly_v5.3.3_apkpure.com-dex2jar.jar:/Users/caleb/android-sdk/platforms/android-19/android.jar com.bangcle.comapiprotect.CheckCodeUtil</p>
+<pre><code>printf(&quot;Creating jstring ...\n&quot;);
+jstring json = (*env)-&gt;NewStringUTF(env, &quot;{\&quot;app\&quot;:{\&quot;os\&quot;:\&quot;android 5.1\&quot;,\&quot;version\&quot;:\&quot;5.3.2\&quot;,\&quot;X-Request-ID\&quot;:\&quot;b09266c2-baeb-4f67-8302-da6d8195246b\&quot;,\&quot;slider-show-cookie\&quot;:\&quot;bl8yMDg0OTQwNDc0MjA2OTA0MzI6Y3hzYmNQck95dWR1eVdzSzFTcWRHQT09OjY4NzFiYmM5MjliODNjOGRkYmVlNWMxYWIwNjM2MWFkOjIwODQ5NDA0NzQyMDY5MDQzMg\&quot;,\&quot;method\&quot;:\&quot;PUT\&quot;,\&quot;url\&quot;:\&quot;https://www.musical.ly/rest/v2/musicals/MzMxMjEyMDk1Mjc5OTU5NzgzOTE1NTI/like\&quot;},\&quot;ostype\&quot;:\&quot;and\&quot;,\&quot;imei\&quot;:\&quot;unknown\&quot;,\&quot;mac\&quot;:\&quot;08:00:27:c3:23:22\&quot;,\&quot;model\&quot;:\&quot;SuperCustom Phone\&quot;,\&quot;sdk\&quot;:\&quot;22\&quot;,\&quot;serviceTime\&quot;:\&quot;1490337613841\&quot;,\&quot;uiName\&quot;:\&quot;unknown\&quot;,\&quot;deviceid\&quot;:\&quot;785b4aa7cf404d1faf1b7b0c3f0c526e\&quot;,\&quot;mod\&quot;:\&quot;papaRoach\&quot;}&quot;);
+//jstring json = (*env)-&gt;NewStringUTF(env, &quot;{}&quot;);
+jint version = (jint) 1;
+jstring timestamp = (*env)-&gt;NewStringUTF(env, &quot;1490337613841&quot;);
+printf(&quot;Calling checkcode\n&quot;);
+jstring result = checkcode(env, 0, json, version, timestamp);
+printf(&quot;Converting to char*...\n&quot;);
+const char *str = (*env)-&gt;GetStringUTFChars(env, result, NULL);
+printf(&quot;Result: %s\n&quot;, str);
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/" data-id="cj15pkbk60006kzupszlj9o90" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jni/">jni</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-creating_java_vm_from_android_native_code" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/05/creating_java_vm_from_android_native_code/" class="article-date">
+  <time datetime="2017-04-05T18:11:11.000Z" itemprop="datePublished">2017-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/05/creating_java_vm_from_android_native_code/">Creating a Java VM from Android Native Code</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need this to create <code>jstring</code>s and other Java objects, lookup classes and fields, etc. It’s not normal for you to have to instantiate a VM from native code because most of the time, if you’re using the Java Native Interface (JNI), you started in Java land and are only dipping into native code land for them sweet, sweet <a href="performance benefits">http://www.androidauthority.com/java-vs-c-app-performance-689081/</a>. However, if you’re reverse engineering or writing an exploit, you’re likely always delving int all kinds of unusual trouble which the developers reasonably believed would never happen or at least would only be a theoretical edge case.</p>
+<p>I recently needed to create a VM from native code to pass Java object arguments to a JNI function. In this post, I want to share what I came up with and why I finally settled on this particular method.<br>
+        
+          <p class="article-more-link">
+            <a href="/2017/04/05/creating_java_vm_from_android_native_code/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/" data-id="cj15pkbke000ckzup678vq0sz" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jni/">jni</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-no-one-can-buy-all-bitcoins" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/22/no-one-can-buy-all-bitcoins/" class="article-date">
+  <time datetime="2017-02-22T18:05:53.000Z" itemprop="datePublished">2017-02-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2017/02/22/no-one-can-buy-all-bitcoins/" data-id="cj15pkbk20002kzup2hzunb7a" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2017/02/22/no-one-can-buy-all-bitcoins/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-building-with-and-detecting-jack" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/01/building-with-and-detecting-jack/" class="article-date">
@@ -130,7 +271,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/" data-id="ciyno78xn000509px792dw7k2" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/" data-id="cj15pkbkb0009kzupu6uem432" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -176,7 +317,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="ciyno78y5000r09pxh6py3a00" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cj15pkbkz000tkzupfxio3awm" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -224,7 +365,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/" data-id="ciyno78y4000q09pxinz7nm1x" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/" data-id="cj15pkbkw000rkzup8n7iq4py" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -270,12 +411,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="ciyno78xs000a09pxlcxyr3x4" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="cj15pkbku000nkzupu4eynamr" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/">smalivm</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/">smalivm</a></li></ul>
 
     </footer>
   </div>
@@ -316,7 +457,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/06/18/what-is-a-company/" data-id="ciyno78y7000w09pxgvhw1nsn" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/06/18/what-is-a-company/" data-id="cj15pkbl5000ykzup5fezr2rv" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/06/18/what-is-a-company/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -361,7 +502,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="ciyno78xv000d09px7c2vm6o9" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="cj15pkbki000fkzupvm9jlw6u" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -407,148 +548,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="ciyno78y9000z09pxqq91tepr" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="cj15pkbl60013kzuppp8mkx74" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-code-kata-bloom-filter" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/04/26/code-kata-bloom-filter/" class="article-date">
-  <time datetime="2016-04-27T02:11:11.000Z" itemprop="datePublished">2016-04-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/04/26/code-kata-bloom-filter/">Code Kata: Bloom Filter</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>If you’re unfamiliar with what a Code Kata is, check out my previous post <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a></p>
-<p>The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/04/26/code-kata-bloom-filter/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="ciyno78xq000909pxc32d3vqh" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-reversing-an-open-source-vulnerability" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/04/24/reversing-an-open-source-vulnerability/" class="article-date">
-  <time datetime="2016-04-24T07:00:00.000Z" itemprop="datePublished">2016-04-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/04/24/reversing-an-open-source-vulnerability/">Reversing an Open Source Vulnerability</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Vulnerability disclosures rarely include enough technical detail to reproduce the exploit. This is a <em>good</em> thing. It wouldn’t do to arm every script kiddie with exact details of how to write an exploit with every disclosure. However, there are times when someone like an application security engineer or security researcher need to “reverse engineer” the disclosure to reconstruct the technical detail in order to fully understand the vulnerability or write an exploit to test systems for weakness.<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/04/24/reversing-an-open-source-vulnerability/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/" data-id="ciyno78xz000k09pxoa2tiu2l" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-code-kata-tdd-and-run-length-encoding" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/" class="article-date">
-  <time datetime="2016-04-24T02:26:04.000Z" itemprop="datePublished">2016-04-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>A <em>kata</em> is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A <em>code kata</em> is is a training method for developing skill in programming. Take something you do frequently, or wish to do better, strip away everything not essential, and practice it repeatedly.<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="ciyno78xt000c09pxyalosz9t" class="article-share-link">Share</a>
-      
-        <a href="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tdd/">tdd</a></li></ul>
 
     </footer>
   </div>
@@ -572,7 +577,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -581,7 +586,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12.5px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 17.5px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12.5px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/open-source/" style="font-size: 12.5px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 17.5px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12.5px;">security</a> <a href="/tags/simplify/" style="font-size: 15px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12.5px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 16px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/jni/" style="font-size: 12px;">jni</a> <a href="/tags/open-source/" style="font-size: 12px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 18px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12px;">security</a> <a href="/tags/simplify/" style="font-size: 14px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
     </div>
   </div>
 
@@ -590,7 +595,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -602,23 +607,23 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/">Calling Native Methods with Java Object Arguments from the Command Line</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/05/creating_java_vm_from_android_native_code/">Creating a Java VM from Android Native Code</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/22/no-one-can-buy-all-bitcoins/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2016/12/01/building-with-and-detecting-jack/">Building with and Detecting Jack</a>
           </li>
         
           <li>
             <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/">Understanding Dalvik Static Fields part 2 of 2</a>
-          </li>
-        
-          <li>
-            <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields part 1 of 2</a>
-          </li>
-        
-          <li>
-            <a href="/2016/07/08/death-and-the-java-class-loader/">Death and the Java Class Loader</a>
-          </li>
-        
-          <li>
-            <a href="/2016/06/18/what-is-a-company/">What is a company?</a>
           </li>
         
       </ul>

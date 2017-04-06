@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Creating a Java VM from Android Native Code | Caleb Fenton&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need th">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Creating a Java VM from Android Native Code">
+<meta property="og:url" content="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/index.html">
+<meta property="og:site_name" content="Caleb Fenton's Blog">
+<meta property="og:description" content="If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need th">
+<meta property="og:updated_time" content="2017-04-05T23:47:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Creating a Java VM from Android Native Code">
+<meta name="twitter:description" content="If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need th">
+<meta name="twitter:creator" content="@CalebFenton">
+  
+    <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74177443-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/rss2.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://CalebFenton.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-creating_java_vm_from_android_native_code" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/05/creating_java_vm_from_android_native_code/" class="article-date">
+  <time datetime="2017-04-05T18:11:11.000Z" itemprop="datePublished">2017-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Creating a Java VM from Android Native Code
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need this to create <code>jstring</code>s and other Java objects, lookup classes and fields, etc. It’s not normal for you to have to instantiate a VM from native code because most of the time, if you’re using the Java Native Interface (JNI), you started in Java land and are only dipping into native code land for them sweet, sweet <a href="performance benefits">http://www.androidauthority.com/java-vs-c-app-performance-689081/</a>. However, if you’re reverse engineering or writing an exploit, you’re likely always delving int all kinds of unusual trouble which the developers reasonably believed would never happen or at least would only be a theoretical edge case.</p>
+<p>I recently needed to create a VM from native code to pass Java object arguments to a JNI function. In this post, I want to share what I came up with and why I finally settled on this particular method.<br><a id="more"></a></p>
+<h2 id="Standard-Method"><a href="#Standard-Method" class="headerlink" title="Standard Method"></a>Standard Method</h2><p>The official, standard method is documented here: <a href="How to Create a JVM Instance in JNI">http://www.developer.com/java/data/how-to-create-a-jvm-instance-in-jni.html</a>. Unfortunately, this <em>won’t</em> work in Android because <code>jint JNI_CreateJavaVM(JavaVM**, JNIEnv**, void*)</code> isn’t exported. Even if you’re not familiar with this function, it’s name should be a <a href="https://media.giphy.com/media/l2Sq2AG0wrEXQgLGU/giphy.gif" target="_blank" rel="external">clue</a> that it’s important. If you want to check if it’s not exported yourself, look at <code>jni.h</code> from your Android NDK directory. In my case, it’s in <code>android-sdk/android-ndk-r13b/platforms/android-9/arch-x86/usr/include/jni.h</code>. The relevant code is:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">if</span> 0  <span class="comment">/* In practice, these are not exported by the NDK so don't declare them */</span></span></div><div class="line"><span class="function">jint <span class="title">JNI_GetDefaultJavaVMInitArgs</span><span class="params">(<span class="keyword">void</span>*)</span></span>;</div><div class="line"><span class="function">jint <span class="title">JNI_CreateJavaVM</span><span class="params">(JavaVM**, JNIEnv**, <span class="keyword">void</span>*)</span></span>;</div><div class="line"><span class="function">jint <span class="title">JNI_GetCreatedJavaVMs</span><span class="params">(JavaVM**, jsize, jsize*)</span></span>;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+<p>If you try to compile the code, you’ll probably get an error like this:</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">warning: <span class="keyword">implicit</span> declaration of <span class="function"><span class="keyword">function</span></span> <span class="string">'JNI_CreateJavaVM'</span> is invalid <span class="keyword">in</span> C99</div><div class="line">      [-Wimplicit-<span class="function"><span class="keyword">function</span></span>-declaration]</div></pre></td></tr></table></figure>
+<p>The official documentation is still useful for understanding the API and what all those options and arguments do. But if we want to use this on Android, we’re going to have to explicitly load the necessary methods from some library.</p>
+<h2 id="UiccUnlock-Method"><a href="#UiccUnlock-Method" class="headerlink" title="UiccUnlock Method"></a>UiccUnlock Method</h2><p>My <a href="https://www.google.com/search?q=android+jni_createjavavm" target="_blank" rel="external">genius cyber-sleuth skills</a> revealed another possible technique. It’s from <a href="https://gist.github.com/tewilove/b65b0b15557c770739d6" target="_blank" rel="external">UiccUnlock.cpp</a> which looks like a quasi-exploit to do a SIM unlock.</p>
+<p>I won’t claim to fully understand what it’s doing, but the interesting part to me is in <code>get_transation_code</code>. Here’s what it does:</p>
+<ul>
+<li>creates a Java VM</li>
+<li>use the VM to get reference to <code>com.android.internal.telephony.ITelephony$Stub</code> class</li>
+<li>get the <code>TRANSACTION_sendOemRilRequestRaw</code> field value</li>
+<li>destroy the VM</li>
+<li>return field value</li>
+</ul>
+<p>It looks like the field value is used to check if the device is already unlocked or perhaps to check if the unlock method will work. I’m not sure. I just wanted to rip out the code to create the VM.</p>
+<p>The approach seemed sound: load the relevant VM creation functions by through <code>libnativehelper.so</code> or <code>libdvm.so</code> as a backup. However, there were a few lines in there that looked weird:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">JniInvocation_ctor = (JniInvocation_ctor_t) dlsym(libnativehelper, <span class="string">"_ZN13JniInvocationC1Ev"</span>);</div><div class="line">JniInvocation_dtor = (JniInvocation_dtor_t) dlsym(libnativehelper, <span class="string">"_ZN13JniInvocationD1Ev"</span>);</div><div class="line">JniInvocation_Init = (JniInvocation_Init_t) dlsym(libnativehelper, <span class="string">"_ZN13JniInvocation4InitEPKc"</span>);</div></pre></td></tr></table></figure>
+<p>I couldn’t find these functions documented anywhere. Someone really clever figured these out (kudos!). Without calling these functions, you get some weird errors:</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">W/dalvikvm(<span class="number">5395</span>): No <span class="keyword">implementation</span> found <span class="keyword">for</span> native Landroid/os/SystemProperties;.native_get:(Ljava/lang/<span class="keyword">String</span>;Ljava/lang/<span class="keyword">String</span>;)Ljava/lang/<span class="keyword">String</span>;</div><div class="line">W/dalvikvm(<span class="number">5395</span>): No <span class="keyword">implementation</span> found <span class="keyword">for</span> native Landroid/os/SystemProperties;.native_get:(Ljava/lang/<span class="keyword">String</span>;Ljava/lang/<span class="keyword">String</span>;)Ljava/lang/<span class="keyword">String</span>;</div><div class="line">W/dalvikvm(<span class="number">5395</span>): Exception Ljava/lang/UnsatisfiedLinkError; thrown <span class="keyword">while</span> initializing Landroid/os/Build;</div><div class="line">A/libc(<span class="number">5395</span>): Fatal signal <span class="number">11</span> (SIGSEGV) at <span class="number">0</span>x0000000c (code=<span class="number">1</span>), thread <span class="number">5395</span> (create_vm)</div></pre></td></tr></table></figure>
+<p>Despite these weird functions, this approach totally worked for me. But I wanted to understand what the <code>_ZN13JniInvocationC1Ev</code> functions did and if they were portable between Android versions. My gut told me that hardcoding that many function names which also included numbers could lead to incompatibilities in some devices or in later Android versions.</p>
+<h2 id="Surfaceflinger-Method"><a href="#Surfaceflinger-Method" class="headerlink" title="Surfaceflinger Method"></a>Surfaceflinger Method</h2><p>I eventually found code from Google’s Surfaceflinger service: <a href="https://android.googlesource.com/platform/frameworks/native/+/ce3a0a5/services/surfaceflinger/DdmConnection.cpp" target="_blank" rel="external">DdmConnection.cpp</a>.</p>
+<p>This defaults to looking for <code>JNI_CreateJavaVM</code> in <code>libdvm.so</code>. Instead of calling <code>_ZN13JniInvocation*</code> methods, it looks like it calls <code>Java_com_android_internal_util_WithFramework_registerNatives</code> from <code>libandroid_runtime.so</code>. The behavior of <code>registerNatives</code> is described well <a href="http://stackoverflow.com/questions/1010645/what-does-the-registernatives-method-do" target="_blank" rel="external">here</a>.</p>
+<p>Also interesting are the options used to create the VM:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">opt.optionString = <span class="string">"-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y"</span>;</div></pre></td></tr></table></figure>
+<p>These options are well documented <a href="http://www.netmite.com/android/mydroid/2.0/dalvik/docs/debugger.html" target="_blank" rel="external">here</a> and according to the documentation, this just allows for debugging of the JVM. Seems pretty standard.</p>
+<p>I noticed the JNI version was 1_4, but I bumped it up to 1_6 because that’s what’s used in the example code <a href="https://developer.android.com/training/articles/perf-jni.html#native_libraries" target="_blank" rel="external">here</a>. Here are the supported versions from  <code>jni.h</code>:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_1 0x00010001</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_2 0x00010002</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_4 0x00010004</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_6 0x00010006</span></div></pre></td></tr></table></figure>
+<p>I ended up using this approach since I figured it’s the most robust and future-proof because it comes from Google.</p>
+<h2 id="Final-Code"><a href="#Final-Code" class="headerlink" title="Final Code"></a>Final Code</h2><p>Here’s the final code to create the VM:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*JNI_CreateJavaVM_t)</span><span class="params">(<span class="keyword">void</span> *, <span class="keyword">void</span> *, <span class="keyword">void</span> *)</span></span>;</div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">jint</span> <span class="params">(*registerNatives_t)</span><span class="params">(JNIEnv* env, jclass clazz)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">init_jvm</span><span class="params">(JavaVM **p_vm, JNIEnv **p_env)</span> </span>&#123;</div><div class="line">  <span class="comment">// https://android.googlesource.com/platform/frameworks/native/+/ce3a0a5/services/surfaceflinger/DdmConnection.cpp</span></div><div class="line">  JavaVMOption opt;</div><div class="line">  opt.optionString = <span class="string">"-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y"</span>;</div><div class="line"></div><div class="line">  JavaVMInitArgs args;</div><div class="line">  args.version = JNI_VERSION_1_6;</div><div class="line">  args.options = &amp;opt;</div><div class="line">  args.nOptions = <span class="number">1</span>;</div><div class="line">  args.ignoreUnrecognized = JNI_FALSE;</div><div class="line"></div><div class="line">  <span class="keyword">void</span> *libdvm_dso = dlopen(<span class="string">"libdvm.so"</span>, RTLD_NOW);</div><div class="line">  <span class="keyword">void</span> *libandroid_runtime_dso = dlopen(<span class="string">"libandroid_runtime.so"</span>, RTLD_NOW);</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (!libdvm_dso || !libandroid_runtime_dso) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  JNI_CreateJavaVM_t JNI_CreateJavaVM;</div><div class="line">  JNI_CreateJavaVM = (JNI_CreateJavaVM_t) dlsym(libdvm_dso, <span class="string">"JNI_CreateJavaVM"</span>);</div><div class="line">  <span class="keyword">if</span> (!JNI_CreateJavaVM) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-2</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  registerNatives_t registerNatives;</div><div class="line">  registerNatives = (registerNatives_t) dlsym(libandroid_runtime_dso, <span class="string">"Java_com_android_internal_util_WithFramework_registerNatives"</span>);</div><div class="line">  <span class="keyword">if</span> (!registerNatives) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-3</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (JNI_CreateJavaVM(&amp;(*p_vm), &amp;(*p_env), &amp;args)) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-4</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (registerNatives(*p_env, <span class="number">0</span>)) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-5</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Here’s how it’s used:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line">JavaVM * vm = <span class="literal">NULL</span>;</div><div class="line">JNIEnv * env = <span class="literal">NULL</span>;</div><div class="line"><span class="keyword">int</span> status = init_jvm( &amp; vm, &amp; env);</div><div class="line"><span class="keyword">if</span> (status == <span class="number">0</span>) &#123;</div><div class="line">  <span class="built_in">printf</span>(<span class="string">"Initialization success (vm=%p, env=%p)\n"</span>, vm, env);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="built_in">printf</span>(<span class="string">"Initialization failure (%i)\n"</span>, status);</div><div class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">jstring testy = (*env)-&gt;NewStringUTF(env, <span class="string">"this should work now!"</span>);</div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> *str = (*env)-&gt;GetStringUTFChars(env, testy, <span class="literal">NULL</span>);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"testy: %s\n"</span>, str);</div></pre></td></tr></table></figure>
+<p>There you go. Now you have everything you need to instantiate a Java VM from native code.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/" data-id="cj15pkbke000ckzup678vq0sz" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jni/">jni</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Calling Native Methods with Java Object Arguments from the Command Line
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/22/no-one-can-buy-all-bitcoins/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 16px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/jni/" style="font-size: 12px;">jni</a> <a href="/tags/open-source/" style="font-size: 12px;">open source</a> <a href="/tags/realtalk/" style="font-size: 10px;">realtalk</a> <a href="/tags/research/" style="font-size: 18px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12px;">security</a> <a href="/tags/simplify/" style="font-size: 14px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/">Calling Native Methods with Java Object Arguments from the Command Line</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/05/creating_java_vm_from_android_native_code/">Creating a Java VM from Android Native Code</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/22/no-one-can-buy-all-bitcoins/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/01/building-with-and-detecting-jack/">Building with and Detecting Jack</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/21/understanding_dalvik_static_fields_2_of_2/">Understanding Dalvik Static Fields part 2 of 2</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    <div id="twitter-feed" class="widget-wrap">
+  <h3 class="widget-title">Twitter Feed</h3>
+  <div class="widget">
+    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Caleb Fenton<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'calebfenton';
+  
+  var disqus_url = 'https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

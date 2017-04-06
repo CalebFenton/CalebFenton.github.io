@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2016-12-08T00:57:10.000Z</updated>
+  <updated>2017-04-06T00:09:29.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -14,6 +14,133 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Calling Native Methods with Java Object Arguments from the Command Line</title>
+    <link href="https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/"/>
+    <id>https://CalebFenton.github.io/2017/04/06/calling_native_methods_with_java_object_arguments_from_the_command_line/</id>
+    <published>2017-04-06T18:11:11.000Z</published>
+    <updated>2017-04-06T00:09:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>mention previus post</p>
+<p>calling native functions with java object arguments from command line</p>
+<p>motivation: red team, wanting to reverse engineer malware, etc.</p>
+<p>start with native shim, use for debugging<br><a href="https://github.com/rednaga/native-shim" target="_blank" rel="external">https://github.com/rednaga/native-shim</a></p>
+<p>add code to create the vm (previous blog post)<br>because the function takes java object arguments like jstring, jint, etc</p>
+<p>create a test app which has the library and also has the function as an instance method</p>
+<p>add the type def for our method</p>
+<p>call it, doesn’t work, need to also call JNI_OnLoad (why??)</p>
+<p>call it, doesn’t work, what the fuck stake shit (include error text for seo)</p>
+<p>use javah to get header</p>
+<p>holy balls it’s an instance method, change type def</p>
+<p>do it again</p>
+<p>use a socket</p>
+<p>emulator -writable-system -avd haxcalibur</p>
+<p>bonus: debugging</p>
+<p>how to do the debugging</p>
+<p>javah -cp /Users/caleb/Downloads/Telegram\ Desktop/musical\ ly_v5.3.3_apkpure.com-dex2jar.jar:/Users/caleb/android-sdk/platforms/android-19/android.jar com.bangcle.comapiprotect.CheckCodeUtil</p>
+<pre><code>printf(&quot;Creating jstring ...\n&quot;);
+jstring json = (*env)-&gt;NewStringUTF(env, &quot;{\&quot;app\&quot;:{\&quot;os\&quot;:\&quot;android 5.1\&quot;,\&quot;version\&quot;:\&quot;5.3.2\&quot;,\&quot;X-Request-ID\&quot;:\&quot;b09266c2-baeb-4f67-8302-da6d8195246b\&quot;,\&quot;slider-show-cookie\&quot;:\&quot;bl8yMDg0OTQwNDc0MjA2OTA0MzI6Y3hzYmNQck95dWR1eVdzSzFTcWRHQT09OjY4NzFiYmM5MjliODNjOGRkYmVlNWMxYWIwNjM2MWFkOjIwODQ5NDA0NzQyMDY5MDQzMg\&quot;,\&quot;method\&quot;:\&quot;PUT\&quot;,\&quot;url\&quot;:\&quot;https://www.musical.ly/rest/v2/musicals/MzMxMjEyMDk1Mjc5OTU5NzgzOTE1NTI/like\&quot;},\&quot;ostype\&quot;:\&quot;and\&quot;,\&quot;imei\&quot;:\&quot;unknown\&quot;,\&quot;mac\&quot;:\&quot;08:00:27:c3:23:22\&quot;,\&quot;model\&quot;:\&quot;SuperCustom Phone\&quot;,\&quot;sdk\&quot;:\&quot;22\&quot;,\&quot;serviceTime\&quot;:\&quot;1490337613841\&quot;,\&quot;uiName\&quot;:\&quot;unknown\&quot;,\&quot;deviceid\&quot;:\&quot;785b4aa7cf404d1faf1b7b0c3f0c526e\&quot;,\&quot;mod\&quot;:\&quot;papaRoach\&quot;}&quot;);
+//jstring json = (*env)-&gt;NewStringUTF(env, &quot;{}&quot;);
+jint version = (jint) 1;
+jstring timestamp = (*env)-&gt;NewStringUTF(env, &quot;1490337613841&quot;);
+printf(&quot;Calling checkcode\n&quot;);
+jstring result = checkcode(env, 0, json, version, timestamp);
+printf(&quot;Converting to char*...\n&quot;);
+const char *str = (*env)-&gt;GetStringUTFChars(env, result, NULL);
+printf(&quot;Result: %s\n&quot;, str);
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;mention previus post&lt;/p&gt;
+&lt;p&gt;calling native functions with java object arguments from command line&lt;/p&gt;
+&lt;p&gt;motivation: red team, wanting to
+    
+    </summary>
+    
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="jni" scheme="https://CalebFenton.github.io/tags/jni/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Creating a Java VM from Android Native Code</title>
+    <link href="https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/"/>
+    <id>https://CalebFenton.github.io/2017/04/05/creating_java_vm_from_android_native_code/</id>
+    <published>2017-04-05T18:11:11.000Z</published>
+    <updated>2017-04-05T23:47:31.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need this to create <code>jstring</code>s and other Java objects, lookup classes and fields, etc. It’s not normal for you to have to instantiate a VM from native code because most of the time, if you’re using the Java Native Interface (JNI), you started in Java land and are only dipping into native code land for them sweet, sweet <a href="performance benefits">http://www.androidauthority.com/java-vs-c-app-performance-689081/</a>. However, if you’re reverse engineering or writing an exploit, you’re likely always delving int all kinds of unusual trouble which the developers reasonably believed would never happen or at least would only be a theoretical edge case.</p>
+<p>I recently needed to create a VM from native code to pass Java object arguments to a JNI function. In this post, I want to share what I came up with and why I finally settled on this particular method.<br><a id="more"></a></p>
+<h2 id="Standard-Method"><a href="#Standard-Method" class="headerlink" title="Standard Method"></a>Standard Method</h2><p>The official, standard method is documented here: <a href="How to Create a JVM Instance in JNI">http://www.developer.com/java/data/how-to-create-a-jvm-instance-in-jni.html</a>. Unfortunately, this <em>won’t</em> work in Android because <code>jint JNI_CreateJavaVM(JavaVM**, JNIEnv**, void*)</code> isn’t exported. Even if you’re not familiar with this function, it’s name should be a <a href="https://media.giphy.com/media/l2Sq2AG0wrEXQgLGU/giphy.gif" target="_blank" rel="external">clue</a> that it’s important. If you want to check if it’s not exported yourself, look at <code>jni.h</code> from your Android NDK directory. In my case, it’s in <code>android-sdk/android-ndk-r13b/platforms/android-9/arch-x86/usr/include/jni.h</code>. The relevant code is:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">if</span> 0  <span class="comment">/* In practice, these are not exported by the NDK so don't declare them */</span></span></div><div class="line"><span class="function">jint <span class="title">JNI_GetDefaultJavaVMInitArgs</span><span class="params">(<span class="keyword">void</span>*)</span></span>;</div><div class="line"><span class="function">jint <span class="title">JNI_CreateJavaVM</span><span class="params">(JavaVM**, JNIEnv**, <span class="keyword">void</span>*)</span></span>;</div><div class="line"><span class="function">jint <span class="title">JNI_GetCreatedJavaVMs</span><span class="params">(JavaVM**, jsize, jsize*)</span></span>;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+<p>If you try to compile the code, you’ll probably get an error like this:</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">warning: <span class="keyword">implicit</span> declaration of <span class="function"><span class="keyword">function</span></span> <span class="string">'JNI_CreateJavaVM'</span> is invalid <span class="keyword">in</span> C99</div><div class="line">      [-Wimplicit-<span class="function"><span class="keyword">function</span></span>-declaration]</div></pre></td></tr></table></figure>
+<p>The official documentation is still useful for understanding the API and what all those options and arguments do. But if we want to use this on Android, we’re going to have to explicitly load the necessary methods from some library.</p>
+<h2 id="UiccUnlock-Method"><a href="#UiccUnlock-Method" class="headerlink" title="UiccUnlock Method"></a>UiccUnlock Method</h2><p>My <a href="https://www.google.com/search?q=android+jni_createjavavm" target="_blank" rel="external">genius cyber-sleuth skills</a> revealed another possible technique. It’s from <a href="https://gist.github.com/tewilove/b65b0b15557c770739d6" target="_blank" rel="external">UiccUnlock.cpp</a> which looks like a quasi-exploit to do a SIM unlock.</p>
+<p>I won’t claim to fully understand what it’s doing, but the interesting part to me is in <code>get_transation_code</code>. Here’s what it does:</p>
+<ul>
+<li>creates a Java VM</li>
+<li>use the VM to get reference to <code>com.android.internal.telephony.ITelephony$Stub</code> class</li>
+<li>get the <code>TRANSACTION_sendOemRilRequestRaw</code> field value</li>
+<li>destroy the VM</li>
+<li>return field value</li>
+</ul>
+<p>It looks like the field value is used to check if the device is already unlocked or perhaps to check if the unlock method will work. I’m not sure. I just wanted to rip out the code to create the VM.</p>
+<p>The approach seemed sound: load the relevant VM creation functions by through <code>libnativehelper.so</code> or <code>libdvm.so</code> as a backup. However, there were a few lines in there that looked weird:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">JniInvocation_ctor = (JniInvocation_ctor_t) dlsym(libnativehelper, <span class="string">"_ZN13JniInvocationC1Ev"</span>);</div><div class="line">JniInvocation_dtor = (JniInvocation_dtor_t) dlsym(libnativehelper, <span class="string">"_ZN13JniInvocationD1Ev"</span>);</div><div class="line">JniInvocation_Init = (JniInvocation_Init_t) dlsym(libnativehelper, <span class="string">"_ZN13JniInvocation4InitEPKc"</span>);</div></pre></td></tr></table></figure>
+<p>I couldn’t find these functions documented anywhere. Someone really clever figured these out (kudos!). Without calling these functions, you get some weird errors:</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">W/dalvikvm(<span class="number">5395</span>): No <span class="keyword">implementation</span> found <span class="keyword">for</span> native Landroid/os/SystemProperties;.native_get:(Ljava/lang/<span class="keyword">String</span>;Ljava/lang/<span class="keyword">String</span>;)Ljava/lang/<span class="keyword">String</span>;</div><div class="line">W/dalvikvm(<span class="number">5395</span>): No <span class="keyword">implementation</span> found <span class="keyword">for</span> native Landroid/os/SystemProperties;.native_get:(Ljava/lang/<span class="keyword">String</span>;Ljava/lang/<span class="keyword">String</span>;)Ljava/lang/<span class="keyword">String</span>;</div><div class="line">W/dalvikvm(<span class="number">5395</span>): Exception Ljava/lang/UnsatisfiedLinkError; thrown <span class="keyword">while</span> initializing Landroid/os/Build;</div><div class="line">A/libc(<span class="number">5395</span>): Fatal signal <span class="number">11</span> (SIGSEGV) at <span class="number">0</span>x0000000c (code=<span class="number">1</span>), thread <span class="number">5395</span> (create_vm)</div></pre></td></tr></table></figure>
+<p>Despite these weird functions, this approach totally worked for me. But I wanted to understand what the <code>_ZN13JniInvocationC1Ev</code> functions did and if they were portable between Android versions. My gut told me that hardcoding that many function names which also included numbers could lead to incompatibilities in some devices or in later Android versions.</p>
+<h2 id="Surfaceflinger-Method"><a href="#Surfaceflinger-Method" class="headerlink" title="Surfaceflinger Method"></a>Surfaceflinger Method</h2><p>I eventually found code from Google’s Surfaceflinger service: <a href="https://android.googlesource.com/platform/frameworks/native/+/ce3a0a5/services/surfaceflinger/DdmConnection.cpp" target="_blank" rel="external">DdmConnection.cpp</a>.</p>
+<p>This defaults to looking for <code>JNI_CreateJavaVM</code> in <code>libdvm.so</code>. Instead of calling <code>_ZN13JniInvocation*</code> methods, it looks like it calls <code>Java_com_android_internal_util_WithFramework_registerNatives</code> from <code>libandroid_runtime.so</code>. The behavior of <code>registerNatives</code> is described well <a href="http://stackoverflow.com/questions/1010645/what-does-the-registernatives-method-do" target="_blank" rel="external">here</a>.</p>
+<p>Also interesting are the options used to create the VM:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">opt.optionString = <span class="string">"-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y"</span>;</div></pre></td></tr></table></figure>
+<p>These options are well documented <a href="http://www.netmite.com/android/mydroid/2.0/dalvik/docs/debugger.html" target="_blank" rel="external">here</a> and according to the documentation, this just allows for debugging of the JVM. Seems pretty standard.</p>
+<p>I noticed the JNI version was 1_4, but I bumped it up to 1_6 because that’s what’s used in the example code <a href="https://developer.android.com/training/articles/perf-jni.html#native_libraries" target="_blank" rel="external">here</a>. Here are the supported versions from  <code>jni.h</code>:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_1 0x00010001</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_2 0x00010002</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_4 0x00010004</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> JNI_VERSION_1_6 0x00010006</span></div></pre></td></tr></table></figure>
+<p>I ended up using this approach since I figured it’s the most robust and future-proof because it comes from Google.</p>
+<h2 id="Final-Code"><a href="#Final-Code" class="headerlink" title="Final Code"></a>Final Code</h2><p>Here’s the final code to create the VM:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*JNI_CreateJavaVM_t)</span><span class="params">(<span class="keyword">void</span> *, <span class="keyword">void</span> *, <span class="keyword">void</span> *)</span></span>;</div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">jint</span> <span class="params">(*registerNatives_t)</span><span class="params">(JNIEnv* env, jclass clazz)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">init_jvm</span><span class="params">(JavaVM **p_vm, JNIEnv **p_env)</span> </span>&#123;</div><div class="line">  <span class="comment">// https://android.googlesource.com/platform/frameworks/native/+/ce3a0a5/services/surfaceflinger/DdmConnection.cpp</span></div><div class="line">  JavaVMOption opt;</div><div class="line">  opt.optionString = <span class="string">"-agentlib:jdwp=transport=dt_android_adb,suspend=n,server=y"</span>;</div><div class="line"></div><div class="line">  JavaVMInitArgs args;</div><div class="line">  args.version = JNI_VERSION_1_6;</div><div class="line">  args.options = &amp;opt;</div><div class="line">  args.nOptions = <span class="number">1</span>;</div><div class="line">  args.ignoreUnrecognized = JNI_FALSE;</div><div class="line"></div><div class="line">  <span class="keyword">void</span> *libdvm_dso = dlopen(<span class="string">"libdvm.so"</span>, RTLD_NOW);</div><div class="line">  <span class="keyword">void</span> *libandroid_runtime_dso = dlopen(<span class="string">"libandroid_runtime.so"</span>, RTLD_NOW);</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (!libdvm_dso || !libandroid_runtime_dso) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  JNI_CreateJavaVM_t JNI_CreateJavaVM;</div><div class="line">  JNI_CreateJavaVM = (JNI_CreateJavaVM_t) dlsym(libdvm_dso, <span class="string">"JNI_CreateJavaVM"</span>);</div><div class="line">  <span class="keyword">if</span> (!JNI_CreateJavaVM) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-2</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  registerNatives_t registerNatives;</div><div class="line">  registerNatives = (registerNatives_t) dlsym(libandroid_runtime_dso, <span class="string">"Java_com_android_internal_util_WithFramework_registerNatives"</span>);</div><div class="line">  <span class="keyword">if</span> (!registerNatives) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-3</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (JNI_CreateJavaVM(&amp;(*p_vm), &amp;(*p_env), &amp;args)) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-4</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (registerNatives(*p_env, <span class="number">0</span>)) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">-5</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Here’s how it’s used:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line">JavaVM * vm = <span class="literal">NULL</span>;</div><div class="line">JNIEnv * env = <span class="literal">NULL</span>;</div><div class="line"><span class="keyword">int</span> status = init_jvm( &amp; vm, &amp; env);</div><div class="line"><span class="keyword">if</span> (status == <span class="number">0</span>) &#123;</div><div class="line">  <span class="built_in">printf</span>(<span class="string">"Initialization success (vm=%p, env=%p)\n"</span>, vm, env);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="built_in">printf</span>(<span class="string">"Initialization failure (%i)\n"</span>, status);</div><div class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">jstring testy = (*env)-&gt;NewStringUTF(env, <span class="string">"this should work now!"</span>);</div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> *str = (*env)-&gt;GetStringUTFChars(env, testy, <span class="literal">NULL</span>);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"testy: %s\n"</span>, str);</div></pre></td></tr></table></figure>
+<p>There you go. Now you have everything you need to instantiate a Java VM from native code.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;If you’re writing native / JNI code for Android, it’s probably as native method of an Android app. These methods are always passed the Dalvik VM instance of the app as the first parameter. You need this to create &lt;code&gt;jstring&lt;/code&gt;s and other Java objects, lookup classes and fields, etc. It’s not normal for you to have to instantiate a VM from native code because most of the time, if you’re using the Java Native Interface (JNI), you started in Java land and are only dipping into native code land for them sweet, sweet &lt;a href=&quot;performance benefits&quot;&gt;http://www.androidauthority.com/java-vs-c-app-performance-689081/&lt;/a&gt;. However, if you’re reverse engineering or writing an exploit, you’re likely always delving int all kinds of unusual trouble which the developers reasonably believed would never happen or at least would only be a theoretical edge case.&lt;/p&gt;
+&lt;p&gt;I recently needed to create a VM from native code to pass Java object arguments to a JNI function. In this post, I want to share what I came up with and why I finally settled on this particular method.&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
+      <category term="jni" scheme="https://CalebFenton.github.io/tags/jni/"/>
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="https://CalebFenton.github.io/2017/02/22/no-one-can-buy-all-bitcoins/"/>
+    <id>https://CalebFenton.github.io/2017/02/22/no-one-can-buy-all-bitcoins/</id>
+    <published>2017-02-22T18:05:53.000Z</published>
+    <updated>2017-02-22T18:05:53.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Building with and Detecting Jack</title>
@@ -187,7 +314,7 @@
     <link href="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/"/>
     <id>https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/</id>
     <published>2016-07-08T07:00:00.000Z</published>
-    <updated>2017-02-02T00:50:41.000Z</updated>
+    <updated>2017-04-05T23:36:49.000Z</updated>
     
     <content type="html"><![CDATA[<p>When <a href="https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/">smalivm</a> is virtually executing code, sometimes it needs to pass around Java Class objects. If it’s a Java API class like <code>String</code> or <code>LinkedList</code>, that’s no problem because smalivm is running in a JVM and has access to those classes already. But what if the class is of a type that’s from the app it’s trying to run? That class only exists in virtual execution imagination land, and if I don’t want to rewrite everything and implement core JVM stuff myself, I need to dynamically create classes.</p>
 <p>What this means is, when you pass smalivm an input DEX, it’ll create a real life Java class which talks and walks just like the DEX class you give it, except it’ll be inert and soulless, without any code. This way it can pass around the dry husk of a Java class, and if input DEX code wants to check the number of names of methods or do tricky reflection stuff, all those properties are there.<br><a id="more"></a></p>
@@ -218,11 +345,13 @@
     </summary>
     
     
+      <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
+    
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
       <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
-      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
@@ -387,11 +516,11 @@
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
-      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
       <category term="smali" scheme="https://CalebFenton.github.io/tags/smali/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
   </entry>
   
