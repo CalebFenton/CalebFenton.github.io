@@ -100,7 +100,7 @@ function func_runsmali() {
 alias runsmali=func_runsmali
 ```
 
-Ideally, this should be in Python and installable using `pip`. It's a rainy day project, and since it doesn't rain in California, it might be a while before I get to it. Also, about Python packages, friends, let me tell you that Python packaging is a _DARK ART_. You want to know the best practices? Fuck you. That's what they are. It's a mess. Ruby Gems are _much_, but Ruby isn't installed on everyone's machine like Python is.
+Ideally, this should be in Python and installable using `pip`. It's a rainy day project, and since it doesn't rain in California, it might be a while before I get to it. Also, about Python packages, friends, let me tell you that Python packaging is a _DARK ART_. You want to know the best practices? Fuck you. That's what they are. It's a mess. Ruby Gems are _much_ easier, but Ruby isn't installed on everyone's machine like Python is.
 
 ![](/images/understanding-dalvik-static-fields/black_magic.png)
 
