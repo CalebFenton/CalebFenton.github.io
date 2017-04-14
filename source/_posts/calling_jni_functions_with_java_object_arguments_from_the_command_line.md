@@ -14,7 +14,7 @@ In a previous post, I explained how to [create a Java VM from Android native cod
 
 There are at least two approaches to harness a native function. The first is to modify the app to accept some input from you and pass that to the native function. For example, you can write an intent filter, [convert it to Smali](https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/), add the code to the target app, modify the manifest, run the app, and send it intents via `adb` with your arguments. Even better, you could add a small socket or web server instead of an intent filter and send `curl` requests, which doesn't require modifying the manifest.
 
-The second approach is to create a small native executable which loads the library, calls the target function, can be executed from the command line, and passes whatever arguments you give it. This makes it easier to debug since you're just running an executable rather than an entire app. 
+The second approach is to create a small native executable which loads the library, calls the target function, can be executed from the command line, and passes whatever arguments you give it. This makes it easier to debug since you're just running an executable rather than an entire app.
 
 ## Target App
 
@@ -180,7 +180,7 @@ $ adb push lib/x86/libstr-crypt.so /data/local/tmp
 lib/x86/libstr-crypt.so: 1 file pushed. 1.5 MB/s (5476 bytes in 0.004s)
 ```
 
-To push harness to the device, 
+To push harness to the device,
 
 ```bash
 cd harness
