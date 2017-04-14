@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2017-04-13T23:42:13.000Z</updated>
+  <updated>2017-04-14T19:36:39.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -20,12 +20,12 @@
     <link href="https://CalebFenton.github.io/2017/04/14/calling_jni_functions_with_java_object_arguments_from_the_command_line/"/>
     <id>https://CalebFenton.github.io/2017/04/14/calling_jni_functions_with_java_object_arguments_from_the_command_line/</id>
     <published>2017-04-14T18:11:11.000Z</published>
-    <updated>2017-04-13T23:42:13.000Z</updated>
+    <updated>2017-04-14T19:36:39.000Z</updated>
     
     <content type="html"><![CDATA[<p>When analyzing malware or <a href="http://i.imgur.com/hV9YDNn.gif" target="_blank" rel="external">penetration testing</a> an app which uses a native library, it’s helpful to isolate and execute the library’s functions. This opens the door for debugging and using the malware’s own code against it. For example, if the malware has encrypted strings and the decryption is done by a native function, you could either spend a bunch of time <a href="http://imgur.com/gallery/9Q1fmSI" target="_blank" rel="external">reversing</a> the algorithm to write your own decryption routine or you could just <a href="http://68.media.tumblr.com/f986bf831261e6935a59c18dccf73f17/tumblr_mltn4vLW8j1rn15aho1_500.gif" target="_blank" rel="external">harness</a> the function such that you can execute it with arbitrary inputs. If the malware author completely changes their decryption, you might not have to change anything. In this post, I’ll explain how to harness a native library and execute its functions even if they require arguments from a live JVM instance.</p>
 <p>In a previous post, I explained how to <a href="/2017/04/05/creating_java_vm_from_android_native_code/">create a Java VM from Android native code</a> but I didn’t give any real examples of how to use it. In this post, I’ll give a concrete example.<br><a id="more"></a></p>
 <p>There are at least two approaches to harness a native function. The first is to modify the app to accept some input from you and pass that to the native function. For example, you can write an intent filter, <a href="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/">convert it to Smali</a>, add the code to the target app, modify the manifest, run the app, and send it intents via <code>adb</code> with your arguments. Even better, you could add a small socket or web server instead of an intent filter and send <code>curl</code> requests, which doesn’t require modifying the manifest.</p>
-<p>The second approach is to create a small native executable which loads the library, calls the target function, can be executed from the command line, and passes whatever arguments you give it. This makes it easier to debug since you’re just running an executable rather than an entire app. </p>
+<p>The second approach is to create a small native executable which loads the library, calls the target function, can be executed from the command line, and passes whatever arguments you give it. This makes it easier to debug since you’re just running an executable rather than an entire app.</p>
 <h2 id="Target-App"><a href="#Target-App" class="headerlink" title="Target App"></a>Target App</h2><p>I created an example app so you can follow along at home. It’s called <a href="https://github.com/CalebFenton/native-harness-target" target="_blank" rel="external">native-harness-target</a>. To clone and build (of course replace <code>$ANDROID_*</code> vars for yourself):</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/CalebFenton/native-harness-target.git</div><div class="line"><span class="built_in">cd</span> native-harness-target</div><div class="line"><span class="built_in">echo</span> <span class="string">'ndk.dir=$ANDROID_NDK'</span> &gt; local.properties</div><div class="line"><span class="built_in">echo</span> <span class="string">'sdk.dir=$ANDROID_SDK'</span> &gt;&gt; local.properties</div><div class="line">./gradlew build</div></pre></td></tr></table></figure>
 <p>The APKs will be in <em>app/build/outputs/apk/</em>. For this post, I’ll be using an x86 emulator image and <em>app-universal-debug.apk</em>.</p>
@@ -71,7 +71,7 @@
 </ul>
 <p>To push the app and native library to the device:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ adb push app/build/output/apk/app-universal-debug.apk /data/<span class="built_in">local</span>/tmp/target-app.apk</div><div class="line">$ unzip app/build/outputs/apk/app-universal-debug.apk lib/x86/libstr-crypt.so</div><div class="line">Archive:  app/build/outputs/apk/app-universal-debug.apk</div><div class="line">  inflating: lib/x86/libstr-crypt.so</div><div class="line">$ adb push lib/x86/libstr-crypt.so /data/<span class="built_in">local</span>/tmp</div><div class="line">lib/x86/libstr-crypt.so: 1 file pushed. 1.5 MB/s (5476 bytes <span class="keyword">in</span> 0.004s)</div></pre></td></tr></table></figure>
-<p>To push harness to the device, </p>
+<p>To push harness to the device,</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> harness</div><div class="line">make &amp;&amp; make install</div></pre></td></tr></table></figure>
 <p><strong>Note:</strong> this pushes the x86 library to the device. If you really want to use another emulator image, replace <code>make install</code> with <code>adb push libs/&lt;your emulator flavor&gt;/harness /data/local/tmp</code>.</p>
 <p>Now, run <code>harness</code> with the path to the target library as the first argument:</p>
@@ -541,11 +541,11 @@
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
-      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
       <category term="smali" scheme="https://CalebFenton.github.io/tags/smali/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
   </entry>
   
