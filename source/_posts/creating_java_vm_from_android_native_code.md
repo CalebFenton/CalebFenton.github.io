@@ -198,4 +198,6 @@ const char *str = (*env)->GetStringUTFChars(env, testy, NULL);
 printf("testy: %s\n", str);
 ```
 
-There you go. Now you have everything you need to instantiate a Java VM from native code.
+## Conclusion
+
+Now you have everything you need to instantiate a Java VM from native code. You should also have a decent understanding (or at least links to documentation) about some of the options available to you. To see a practical application of this technique, check out [Calling JNI Functions with Java Object Arguments from the Command Line](/2017/04/14/calling_jni_functions_with_java_object_arguments_from_the_command_line/).
