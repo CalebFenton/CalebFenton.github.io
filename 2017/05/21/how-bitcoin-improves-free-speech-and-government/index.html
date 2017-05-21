@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>What happens when a DEX includes a framework class? | Caleb Fenton&#39;s Blog</title>
+  <title>How Bitcoin Improves Free Speech and Government | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
+  <meta name="description" content="Many people are introduced to Bitcoin and other cryptocurrencies merely as a way to make money investing. They see the price rising, buy in, and hope it goes “to the moon“, without really understandin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="What happens when a DEX includes a framework class?">
-<meta property="og:url" content="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/index.html">
+<meta property="og:title" content="How Bitcoin Improves Free Speech and Government">
+<meta property="og:url" content="https://CalebFenton.github.io/2017/05/21/how-bitcoin-improves-free-speech-and-government/index.html">
 <meta property="og:site_name" content="Caleb Fenton's Blog">
-<meta property="og:description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
-<meta property="og:updated_time" content="2016-07-15T05:26:16.000Z">
+<meta property="og:description" content="Many people are introduced to Bitcoin and other cryptocurrencies merely as a way to make money investing. They see the price rising, buy in, and hope it goes “to the moon“, without really understandin">
+<meta property="og:updated_time" content="2017-05-21T20:44:44.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="What happens when a DEX includes a framework class?">
-<meta name="twitter:description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
+<meta name="twitter:title" content="How Bitcoin Improves Free Speech and Government">
+<meta name="twitter:description" content="Many people are introduced to Bitcoin and other cryptocurrencies merely as a way to make money investing. They see the price rising, buy in, and hope it goes “to the moon“, without really understandin">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -98,10 +98,10 @@ ga('send', 'pageview');
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-what-happens-when-a-dex-includes-a-framework-class" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-how-bitcoin-improves-free-speech-and-government" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" class="article-date">
-  <time datetime="2015-12-22T04:13:40.000Z" itemprop="datePublished">2015-12-21</time>
+    <a href="/2017/05/21/how-bitcoin-improves-free-speech-and-government/" class="article-date">
+  <time datetime="2017-05-21T07:13:37.000Z" itemprop="datePublished">2017-05-21</time>
 </a>
     
   </div>
@@ -112,7 +112,7 @@ ga('send', 'pageview');
         
   
     <h1 class="article-title" itemprop="name">
-      What happens when a DEX includes a framework class?
+      How Bitcoin Improves Free Speech and Government
     </h1>
   
 
@@ -120,35 +120,29 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>While working on a new class loading system for <a href="https://github.com/CalebFenton/simplify/tree/master/smalivm" target="_blank" rel="external">SmaliVM</a>, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as <code>Ljava/lang/Object;</code>. I’d originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be <em>stupid</em>.<br><a id="more"></a></p>
-<p>If Dalvik let apps redefine framework classes, it has huge security implications. Sure, each app runs it its own zygote-spawned sandbox, but what if somewhere, somehow, my malicious app’s DEX file was loaded by an app with system or root access? I could just backdoor <code>Ljava/lang/Object;</code>. Even if that’s not possible, I’m sure I could think of something nefarious if you gave me the ability to backdoor any class.</p>
-<p>Well, derp, so now I have to rewrite part of <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a> and (hopefully) fix some tests. I might as well know exactly how it fails and document it for other researchers, right?</p>
-<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>First, I created two small Smali files.</p>
-<p>smali/<strong>hello.smali</strong>:</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LHelloWorld;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> main([<span class="class">Ljava/lang/String;</span>)V</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"></div><div class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></div><div class="line">   <span class="built_in"> const-string </span>v1, <span class="string">"hello,world!"</span></div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</div><div class="line"></div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div></pre></td></tr></table></figure>
-<p>The purpose of this is just to provide a <code>main(String[])</code> method and to have <code>Object</code> as a <code>super</code>.</p>
-<p>smali/<strong>object.smali</strong>:</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> &lt;clinit&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"></div><div class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></div><div class="line">   <span class="built_in"> const-string </span>v1, <span class="string">"crazyballs"</span></div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</div><div class="line"></div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div></pre></td></tr></table></figure>
-<p>This is the real test. If I can overwrite framework classes, I should get a lot of errors, duh, but not before <code>&lt;clinit&gt;</code> prints out something witty.</p>
-<p>After that, it was just packing it up and shoving it onto an emulator:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ smali smali -o classes.dex</div><div class="line">$ zip hello.zip classes.dex</div><div class="line">  adding: classes.dex (deflated 47%)</div><div class="line">$ adb push hello.zip /data/<span class="built_in">local</span></div></pre></td></tr></table></figure>
-<p>I’ll also wanted to see the error explosions in the logs. You’d be surprised how many people have an app crash or something and don’t bother looking at the logs. <code>monitor</code> is your friend. It usually has bad news, and confuses Eclipse and IntelliJ if it’s running, but at least it’s honest.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ monitor &amp;<span class="built_in">disown</span></div></pre></td></tr></table></figure>
-<p>Finally, just invoke <code>dalvikvm</code> with our ZIP as the classpath:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ adb shell</div><div class="line">root@android:/ <span class="comment"># cd /data/local</span></div><div class="line">root@android:/data/<span class="built_in">local</span> <span class="comment"># dalvikvm -cp hello.zip HelloWorld</span></div><div class="line">hello,world!</div><div class="line">root@android:/data/<span class="built_in">local</span> <span class="comment">#</span></div></pre></td></tr></table></figure>
-<p>No <code>&quot;crazyballs&quot;</code>, so I guess my hunch was right. I wonder what the error looked like?</p>
-<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="number">12</span><span class="number">-21</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">22.035</span>: <span class="keyword">D</span>/dalvikvm(<span class="number">1065</span>): DexOpt: --- BEGIN <span class="string">'hello.zip'</span> (bootstrap=<span class="number">0</span>) ---</div><div class="line"><span class="number">12</span><span class="number">-21</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">22.095</span>: <span class="keyword">D</span>/dalvikvm(<span class="number">1066</span>): DexOpt: <span class="string">'Ljava/lang/Object;'</span> has an earlier definition; blocking out</div><div class="line"><span class="number">12</span><span class="number">-21</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">22.095</span>: <span class="keyword">D</span>/dalvikvm(<span class="number">1066</span>): DexOpt: not verifying/optimizing <span class="string">'Ljava/lang/Object;'</span>: multiple definitions</div><div class="line"><span class="number">12</span><span class="number">-21</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">22.115</span>: <span class="keyword">D</span>/dalvikvm(<span class="number">1066</span>): DexOpt: load <span class="number">14</span>ms, verify+opt <span class="number">11</span>ms, <span class="number">83668</span> bytes</div><div class="line"><span class="number">12</span><span class="number">-21</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">22.115</span>: <span class="keyword">D</span>/dalvikvm(<span class="number">1065</span>): DexOpt: --- END <span class="string">'hello.zip'</span> (success) ---</div><div class="line"><span class="number">12</span><span class="number">-21</span> <span class="number">11</span>:<span class="number">07</span>:<span class="number">22.115</span>: <span class="keyword">D</span>/dalvikvm(<span class="number">1065</span>): DEX prep <span class="string">'hello.zip'</span>: unzip in <span class="number">2</span>ms, rewrite <span class="number">75</span>ms</div></pre></td></tr></table></figure>
-<p>If you read between the lines, the actual error message is “has an earlier definition; blocking out (idiot)”.</p>
+        <p>Many people are introduced to Bitcoin and other cryptocurrencies merely as a way to make money investing. They see the price rising, buy in, and hope it goes “<a href="http://1.bp.blogspot.com/-9_AQgspzJCE/UtQ7wlYZeeI/AAAAAAAAAJs/4voWG2CesFk/s1600/todamoojoon.gif" target="_blank" rel="external">to the moon</a>“, without really understanding what it is or why the price is moving. I’m glad Bitcoin is getting popular. <a href="https://media.giphy.com/media/rcqxcl5DGhM9q/giphy.gif" target="_blank" rel="external">I’m a huge fan</a>, but I don’t give a single shit about how good of an investment it is. Even though you might make a lot of money investing, it pales in comparison to how Bitcoin can fundamentally change the world.</p>
+<p>I can talk all day about how a big chunk of the world is unbanked and doesn’t have access to financial services, how this is a huge problem, and <em>who knows</em> what will happen when 4 billion people suddenly have access to savings accounts and loans with a simple feature phone with internet. I can write pages and pages about how Bitcoin enables truly micro transactions and how I think it’ll fit in nicely as payment models for AI powered robot services, <a href="http://www.bbc.com/news/technology-30998361" target="_blank" rel="external">self-driving cars</a>, and media streaming services. The list goes on and on, but this post covers how Bitcoin bolsters the power of speech and improves our relationship with government.</p>
+<a id="more"></a>
+<h2 id="Bitcoin-Transactions-are-Speech"><a href="#Bitcoin-Transactions-are-Speech" class="headerlink" title="Bitcoin Transactions are Speech"></a>Bitcoin Transactions are Speech</h2><p>Money is now speech. Bitcoin lives on the internet and inherits all the censorship resistance of the internet: encryption, proxies, traffic masking. The internet is hands down the greatest facilitator of free speech ever devised. With Bitcoin, anyone with a feature phone and internet has access to financial services and transactions.</p>
+<p>Blocking Bitcoin is harder than censoring the internet, which is nearly impossible, because you also have to censor <em>all</em> forms of communication, including the contents of people’s minds! You can memorize Bitcoin wallet seeds. If someone wants to smuggle Bitcoin into a country, they just have to memorize 20-30 words. Good luck stopping that! If internet is blocked completely, people can write down or print out transactions and physically deliver them to someone with internet access. Good luck stopping that!</p>
+<p>Physical money is a liability. Your government or enemies can take it from you by force. Credit and debit cards are a liability because governments can see how much money you have, where you’re spending it, what you’re buying, and so on. If you become an enemy of the government, you’re fucked. With Bitcoin, you can be as anonymous as you want, and new developments like Lightning Network and altcoins like Monero can improve anonymity. If you want to send or receive money without anyone spying on you, you’re free to do so. I’m certainly not advocating breaking the law, and of course a lot of people will use this freedom for bad. And I’ll start taking that argument seriously just as soon as people stop using cash for bad.</p>
+<h2 id="Bitcoin-and-Government-Finance"><a href="#Bitcoin-and-Government-Finance" class="headerlink" title="Bitcoin and Government Finance"></a>Bitcoin and Government Finance</h2><p>How does Bitcoin affect government? Simple. Bitcoin competes with government money. If people like Bitcoin more than the government issued fiat currency, they’ll buy more Bitcoin. This creates more pressure for stores to accept Bitcoin in the same way that rising oil prices creates more pressure for renewable energy and electric cars. This isn’t just my theory. <a href="https://media.giphy.com/media/5mBE2MiMVFITS/giphy.gif" target="_blank" rel="external">It’s happening</a>. India made some of their money illegal and <a href="https://www.forbes.com/sites/krnkashyap/2016/12/22/indias-demonetization-is-causing-bitcoin-to-surge-inside-the-country/#5e3812397dfc" target="_blank" rel="external">Bitcoin prices surged in India</a>. Capital controls in China <a href="http://www.scmp.com/comment/insight-opinion/article/1984052/how-fear-inflation-driving-bitcoins-popularity-china" target="_blank" rel="external">drove people</a> to trade <a href="http://www.zerohedge.com/news/2017-01-02/bitcoin-surges-above-1000-china-unveils-new-capital-controls" target="_blank" rel="external">Yen for Bitcoin</a>. Venezuela has so fucked up their currency they’ve had to outlaw foreign currencies, <a href="http://www.aljazeera.com/indepth/features/2017/04/venezuelans-turned-bitcoin-mining-170415124105593.html" target="_blank" rel="external">including Bitcoin</a>.</p>
+<p>Government currencies aren’t a monopoly anymore. They gotta compete with Bitcoin. If the Chinese government inflates their Yen, people trade Yen for Bitcoin because it’s a better store of value. People also trade into gold to hedge against inflation, but Bitcoin is easier to buy and use. As people swap out Yen for Bitcoin, Yen supply goes up as demand goes down leading to a further decline in purchasing power. If a currency’s value is too low and government can’t afford it’s military or administration, it’s fucked. Inversely, Bitcoin, like gold, is inherently deflationary. There’s a fixed amount of Bitcoin to be mined and this puts a pressure on Bitcoin’s purchasing power to increase.</p>
+<p>I don’t care if you’re politically left, right, liberal, republican, hardcore anarcho-capitalist, we can all agree that government should be more beholden to its people. Unless you’re a fascist, in which case go fuck yourself. Consider the government that inflates its currency to bail out a bunch of banks and other companies as well as finance a huge military. The companies should have gone out of business because they did a bunch of stupid shit and were wasteful and inefficient compared to the competition and the military wages many wars and kills people. If people don’t like this, they don’t have to wait years and organize voting campaigns to hopefully get someone else into office. They can simply trade their government money for Bitcoin.</p>
+<p>You might be a fan of <a href="http://www.npr.org/sections/money/2009/01/what_is_seigniorage_1.html" target="_blank" rel="external">inflation</a> or you might think it’s terrible. Regardless of your political opinions, you have to admit that there’s <em>considerable disagreement about the effects of inflation</em>. For example, some say central banks create money and inflation, and that’s <em>bad</em> because it’s theft. Others argue it creates money and inflation, but that’s <em>good</em> because it keeps people from hoarding money. Still some say it doesn’t create money <em>at all</em>–it just shuffles numbers around in a sophisticated way that’s both good and bad, but mostly good probably, and <a href="https://cdn.meme.am/instances/31631803.jpg" target="_blank" rel="external">you’re stupid and uneducated</a> for thinking it simply creates money.</p>
+<p>This ambiguity and disagreement about inflation sucks because the truth is <strong>super important</strong>. Why can’t we be sure about something like this? We need to know if the billions (or trillions) of dollars the United States is creating is actually good or if it’s fucking us and making everyone poorer and lowering the standard of living. If you ask economists about inflation, you get opinions ranging from “this is really good and keeps our economy from collapsing” all the way to “this is really bad and is destroying our economy like a cancer”. Economics isn’t a science like math or physics. It’s almost as bad as nutrition science. There’s a lot of incentive for people to push certain interpretations and ideas. How else can you explain this divergence of opinion? When opinions vary this wildly and there’s incentive to be dishonest, the <em>only way</em> to find the truth is to make people put their money where their mouth is. You do this by combining wisdom of the crowds and competition and create a market where everyone can participate. <em>Bitcoin does this for money.</em></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>I’m not saying Bitcoin is the end of government. Not at all. It can make government better by making it more beholden to its people. These effects will take time to sink in, especially in wealthier countries which aren’t threatened by Bitcoin. Government money has to compete and it’s citizens have more freedom and control over their wealth. This is good. Freedom and competition are good!</p>
+<p>Governments used to be afraid of printing presses because it allowed people to share ideas. Then the internet happened and made sharing ideas even easier. Bitcoin is far more than a hot investment. It’s the next step in personal liberty. It combines the power of money with the power of internet and our lives will all be improved by it.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" data-id="cj2z6bg63000y7xuphzxmztao" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2017/05/21/how-bitcoin-improves-free-speech-and-government/" data-id="cj2z6bg5n000f7xupn8o1dqio" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://CalebFenton.github.io/2017/05/21/how-bitcoin-improves-free-speech-and-government/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bitcoin/">bitcoin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/realtalk/">realtalk</a></li></ul>
 
     </footer>
   </div>
@@ -156,15 +150,11 @@ ga('send', 'pageview');
     
 <nav id="article-nav">
   
-    <a href="/2016/02/07/why-anti-virus-sucks/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Why Anti-Virus Software Sucks
-        
-      </div>
-    </a>
   
+    <a href="/2017/04/14/calling_jni_functions_with_java_object_arguments_from_the_command_line/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Calling JNI Functions with Java Object Arguments from the Command Line</div>
+    </a>
   
 </nav>
 
@@ -273,7 +263,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/';
+  var disqus_url = 'https://CalebFenton.github.io/2017/05/21/how-bitcoin-improves-free-speech-and-government/';
   
   (function(){
     var dsq = document.createElement('script');
