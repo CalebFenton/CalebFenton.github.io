@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2017-05-21T20:44:44.000Z</updated>
+  <updated>2017-05-27T19:49:09.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -14,6 +14,96 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to Monitor HTTPS Traffic of a Single App on OSX</title>
+    <link href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/"/>
+    <id>https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/</id>
+    <published>2017-05-27T07:13:37.000Z</published>
+    <updated>2017-05-27T19:49:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a href="https://en.wikipedia.org/wiki/Rosy_retrospection" target="_blank" rel="external">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a href="www.4chan.org">deep dark web</a> for a few hundred <a href="https://coinmarketcap.com/currencies/dogecoin/" target="_blank" rel="external">dogecoin</a>.</p>
+<p>In today-time, doing any network analysis absolutely requires knowledge of HTTPS / SSL / TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how <a href="https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server" target="_blank" rel="external">Man-in-the-Middle works</a>, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.</p>
+<p>In this post, I’ll be describing how to monitor the encrypted HTTPS traffic of a single app on macOS as well as solutions to some of the frustrating problems I encountered.<br><a id="more"></a></p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>The process for intercepting traffic is as follows:</p>
+<ol>
+<li>Generate a root certificate</li>
+<li>Install the cert</li>
+<li>Use <a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="external">proxychains</a> to proxy a specific app</li>
+<li>Use <a href="https://mitmproxy.org/" target="_blank" rel="external">mitmproxy</a> to intercept traffic</li>
+<li>Yell at your computer because it doesn’t work for reasons which are highly opaque</li>
+</ol>
+<p>You get to skip step 5 since you’re reading this post. Congratulations.</p>
+<h2 id="Installing-Stuff"><a href="#Installing-Stuff" class="headerlink" title="Installing Stuff"></a>Installing Stuff</h2><p>Install proxychains the way you probably install everything else: by blindly <code>brew install</code>‘ing it, but add a little <code>-ng</code> at the end:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">brew install proxychains-ng</div></pre></td></tr></table></figure>
+<p>There’s a slightly newer version forked <a href="https://github.com/haad/proxychains" target="_blank" rel="external">on GitHub</a> but I couldn’t be bothered to <code>make</code> it and the brew formula is <em>conspicuously</em> <a href="https://gist.github.com/allenhuang/3792521#gistcomment-1367295" target="_blank" rel="external">missing from the brew repo</a>. What are you trying to hide, bro?</p>
+<p>Create a <em>proxychains.conf</em> and add these lines:</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">strict_chain</div><div class="line">quiet_mode</div><div class="line">proxy_dns</div><div class="line">remote_dns_subnet <span class="number">224</span></div><div class="line">tcp_read_time_out <span class="number">15000</span></div><div class="line">tcp_connect_time_out <span class="number">8000</span></div><div class="line"></div><div class="line">[ProxyList]</div><div class="line">http <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="number">8080</span></div></pre></td></tr></table></figure>
+<p>The main important line is <code>http 127.0.0.1 8080</code> which tells proxychains to redirect all traffic from the app to 127.0.0.1 port 8080, which is where we’ll be running mitmproxy.</p>
+<p>Next, install mitmproxy with <code>pip</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="comment"># because I know you probably never upgrade pip and this is really just a test to see if you're paying attention and just copy / pasting everything</span></div><div class="line">pip install --upgrade pip</div><div class="line">pip install mitmproxy <span class="comment"># this is all that matters</span></div></pre></td></tr></table></figure>
+<p>Go ahead and start mitmproxy so it’ll be running (duh) and because it helpfully generates a root cert for you in <em>~/.mitmproxy</em>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./mitmproxy --host</div></pre></td></tr></table></figure>
+<p>To install the certs, you have two options. First, the clicky-clicky method:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">open ~/.mitmproxy</div></pre></td></tr></table></figure>
+<p>Then, press <code>Command+Space</code> and type <code>Keychain Access</code>. Next, double click <em>mitmproxy-ca-cert.pem</em> to install it. Or, you can drag it to Keychain Access. At this point, you should see something like this:</p>
+<p><img src="/images/single-app-mitm-proxy/added_cert_untrusted.png" alt=""></p>
+<p>The cert is installed but it’s not trusted. To trust the cert, right click on it and select <code>Get Info</code>. Expand <code>Trust</code> and select <code>Always Trust</code> for <code>When using this certificate</code>. It should look like this:</p>
+<p><img src="/images/single-app-mitm-proxy/trust_info.png" alt=""></p>
+<p>The second install option is to just do it from the command line:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo security add-trusted-cert <span class="_">-d</span> -r trustRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem</div></pre></td></tr></table></figure>
+<p>Finally, your cert should look something like this:</p>
+<p><img src="/images/single-app-mitm-proxy/cert_installed_trusted.png" alt=""></p>
+<p>If you have any other certs than those in the screen shot, you may be backdoor’ed! The <a href="https://cdn.arstechnica.net/wp-content/uploads/2013/11/party-van-640x215.jpg" target="_blank" rel="external">vans</a> are on their way.</p>
+<h2 id="Using-mitmproxy"><a href="#Using-mitmproxy" class="headerlink" title="Using mitmproxy"></a>Using mitmproxy</h2><p>The mitmproxy manual is very good and those people put a lot of work into the software and documentation, so I’m not going to explain it here. It’s also pretty simple to figure out and I’m not going to patronize you by holding your hand like you’re a little baby.</p>
+<p><strong>However</strong>, if you’ve never used mitmproxy before, you should know a few key bindings. The first two are obvious:</p>
+<ul>
+<li>UP and DOWN arrow keys are for navigation</li>
+<li>ENTER key enters the selected item</li>
+</ul>
+<p>The other keys are less obvious:</p>
+<ul>
+<li>TAB switches between Request, Response, and Detail</li>
+<li>Q backs out of a selected item</li>
+</ul>
+<h2 id="Testing-Everything"><a href="#Testing-Everything" class="headerlink" title="Testing Everything"></a>Testing Everything</h2><p>Now that you have a proxychains configuration pointed at localhost, the certs are installed, and mitmproxy is running, you’re ready to test stuff and see if it works!</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">proxychains4 <span class="_">-f</span> proxychains.conf curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
+<p>Now, check out mitmproxy and observe how there is <strong>no</strong> logged traffic. Hurray! It’s not working! But why is this? <strong>Because system apps silently ignore your bullshit.</strong> It has something to do with SIP not allowing proxychains to do it’s thing. You can work around this like so:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cp `<span class="built_in">which</span> curl` .</div><div class="line">proxychains4 <span class="_">-f</span> proxychains.conf ./curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
+<p>Or you could just <code>brew install wget</code> and replace <code>curl</code> with <code>wget</code> and that should work because <code>wget</code> is not a system app.</p>
+<p>Once you see traffic on mitmproxy, it means a lot is working: mitmproxy is correctly mitm’ing, your freshly installed backdoor root cert is respected, and proxychains is correctly hooking the right stuff. This is really good! Probably enough for most people, but I was trying to proxy some Python code. So, on to some possible problems with Python!</p>
+<p>If you want to follow along, add these lines to <em>req.py</em>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> requests</div><div class="line">r = requests.get(<span class="string">'https://calebfenton.github.io/'</span>)</div><div class="line">print(r)</div></pre></td></tr></table></figure>
+<p>You may need to <code>pip install requests</code> if you hate yourself and don’t have requests installed already. This script basically does what <code>curl</code> does, except it prints out a lot less. Let’s try it with proxychains:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ proxychains4 python req.py <span class="comment"># automatically finds proxychains.conf</span></div><div class="line">[proxychains] config file found: /Users/caleb/secret-shit-omg/proxychains.conf</div><div class="line">[proxychains] preloading /usr/<span class="built_in">local</span>/Cellar/proxychains-ng/4.12_1/lib/libproxychains4.dylib</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"req2.py"</span>, line 2, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    r = requests.get(<span class="string">'https://calebfenton.github.io/'</span>)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/api.py"</span>, line 71, <span class="keyword">in</span> get</div><div class="line">    <span class="built_in">return</span> request(<span class="string">'get'</span>, url, params=params, **kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/api.py"</span>, line 57, <span class="keyword">in</span> request</div><div class="line">    <span class="built_in">return</span> session.request(method=method, url=url, **kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/sessions.py"</span>, line 475, <span class="keyword">in</span> request</div><div class="line">    resp = self.send(prep, **send_kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/sessions.py"</span>, line 585, <span class="keyword">in</span> send</div><div class="line">    r = adapter.send(request, **kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/adapters.py"</span>, line 477, <span class="keyword">in</span> send</div><div class="line">    raise SSLError(e, request=request)</div><div class="line">requests.exceptions.SSLError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)</div></pre></td></tr></table></figure>
+<p>Python doesn’t give a shit about your certs. Hah! You can do a quick test that this is the case by changing the <code>requests.get</code> to include a <code>verify</code> parameter pointing to your cert:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> requests</div><div class="line">r = requests.get(<span class="string">'https://calebfenton.github.io/'</span>, verify=<span class="string">'/Users/caleb/.mitmproxy/mitmproxy-ca-cert.pem'</span>)</div><div class="line">print(r)</div></pre></td></tr></table></figure>
+<p>This <em>works fine</em> because you’re telling the <code>requests</code> module  to trust your mitmproxy cert.</p>
+<p>What if you can’t be bothered to change your target app or maybe it uses something other than requests? You have at least two options:</p>
+<ul>
+<li>For requests, set <code>REQUESTS_CA_BUNDLE</code> to point at your root cert, e.g.<code>REQUESTS_CA_BUNDLE=/Users/caleb/.mitmproxy/mitmproxy-ca-cert.cer</code></li>
+<li>For other modules, try setting <code>SSL_CERT_FILE</code> with the path to your root cert</li>
+</ul>
+<p>For example, using the first version of <em>req.py</em> without <code>verify</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ REQUESTS_CA_BUNDLE=/Users/caleb/.mitmproxy/mitmproxy-ca-cert.cer proxychains4 python req.py</div><div class="line">[proxychains] config file found: /Users/caleb/secret-shit-omg/proxychains.conf</div><div class="line">[proxychains] preloading /usr/<span class="built_in">local</span>/Cellar/proxychains-ng/4.12_1/lib/libproxychains4.dylib</div><div class="line">&lt;Response [200]&gt;</div></pre></td></tr></table></figure>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>This post only covers a small number of the problems that can bite you when trying to mitm HTTPS. However, most of the time, I just need to proxy a single app and don’t want to use iptables or ipfw to redirect all traffic because 1.) that’s noisy and 2.) <a href="/images/single-app-mitm-proxy/man_iptables.png">firewall rules are confusing</a> and I don’t want to master that arcanum unless I have to, not ashamed to admit it. With this post, you should have everything you need to successfully proxy and monitor traffic of a single app on OSX (most of the time).</p>
+<p>Good luck. Happy sniffing.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the &lt;a href=&quot;https://en.wikipedia.org/wiki/Rosy_retrospection&quot;&gt;good old days&lt;/a&gt;, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the &lt;a href=&quot;www.4chan.org&quot;&gt;deep dark web&lt;/a&gt; for a few hundred &lt;a href=&quot;https://coinmarketcap.com/currencies/dogecoin/&quot;&gt;dogecoin&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In today-time, doing any network analysis absolutely requires knowledge of HTTPS / SSL / TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how &lt;a href=&quot;https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server&quot;&gt;Man-in-the-Middle works&lt;/a&gt;, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.&lt;/p&gt;
+&lt;p&gt;In this post, I’ll be describing how to monitor the encrypted HTTPS traffic of a single app on macOS as well as solutions to some of the frustrating problems I encountered.&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="python" scheme="https://CalebFenton.github.io/tags/python/"/>
+    
+      <category term="networking" scheme="https://CalebFenton.github.io/tags/networking/"/>
+    
+  </entry>
   
   <entry>
     <title>How Bitcoin Improves Free Speech and Government</title>
@@ -204,11 +294,11 @@
   </entry>
   
   <entry>
-    <title>Building with and Detecting Jack</title>
+    <title>Building with and Detecting Android&#39;s Jack Compiler</title>
     <link href="https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/"/>
     <id>https://CalebFenton.github.io/2016/12/01/building-with-and-detecting-jack/</id>
     <published>2016-12-01T08:13:37.000Z</published>
-    <updated>2016-12-08T00:57:10.000Z</updated>
+    <updated>2017-05-27T19:47:52.000Z</updated>
     
     <content type="html"><![CDATA[<p>Recently, I needed to write a bunch of Smali code to use in tests for <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a>. While, Smali syntax is simple and fairly easy to write, it’s also tedious and I needed to do some tricky, uncommon stuff. I wasn’t even sure how to do it in Smali. Luckily, it’s pretty easy to write Java and convert it to Smali. I’ve talked about how to make a small alias to do this and go over some other use cases in a <a href="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/">previous post</a>. Writing Java and converting to Smali makes it easy to quickly prototype lots of Smali code without worrying about Smali syntax or conventions. In this post, I want to show how to use a new Android compiler called <a href="https://source.android.com/source/jack.html" target="_blank" rel="external"><code>jack</code></a> which takes the place of <code>dx</code> and you’ll need to know how to use if you want to continue converting Java to Smali.<br><a id="more"></a></p>
 <h2 id="Building-with-Jack"><a href="#Building-with-Jack" class="headerlink" title="Building with Jack"></a>Building with Jack</h2><p>The original Android compiler is <code>dx</code> and it works by translating Java <em>.class</em> files to Dalvik executables (<em>.dex</em>). Jack, however, compiles Java source code, so you don’t need to invoke <code>javac</code> at all.</p>
@@ -261,6 +351,8 @@
     
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
+    
+      <category term="research" scheme="https://CalebFenton.github.io/tags/research/"/>
     
   </entry>
   
