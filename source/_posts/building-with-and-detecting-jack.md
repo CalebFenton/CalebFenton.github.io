@@ -1,6 +1,7 @@
-title: "Building with and Detecting Jack"
+title: "Building with and Detecting Android's Jack Compiler"
 tags:
   - android
+  - research
 comments: true
 date: 2016-12-01 00:13:37
 ---
