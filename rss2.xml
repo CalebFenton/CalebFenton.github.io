@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2017-05-27T19:49:09.000Z</updated>
+  <updated>2017-05-27T19:55:25.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>How to Monitor HTTPS Traffic of a Single App on OSX</title>
+    <title>Monitoring HTTPS Traffic of a Single App on OSX</title>
     <link href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/"/>
     <id>https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/</id>
     <published>2017-05-27T07:13:37.000Z</published>
-    <updated>2017-05-27T19:49:09.000Z</updated>
+    <updated>2017-05-27T19:55:25.000Z</updated>
     
     <content type="html"><![CDATA[<p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a href="https://en.wikipedia.org/wiki/Rosy_retrospection" target="_blank" rel="external">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a href="www.4chan.org">deep dark web</a> for a few hundred <a href="https://coinmarketcap.com/currencies/dogecoin/" target="_blank" rel="external">dogecoin</a>.</p>
 <p>In today-time, doing any network analysis absolutely requires knowledge of HTTPS / SSL / TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how <a href="https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server" target="_blank" rel="external">Man-in-the-Middle works</a>, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.</p>
