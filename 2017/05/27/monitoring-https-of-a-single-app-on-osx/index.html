@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/added_cert_untrusted.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/trust_info.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/cert_installed_trusted.png">
-<meta property="og:updated_time" content="2017-05-27T19:55:25.000Z">
+<meta property="og:updated_time" content="2017-05-27T21:11:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Monitoring HTTPS Traffic of a Single App on OSX">
 <meta name="twitter:description" content="If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitiv">
@@ -124,7 +124,7 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a href="https://en.wikipedia.org/wiki/Rosy_retrospection" target="_blank" rel="external">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a href="www.4chan.org">deep dark web</a> for a few hundred <a href="https://coinmarketcap.com/currencies/dogecoin/" target="_blank" rel="external">dogecoin</a>.</p>
+        <p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a href="https://en.wikipedia.org/wiki/Rosy_retrospection" target="_blank" rel="external">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a href="https://www.4chan.org" target="_blank" rel="external">deep dark web</a> for a few hundred <a href="https://coinmarketcap.com/currencies/dogecoin/" target="_blank" rel="external">dogecoin</a>.</p>
 <p>In today-time, doing any network analysis absolutely requires knowledge of HTTPS / SSL / TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how <a href="https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server" target="_blank" rel="external">Man-in-the-Middle works</a>, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.</p>
 <p>In this post, I’ll be describing how to monitor the encrypted HTTPS traffic of a single app on macOS as well as solutions to some of the frustrating problems I encountered.<br><a id="more"></a></p>
 <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>The process for intercepting traffic is as follows:</p>
@@ -194,7 +194,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="cj37p590s000uo0upev0duu9s" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="cj37rv0jy000qi3upk0vvuuxf" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/#disqus_thread" class="article-comment-link">Comments</a>
       
