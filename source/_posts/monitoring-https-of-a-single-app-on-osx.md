@@ -1,4 +1,4 @@
-title: "How to Monitor HTTPS Traffic of a Single App on OSX"
+title: "Monitoring HTTPS Traffic of a Single App on OSX"
 tags:
   - python
   - networking
