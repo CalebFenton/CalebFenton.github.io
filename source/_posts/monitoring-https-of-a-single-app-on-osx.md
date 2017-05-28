@@ -113,7 +113,7 @@ Now that you have a proxychains configuration pointed at localhost, the certs ar
 proxychains4 -f proxychains.conf curl https://calebfenton.github.io/
 ```
 
-Now, check out mitmproxy and observe how there is **no** logged traffic. Hurray! It's not working! But why is this? **Because system apps silently ignore your bullshit.** It has something to do with SIP not allowing proxychains to do it's thing. You can work around this like so:
+Now, check out mitmproxy and observe how there is **no** logged traffic. Hurray! It's not working! But why is this? **Because system apps silently ignore your bullshit.** It has something to do with [SIP not allowing proxychains to do it's thing](https://github.com/rofl0r/proxychains-ng/issues/78). You can work around this like so:
 
 ```bash
 cp `which curl` .
