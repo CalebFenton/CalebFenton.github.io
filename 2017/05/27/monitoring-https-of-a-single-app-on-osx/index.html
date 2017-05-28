@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/added_cert_untrusted.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/trust_info.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/cert_installed_trusted.png">
-<meta property="og:updated_time" content="2017-05-27T21:11:39.000Z">
+<meta property="og:updated_time" content="2017-05-28T23:57:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Monitoring HTTPS Traffic of a Single App on OSX">
 <meta name="twitter:description" content="If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitiv">
@@ -170,7 +170,7 @@ ga('send', 'pageview');
 </ul>
 <h2 id="Testing-Everything"><a href="#Testing-Everything" class="headerlink" title="Testing Everything"></a>Testing Everything</h2><p>Now that you have a proxychains configuration pointed at localhost, the certs are installed, and mitmproxy is running, you’re ready to test stuff and see if it works!</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">proxychains4 <span class="_">-f</span> proxychains.conf curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
-<p>Now, check out mitmproxy and observe how there is <strong>no</strong> logged traffic. Hurray! It’s not working! But why is this? <strong>Because system apps silently ignore your bullshit.</strong> It has something to do with SIP not allowing proxychains to do it’s thing. You can work around this like so:</p>
+<p>Now, check out mitmproxy and observe how there is <strong>no</strong> logged traffic. Hurray! It’s not working! But why is this? <strong>Because system apps silently ignore your bullshit.</strong> It has something to do with <a href="https://github.com/rofl0r/proxychains-ng/issues/78" target="_blank" rel="external">SIP not allowing proxychains to do it’s thing</a>. You can work around this like so:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cp `<span class="built_in">which</span> curl` .</div><div class="line">proxychains4 <span class="_">-f</span> proxychains.conf ./curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
 <p>Or you could just <code>brew install wget</code> and replace <code>curl</code> with <code>wget</code> and that should work because <code>wget</code> is not a system app.</p>
 <p>Once you see traffic on mitmproxy, it means a lot is working: mitmproxy is correctly mitm’ing, your freshly installed backdoor root cert is respected, and proxychains is correctly hooking the right stuff. This is really good! Probably enough for most people, but I was trying to proxy some Python code. So, on to some possible problems with Python!</p>
@@ -194,7 +194,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="cj37rv0jy000qi3upk0vvuuxf" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="cj39d7my0000ke7uphq261q6o" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/#disqus_thread" class="article-comment-link">Comments</a>
       

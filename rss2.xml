@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2017-05-27T21:11:39.000Z</updated>
+  <updated>2017-05-28T23:57:08.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/"/>
     <id>https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/</id>
     <published>2017-05-27T07:13:37.000Z</published>
-    <updated>2017-05-27T21:11:39.000Z</updated>
+    <updated>2017-05-28T23:57:08.000Z</updated>
     
     <content type="html"><![CDATA[<p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a href="https://en.wikipedia.org/wiki/Rosy_retrospection" target="_blank" rel="external">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a href="https://www.4chan.org" target="_blank" rel="external">deep dark web</a> for a few hundred <a href="https://coinmarketcap.com/currencies/dogecoin/" target="_blank" rel="external">dogecoin</a>.</p>
 <p>In today-time, doing any network analysis absolutely requires knowledge of HTTPS / SSL / TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how <a href="https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server" target="_blank" rel="external">Man-in-the-Middle works</a>, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.</p>
@@ -68,7 +68,7 @@
 </ul>
 <h2 id="Testing-Everything"><a href="#Testing-Everything" class="headerlink" title="Testing Everything"></a>Testing Everything</h2><p>Now that you have a proxychains configuration pointed at localhost, the certs are installed, and mitmproxy is running, you’re ready to test stuff and see if it works!</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">proxychains4 <span class="_">-f</span> proxychains.conf curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
-<p>Now, check out mitmproxy and observe how there is <strong>no</strong> logged traffic. Hurray! It’s not working! But why is this? <strong>Because system apps silently ignore your bullshit.</strong> It has something to do with SIP not allowing proxychains to do it’s thing. You can work around this like so:</p>
+<p>Now, check out mitmproxy and observe how there is <strong>no</strong> logged traffic. Hurray! It’s not working! But why is this? <strong>Because system apps silently ignore your bullshit.</strong> It has something to do with <a href="https://github.com/rofl0r/proxychains-ng/issues/78" target="_blank" rel="external">SIP not allowing proxychains to do it’s thing</a>. You can work around this like so:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cp `<span class="built_in">which</span> curl` .</div><div class="line">proxychains4 <span class="_">-f</span> proxychains.conf ./curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
 <p>Or you could just <code>brew install wget</code> and replace <code>curl</code> with <code>wget</code> and that should work because <code>wget</code> is not a system app.</p>
 <p>Once you see traffic on mitmproxy, it means a lot is working: mitmproxy is correctly mitm’ing, your freshly installed backdoor root cert is respected, and proxychains is correctly hooking the right stuff. This is really good! Probably enough for most people, but I was trying to proxy some Python code. So, on to some possible problems with Python!</p>
@@ -669,11 +669,11 @@
     
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
-      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
-    
       <category term="smali" scheme="https://CalebFenton.github.io/tags/smali/"/>
     
       <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
+    
+      <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
   </entry>
   
