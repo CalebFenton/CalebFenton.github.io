@@ -59,10 +59,10 @@ pip install --upgrade pip
 pip install mitmproxy # this is all that matters
 ```
 
-Go ahead and start mitmproxy so it'll be running (duh) and because it helpfully generates a root cert for you in _~/.mitmproxy_:
+Go ahead and start `mitmproxy` so it'll be running (duh) and because it helpfully generates a root cert for you in _~/.mitmproxy_:
 
 ```bash
-./mitmproxy --host
+mitmproxy --host
 ```
 
 To install the certs, you have two options. First, the clicky-clicky method:
