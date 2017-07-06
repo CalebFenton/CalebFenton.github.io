@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/added_cert_untrusted.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/trust_info.png">
 <meta property="og:image" content="https://CalebFenton.github.io/images/single-app-mitm-proxy/cert_installed_trusted.png">
-<meta property="og:updated_time" content="2017-05-28T23:57:08.000Z">
+<meta property="og:updated_time" content="2017-06-14T04:24:57.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Monitoring HTTPS Traffic of a Single App on OSX">
 <meta name="twitter:description" content="If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitiv">
@@ -144,8 +144,8 @@ ga('send', 'pageview');
 <p>The main important line is <code>http 127.0.0.1 8080</code> which tells proxychains to redirect all traffic from the app to 127.0.0.1 port 8080, which is where we’ll be running mitmproxy.</p>
 <p>Next, install mitmproxy with <code>pip</code>:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="comment"># because I know you probably never upgrade pip and this is really just a test to see if you're paying attention and just copy / pasting everything</span></div><div class="line">pip install --upgrade pip</div><div class="line">pip install mitmproxy <span class="comment"># this is all that matters</span></div></pre></td></tr></table></figure>
-<p>Go ahead and start mitmproxy so it’ll be running (duh) and because it helpfully generates a root cert for you in <em>~/.mitmproxy</em>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./mitmproxy --host</div></pre></td></tr></table></figure>
+<p>Go ahead and start <code>mitmproxy</code> so it’ll be running (duh) and because it helpfully generates a root cert for you in <em>~/.mitmproxy</em>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mitmproxy --host</div></pre></td></tr></table></figure>
 <p>To install the certs, you have two options. First, the clicky-clicky method:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">open ~/.mitmproxy</div></pre></td></tr></table></figure>
 <p>Then, press <code>Command+Space</code> and type <code>Keychain Access</code>. Next, double click <em>mitmproxy-ca-cert.pem</em> to install it. Or, you can drag it to Keychain Access. At this point, you should see something like this:</p>
@@ -194,7 +194,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="cj3lsx9nv000rpiupm8jtzipk" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="cj4svpkia000uknupoezavovk" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/#disqus_thread" class="article-comment-link">Comments</a>
       

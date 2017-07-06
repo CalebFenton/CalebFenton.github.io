@@ -5,7 +5,7 @@
   <link href="/rss2.xml" rel="self"/>
   
   <link href="https://CalebFenton.github.io/"/>
-  <updated>2017-05-28T23:57:08.000Z</updated>
+  <updated>2017-06-14T04:24:57.000Z</updated>
   <id>https://CalebFenton.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/"/>
     <id>https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/</id>
     <published>2017-05-27T07:13:37.000Z</published>
-    <updated>2017-05-28T23:57:08.000Z</updated>
+    <updated>2017-06-14T04:24:57.000Z</updated>
     
     <content type="html"><![CDATA[<p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a href="https://en.wikipedia.org/wiki/Rosy_retrospection" target="_blank" rel="external">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a href="https://www.4chan.org" target="_blank" rel="external">deep dark web</a> for a few hundred <a href="https://coinmarketcap.com/currencies/dogecoin/" target="_blank" rel="external">dogecoin</a>.</p>
 <p>In today-time, doing any network analysis absolutely requires knowledge of HTTPS / SSL / TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how <a href="https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server" target="_blank" rel="external">Man-in-the-Middle works</a>, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.</p>
@@ -42,8 +42,8 @@
 <p>The main important line is <code>http 127.0.0.1 8080</code> which tells proxychains to redirect all traffic from the app to 127.0.0.1 port 8080, which is where we’ll be running mitmproxy.</p>
 <p>Next, install mitmproxy with <code>pip</code>:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="comment"># because I know you probably never upgrade pip and this is really just a test to see if you're paying attention and just copy / pasting everything</span></div><div class="line">pip install --upgrade pip</div><div class="line">pip install mitmproxy <span class="comment"># this is all that matters</span></div></pre></td></tr></table></figure>
-<p>Go ahead and start mitmproxy so it’ll be running (duh) and because it helpfully generates a root cert for you in <em>~/.mitmproxy</em>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./mitmproxy --host</div></pre></td></tr></table></figure>
+<p>Go ahead and start <code>mitmproxy</code> so it’ll be running (duh) and because it helpfully generates a root cert for you in <em>~/.mitmproxy</em>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mitmproxy --host</div></pre></td></tr></table></figure>
 <p>To install the certs, you have two options. First, the clicky-clicky method:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">open ~/.mitmproxy</div></pre></td></tr></table></figure>
 <p>Then, press <code>Command+Space</code> and type <code>Keychain Access</code>. Next, double click <em>mitmproxy-ca-cert.pem</em> to install it. Or, you can drag it to Keychain Access. At this point, you should see something like this:</p>
@@ -667,11 +667,11 @@
     
       <category term="android" scheme="https://CalebFenton.github.io/tags/android/"/>
     
-      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
-    
       <category term="smalivm" scheme="https://CalebFenton.github.io/tags/smalivm/"/>
     
       <category term="smali" scheme="https://CalebFenton.github.io/tags/smali/"/>
+    
+      <category term="dalvik" scheme="https://CalebFenton.github.io/tags/dalvik/"/>
     
       <category term="simplify" scheme="https://CalebFenton.github.io/tags/simplify/"/>
     
