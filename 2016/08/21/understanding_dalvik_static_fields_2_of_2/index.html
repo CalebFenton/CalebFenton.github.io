@@ -140,7 +140,7 @@ ga('send', 'pageview');
 <div align="center"><br><img src="/images/understanding-dalvik-static-fields/read-the-code.gif" alt="READ IT"><br><strong>READ THE CODE</strong><br></div>
 
 <h3 id="Running-the-Test"><a href="#Running-the-Test" class="headerlink" title="Running the Test"></a>Running the Test</h3><p>Compile <code>Driver</code>, remove the dummy child class, and change references to the dummy class to point at our <code>ChildClass</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">java2smali Driver.java</div><div class="line">rm Driver\<span class="variable">$child_class</span>.class</div><div class="line">sed -i <span class="_">-e</span> <span class="string">'s/Driver\$//g'</span> Driver.smali</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">java2smali Driver.java</div><div class="line">rm Driver\<span class="variable">$child_class</span>.class</div><div class="line">sed -i -e <span class="string">'s/Driver\$//g'</span> Driver.smali</div></pre></td></tr></table></figure>
 <p>For the source for <code>runsmali</code> and <code>java2smali</code>, check out <a href="2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields part 1 of 2</a>.</p>
 <p>Next, compile all of the Smali files into a classes.dex and run the Driver class:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ runsmali inheri-tests Driver</div><div class="line">  adding: classes.dex (deflated 53%)</div><div class="line">[100%] /data/<span class="built_in">local</span>/runsmali.zip</div><div class="line">EXECUTING: Driver</div><div class="line">field literal: 2</div><div class="line">grandparent field: 4</div><div class="line">grandparent field literal: 5</div></pre></td></tr></table></figure>
@@ -158,7 +158,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cj4t36lj20014deupzta42wo0" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/" data-id="cj4t3vtz1000zolupove9sak4" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2016/08/21/understanding_dalvik_static_fields_2_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
