@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Measuring the Usefulness of Multiple Models | Caleb Fenton&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="The past several years have seen a massive increase in products, services, and features which are powered or enhanced by artificial intelligence — voice recognition, facial recognition, targeted adver">
+<meta name="keywords" content="research,machine learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measuring the Usefulness of Multiple Models">
+<meta property="og:url" content="https://CalebFenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/index.html">
+<meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
+<meta property="og:description" content="The past several years have seen a massive increase in products, services, and features which are powered or enhanced by artificial intelligence — voice recognition, facial recognition, targeted adver">
+<meta property="og:updated_time" content="2017-09-28T21:08:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Measuring the Usefulness of Multiple Models">
+<meta name="twitter:description" content="The past several years have seen a massive increase in products, services, and features which are powered or enhanced by artificial intelligence — voice recognition, facial recognition, targeted adver">
+<meta name="twitter:creator" content="@CalebFenton">
+  
+    <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74177443-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/rss2.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://CalebFenton.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-measuring-the-usefulness-of-multiple-models" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/28/measuring-the-usefulness-of-multiple-models/" class="article-date">
+  <time datetime="2017-09-28T07:13:37.000Z" itemprop="datePublished">2017-09-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Measuring the Usefulness of Multiple Models
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>The past several years have seen a massive increase in products, services, and features which are powered or enhanced by artificial intelligence — voice recognition, facial recognition, targeted advertisements, and so on. In the anti-virus industry, we’ve seen a similar trend with a push away from traditional, signature-based detection towards fancy machine learning models. Machine learning allows anti-virus companies to leverage large amounts of data and clever feature engineering to build models which can accurately detect malware and scales much better than manual reverse engineering. Using machine learning and training a model is <a href="https://github.com/llSourcell/antivirus_demo" target="_blank" rel="external">simple enough</a> that there are YouTube videos like “<a href="https://www.youtube.com/watch?v=iLNHVwSu9EA&amp;feature=youtu.be" target="_blank" rel="external">Build an Antivirus in 5 Minutes</a>“. While these home brew approaches are interesting and educational, building and maintaining an effective, competitive model takes a <em>lot</em> longer than 5 minutes.<br><a id="more"></a></p>
+<p>To stay competitive with machine learning one must constantly beef up the training data to include new and diverse samples, engineer better features, refine old features, tune model <a href="https://images.gr-assets.com/hostedimages/1467729070ra/19623361.gif" target="_blank" rel="external">hyper parameters</a>, research new models, and so on. To this end, I’ve been researching how to use multiple models to improve detection accuracy. The intuition is that different models may have different strengths and weaknesses and as the number of models which agree increases, you can be more certain. Using multiple model’s isn’t new. It’s a common technique generally agreed to improve accuracy, and we already use it in some places. However, I wanted to quantify how much can it improve accuracy and which combination of models would work best. In this post, I’m going to share my findings and give some ideas for future research.</p>
+<h2 id="Selecting-the-Algorithms"><a href="#Selecting-the-Algorithms" class="headerlink" title="Selecting the Algorithms"></a>Selecting the Algorithms</h2><p>If you want to use multiple models, the first question is which learning algorithms to use. Intuitively, you want strong models which make different mistakes. For example, if one model is wrong about a particular file, you want your other models to not be wrong. In other words, you want to minimize the size of the intersection of the sets of misclassified files between models. In this way, three strong models which make the same mistakes may not perform as well as one strong model with two weaker models which make entirely different mistakes.</p>
+<p>I picked three models which I hoped would perform differently: <a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier" target="_blank" rel="external">random forest</a>, <a href="http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html" target="_blank" rel="external">multi-layer perceptron</a>, and <a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html" target="_blank" rel="external">extra trees</a>. Random forests, <a href="https://sentinelone.com/2016/12/05/detecting-malware-pre-execution-static-analysis-machine-learning/" target="_blank" rel="external">which I’ve explained previously</a> and extra trees are both ensemble algorithms which use decision trees as a base estimator, but I figured I could use very different parameters for each and get different results.</p>
+<p>For evaluating the performance of multiple models, consider that when a model judges a file, there are four outcomes:</p>
+<ol>
+<li>true positive (TP) – file is bad and model says bad</li>
+<li>true negative (TN) – file is good and model says good</li>
+<li>false positive (FP) – file is good but model says bad</li>
+<li>false negative (FN) – file is bad but model says good</li>
+</ol>
+<p>In the anti-virus industry, the most important metric for a model is the FP rate. If you detect 100% of malware but have an FP rate of only 0.1%, you’ll still be deleting 1 in 1,000 benign files which will <em>probably</em> <a href="https://1.bp.blogspot.com/--w1K7n5WMLM/UoKA3t9CugI/AAAAAAAD_jw/awBs5Xd6PI4/s1600/a_few_things_that_are_just_seconds_from_disaster_35.gif" target="_blank" rel="external">break something important</a> (like the operating system). The second most important metric is the TP rate, or the detection rate. This is how many malicious files you detect and these two rates are usually antagonistic. Improving the TP rate usually means increasing the FP rate, and vice versa.</p>
+<p>Since FPs are so important to avoid, I decided to evaluate model combinations by measuring how much the FP sets overlap. The less they overlap, the better. This isn’t very rigorous, but it’s <em>fast</em>. I prefer to get quick results, build my intuition, and get more rigorous as I iterate. In a perfect world with unlimited time, CPU power, and memory, I would setup a grid search to find the ideal parameters for a dozen models and then build another grid search to find the ideal way to combine the models. Unfortunately, this could take weeks. By doing some quick experiments, I can find out if the idea is worth perusing, possibly come up with a better test, and save a lot of time by eliminating certain possibilities.</p>
+<h2 id="Building-the-Models"><a href="#Building-the-Models" class="headerlink" title="Building the Models"></a>Building the Models</h2><p>The training data consisted of features from a wide variety of about 1.7 million executables, about half of which were malicious. The data were vectorized and prepared by removing invariant features, normalizing, scaling, and agglomerating features. Decision trees don’t care much about scaling and normalizing, but MLP and other models do. By limiting the number of features to 1000, training time is reduced and previous experiments have shown that it doesn’t degrade model performance much. Below is the code for preparing the matrix:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> sklearn <span class="keyword">as</span> skl</div><div class="line"><span class="keyword">import</span> sklearn.feature_selection</div><div class="line"><span class="keyword">import</span> gc</div><div class="line"></div><div class="line">variance = skl.feature_selection.VarianceThreshold(threshold=<span class="number">0.001</span>)</div><div class="line">matrix = variance.fit_transform(matrix)</div><div class="line"></div><div class="line">normalize = sklearn.preprocessing.Normalizer(copy=<span class="keyword">False</span>)</div><div class="line">matrix = normalize.fit_transform(matrix)</div><div class="line"></div><div class="line"><span class="comment"># Converts matrix from sparse to dense</span></div><div class="line">scale = skl.preprocessing.RobustScaler(copy=<span class="keyword">False</span>)</div><div class="line">matrix = scale.fit_transform(matrix.toarray())</div><div class="line"></div><div class="line"><span class="comment"># Lots of garbage to collect after last step</span></div><div class="line"><span class="comment"># This may prevent some out of memory errors</span></div><div class="line">gc.collect()</div><div class="line"></div><div class="line">fa = sklearn.cluster.FeatureAgglomeration(n_clusters=<span class="number">1000</span>)</div><div class="line">matrix = fa.fit_transform(matrix)</div></pre></td></tr></table></figure>
+<p>The random forest (RF), extra trees (ET), and multi-layer perceptron (MLP) models were built using the <a href="https://github.com/scikit-learn/scikit-learn" target="_blank" rel="external">SKLearn</a> Python library from the prepared matrix.</p>
+<h2 id="Testing-the-Models"><a href="#Testing-the-Models" class="headerlink" title="Testing the Models"></a>Testing the Models</h2><p>The strongest performing model was the random forest with extra trees coming in a close second. The lackluster MLP performance is likely due to bad tuning of hyper parameters but it could just be a bad algorithm for this type of problem.</p>
+<p>Below is the table of results showing the number of FPs from each model and the number of FPs in the intersection between each model and every other model:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>FPs</th>
+<th>∩ RF</th>
+<th>∩ MLP</th>
+<th>∩ ET</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RF</td>
+<td>3928</td>
+<td>-</td>
+<td>3539</td>
+<td>2784</td>
+</tr>
+<tr>
+<td>MLP</td>
+<td>104356</td>
+<td>3539</td>
+<td>-</td>
+<td>3769</td>
+</tr>
+<tr>
+<td>ET</td>
+<td>4302</td>
+<td>2784</td>
+<td>3769</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>The FPs common between all models is 2558. This means that all three models mistakenly labeled 2558 of the files as malicious when they were <a href="http://ct.fra.bz/ol/fz/sw/i59/2/8/3/frabz-ACTUALLY-9f1b65.jpg" target="_blank" rel="external">actually</a> benign. The best way to minimize FPs is to require that all three models agree a file is malicious. With these three models, this would decrease the false positive rate by 35%. For example, instead of using just a random forest and getting 3928 FPs, if all models had to agree, the FPs would be limited to just 2558.</p>
+<p>Requiring all models agree is a highly conservative way to combine models and is the most likely to reduce the TP rate. To measure the TP rate reduction, I checked the size of the intersections of TPs between the models. The table below shows the figures:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>TPs</th>
+<th>∩ RF</th>
+<th>∩ MLP</th>
+<th>∩ ET</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RF</td>
+<td>769043</td>
+<td>-</td>
+<td>759321</td>
+<td>767333</td>
+</tr>
+<tr>
+<td>MLP</td>
+<td>761807</td>
+<td>759321</td>
+<td>-</td>
+<td>758488</td>
+</tr>
+<tr>
+<td>ET</td>
+<td>768090</td>
+<td>767333</td>
+<td>758488</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>As with FPs, the RF model performed the best with the ET model lagging slightly behind. The intersection of TPs between all models was 757880. If all models were required to agree a file was malicious, this means the TP rate would only decrease 1.5%.</p>
+<p>Below is roughly the code I used to collect FPs and TPs:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># matrix contains vectorized data</span></div><div class="line"><span class="comment"># indicies contains array of sample sha256 hashes</span></div><div class="line"><span class="comment"># labels contains array of sample labels - True=malicious, False=benign</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_tps</span><span class="params">(labels, predicted, indicies)</span>:</span></div><div class="line">    tps = set()</div><div class="line">    <span class="keyword">for</span> idx, label <span class="keyword">in</span> enumerate(labels):</div><div class="line">        prediction = predicted[idx]</div><div class="line">        <span class="keyword">if</span> label <span class="keyword">and</span> prediction:</div><div class="line">            tps.add(indicies[idx])</div><div class="line">    <span class="keyword">return</span> tps</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_fps</span><span class="params">(labels, predicted, indicies)</span>:</span></div><div class="line">    fps = set()</div><div class="line">    <span class="keyword">for</span> idx, label <span class="keyword">in</span> enumerate(labels):</div><div class="line">        prediction = predicted[idx]</div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> label <span class="keyword">and</span> prediction:</div><div class="line">            fps.add(indicies[idx])</div><div class="line">    <span class="keyword">return</span> fps</div><div class="line"></div><div class="line"><span class="comment"># Fit the classifier</span></div><div class="line">mlp = skl.neural_network.MLPClassifier()</div><div class="line">mlp.fit(matrix, labels)</div><div class="line"></div><div class="line"><span class="comment"># Make predictions and collect FPs and TPs</span></div><div class="line">mlp_predicted = skl.model_selection.cross_val_predict(mlp, matrix, labels, cv=<span class="number">10</span>)</div><div class="line">mlp_fps = get_fps(labels, predicted, indicies)</div><div class="line">mlp_tps = get_fps(labels, predicted, indicies)</div><div class="line"></div><div class="line"><span class="comment"># rf_fps contains random forest FPs</span></div><div class="line">print(rf_fps.intersection(mlp_fps))</div></pre></td></tr></table></figure>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This research suggests that by using multiple models one could easily reduce FPs by about a third with only a tiny hit to the detection rate. This seems promising, but the real world is often more complicated in practice. For example, we use many robust, non-AI systems to avoid FPs so the 35% reduction likely wouldn’t affect all file types equally and most of the FP reduction might be covered by such pre-existing systems. This research only establishes an upper bound for FP reductions. There’s also engineering considerations for model complexity and speed that need to be taken into account. I’m using Python and don’t care how slow models are, but implementing the code in C and making it performant might be quite tricky.</p>
+<p>The extra trees worked better than expected. I did very little tuning yet it was strong and had fairly different false positives than the random forest model. The MLP model may, with enough tuning, eventually perform well, but maybe it’s a bad model for the number and type of features. I’m eager to try with an SVC model, but SVC training time grows quadratically so I’d need to use a <a href="https://stackoverflow.com/questions/31681373/making-svm-run-faster-in-python" target="_blank" rel="external">bagging classifier with many smaller SVCs</a>.</p>
+<p>There are many different ways to combine models — voting, soft voting, blending, and stacking. What I’ve described here is a variant of voting. I’d like to experiment with stacking which works by training multiple models, then using the output of those models as features into a “second layer” model which figures out how to best combine the models. Since I’m most interested in minimizing false positives, I’ll have to compare stacking performance versus requiring all models agree. It may be possible to weight benign samples so models favor avoiding false positives while training without sacrificing detection rates.</p>
+<p>The main bottleneck for this research is computing speed and memory. I may be able to just use a smaller training set. I can find out how small the training set can be by training on a subset of the data and testing the performance against the out-of-sample data. Another option is to switch from SKLearn to TensorFlow GPU which allows me to take advantage of my <a href="http://www.cnn.com/2011/TECH/gaming.gadgets/01/31/video.games.smarter.steinberg/index.html" target="_blank" rel="external">totally justified</a> video card purchase.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/" data-id="cj84ydqkf000x81upf7nrja3t" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/machine-learning/">machine learning</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Filtering Popular Code and Effects on Model Accuracy</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/09/28/measuring-the-usefulness-of-multiple-models/">Measuring the Usefulness of Multiple Models</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/">Filtering Popular Code and Effects on Model Accuracy</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/24/malware-analysts-guide-to-bitcoin/">Malware Analyst’s Guide to Bitcoin</a>
+          </li>
+        
+          <li>
+            <a href="/2017/08/23/using-markov-chains-for-android-malware-detection/">Using Markov Chains for Android Malware Detection</a>
+          </li>
+        
+          <li>
+            <a href="/2017/05/27/monitoring-https-of-a-single-app-on-osx/">Monitoring HTTPS Traffic of a Single App on OSX</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    <div id="twitter-feed" class="widget-wrap">
+  <h3 class="widget-title">Twitter Feed</h3>
+  <div class="widget">
+    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</div>
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/bitcoin/" style="font-size: 12px;">bitcoin</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 16px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/jni/" style="font-size: 12px;">jni</a> <a href="/tags/machine-learning/" style="font-size: 14px;">machine learning</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/open-source/" style="font-size: 12px;">open source</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/realtalk/" style="font-size: 12px;">realtalk</a> <a href="/tags/research/" style="font-size: 18px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12px;">security</a> <a href="/tags/simplify/" style="font-size: 14px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Caleb Fenton<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'calebfenton';
+  
+  var disqus_url = 'https://CalebFenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

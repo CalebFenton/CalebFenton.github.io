@@ -99,6 +99,152 @@ ga('send', 'pageview');
       <div class="outer">
         <section id="main">
   
+    <article id="post-how-does-dalvik-handle-this-registers" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/21/how-does-dalvik-handle-this-registers/" class="article-date">
+  <time datetime="2016-02-21T20:44:39.000Z" itemprop="datePublished">2016-02-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/02/21/how-does-dalvik-handle-this-registers/">How does Dalvik handle &#39;this&#39; registers?</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="The-this-Reference"><a href="#The-this-Reference" class="headerlink" title="The this Reference"></a>The <code>this</code> Reference</h2><p>For every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the <code>this</code> reference. I wanted to know if it was legal to reassign the register value.</p>
+<p>Just so I’m sure you know what I’m talking about, here’s a simple Java class with an instance method called <code>instanceMethod</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Instance</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">5</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">instanceMethod</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.number;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        
+          <p class="article-more-link">
+            <a href="/2016/02/21/how-does-dalvik-handle-this-registers/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/" data-id="cj84ydqk7000m81up6gg6kvxp" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-how-does-dalvik-handle-null-types" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/16/how-does-dalvik-handle-null-types/" class="article-date">
+  <time datetime="2016-02-17T03:44:39.000Z" itemprop="datePublished">2016-02-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/02/16/how-does-dalvik-handle-null-types/">How does Dalvik handle null?</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="The-Problem"><a href="#The-Problem" class="headerlink" title="The Problem"></a>The Problem</h2><p>Dalvik doesn’t have a proper null type. A null is <a href="https://github.com/android/platform_dalvik/blob/master/dx/src/com/android/dx/rop/cst/CstKnownNull.java#L92" target="_blank" rel="external">represented by a <code>0</code></a>. Consider this example Smali code:<br><code>const/4 v0, 0x0</code></p>
+<p>It could actually represent a few of different types:</p>
+<ul>
+<li><code>int v0 = 0;</code></li>
+<li><code>boolean v0 = false;</code></li>
+<li><code>byte v0 = 0x0;</code></li>
+<li><code>short v0 = 0;</code></li>
+<li>And even: <code>v0 = null;</code>
+        
+          <p class="article-more-link">
+            <a href="/2016/02/16/how-does-dalvik-handle-null-types/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/" data-id="cj84ydqk7000j81upg535xt2e" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/02/16/how-does-dalvik-handle-null-types/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-why-anti-virus-sucks" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/07/why-anti-virus-sucks/" class="article-date">
+  <time datetime="2016-02-08T04:13:40.000Z" itemprop="datePublished">2016-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/02/07/why-anti-virus-sucks/">Why Anti-Virus Software Sucks</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Everyone knows anti-virus products suck and you can say anti-virus sucks for many different reasons and at different levels. You could start with obvious, surface level reasons: anti-virus software (AV) sucks because it’s slow, klunky, self-advertising garbage that slows your machine down. From there, you could move on to more perceptive complaints such as how it hardly ever detects new malware and almost certainly will not detect fancypants, bespoke, advanced persistent threats (APT). You could still deeper and claim that there’s something wrong with an industry that thrives on selling people fear and selling companies mere compliance so their insurance doesn’t laugh in their faces when they try to collect after getting their gibson’s backdoor hacked.</p>
+<p>The obvious question is then <em>why</em> do AV products suck? Malware is a big problem that costs people money and heartache all the time. Why isn’t this solved better? Need to understand the problem at the most fundamental level. For me, this means understanding the condition in terms of economics principals–incentives, constraints, market forces at work, and so on. Once you understand something at this level, you can usually extrapolate most of the symptoms yourself and, importantly, you’ll have a much better idea of how to actually <em>fix</em> it. This brings me to my main thesis: <strong>AV software sucks because it’s impossible for the market to be informed and to meaningfully differentiate between products and objectively determine which one is better.</strong> Because of this, there isn’t much incentive for companies to make lean, clean, optimized, AV products with amazing, complex detection capabilities and behavior analysis. They can’t compete on quality, because people can’t tell the difference between great and crap, so they have to compete on sales and advertising.</p>
+<p><img src="http://usercontent1.hubimg.com/3675524_f520.jpg" alt="fearmongering"><br>
+        
+          <p class="article-more-link">
+            <a href="/2016/02/07/why-anti-virus-sucks/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/" data-id="cj84ydqkq001c81upj9yvc3y3" class="article-share-link">Share</a>
+      
+        <a href="https://CalebFenton.github.io/2016/02/07/why-anti-virus-sucks/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/anti-virus/">anti-virus</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/realtalk/">realtalk</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-what-happens-when-a-dex-includes-a-framework-class" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" class="article-date">
@@ -130,7 +276,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" data-id="cj822kajr00146qupu7dgwwb8" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" data-id="cj84ydqkn001881up93czskta" class="article-share-link">Share</a>
       
         <a href="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -160,23 +306,23 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/2017/09/28/measuring-the-usefulness-of-multiple-models/">Measuring the Usefulness of Multiple Models</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/">Filtering Popular Code and Effects on Model Accuracy</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/24/malware-analysts-guide-to-bitcoin/">Malware Analyst’s Guide to Bitcoin</a>
+          </li>
+        
+          <li>
             <a href="/2017/08/23/using-markov-chains-for-android-malware-detection/">Using Markov Chains for Android Malware Detection</a>
           </li>
         
           <li>
             <a href="/2017/05/27/monitoring-https-of-a-single-app-on-osx/">Monitoring HTTPS Traffic of a Single App on OSX</a>
-          </li>
-        
-          <li>
-            <a href="/2017/05/21/how-bitcoin-improves-free-speech-and-government/">How Bitcoin Improves Free Speech and Government</a>
-          </li>
-        
-          <li>
-            <a href="/2017/04/14/calling_jni_functions_with_java_object_arguments_from_the_command_line/">Calling JNI Functions with Java Object Arguments from the Command Line</a>
-          </li>
-        
-          <li>
-            <a href="/2017/04/05/creating_java_vm_from_android_native_code/">Creating a Java VM from Android Native Code</a>
           </li>
         
       </ul>
@@ -198,7 +344,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -207,7 +353,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/bitcoin/" style="font-size: 10px;">bitcoin</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 16px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/jni/" style="font-size: 12px;">jni</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/open-source/" style="font-size: 12px;">open source</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/realtalk/" style="font-size: 12px;">realtalk</a> <a href="/tags/research/" style="font-size: 18px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12px;">security</a> <a href="/tags/simplify/" style="font-size: 14px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 20px;">android</a> <a href="/tags/anti-virus/" style="font-size: 10px;">anti-virus</a> <a href="/tags/bitcoin/" style="font-size: 12px;">bitcoin</a> <a href="/tags/business/" style="font-size: 10px;">business</a> <a href="/tags/code-kata/" style="font-size: 12px;">code-kata</a> <a href="/tags/culture/" style="font-size: 10px;">culture</a> <a href="/tags/dalvik/" style="font-size: 16px;">dalvik</a> <a href="/tags/deobfuscation/" style="font-size: 12px;">deobfuscation</a> <a href="/tags/dex-oracle/" style="font-size: 10px;">dex-oracle</a> <a href="/tags/jni/" style="font-size: 12px;">jni</a> <a href="/tags/machine-learning/" style="font-size: 14px;">machine learning</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/open-source/" style="font-size: 12px;">open source</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/realtalk/" style="font-size: 12px;">realtalk</a> <a href="/tags/research/" style="font-size: 18px;">research</a> <a href="/tags/reversing/" style="font-size: 10px;">reversing</a> <a href="/tags/security/" style="font-size: 12px;">security</a> <a href="/tags/simplify/" style="font-size: 14px;">simplify</a> <a href="/tags/smali/" style="font-size: 10px;">smali</a> <a href="/tags/smalivm/" style="font-size: 12px;">smalivm</a> <a href="/tags/tdd/" style="font-size: 10px;">tdd</a>
     </div>
   </div>
 
@@ -216,7 +362,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

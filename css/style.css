@@ -610,17 +610,28 @@ a.article-title:hover {
 }
 .article-entry table {
   width: 100%;
+  padding: 0;
   border-collapse: collapse;
-  border-spacing: 0;
+}
+.article-entry tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+  padding: 6px 13px;
+}
+.article-entry tr:nth-child(2n) {
+  background-color: #f8f8f8;
 }
 .article-entry th {
   font-weight: bold;
-  border-bottom: 3px solid #ddd;
-  padding-bottom: 0.5em;
+  border: 1px solid #ccc;
+  margin: 0;
+  padding: 6px 13px;
 }
 .article-entry td {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
+  border: 1px solid #ddd;
+  padding: 6px 13px;
 }
 .article-entry blockquote {
   font-family: Georgia, "Times New Roman", serif;
