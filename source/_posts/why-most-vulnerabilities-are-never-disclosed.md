@@ -1,4 +1,4 @@
-title: Why Most Vulnerabilities Are Never Disclosed
+title: "Why Most Vulnerabilities Are Never Disclosed"
 tags:
   - security
   - open source
