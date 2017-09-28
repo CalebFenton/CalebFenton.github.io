@@ -9,7 +9,7 @@ date: 2017-09-25 00:13:37
 
 I've been conducting experiments to try and improve accuracy of a malware detection tool called [Judge](http://judge.rednaga.io/). This post is about an experiment involving finding which classes and methods occur frequently in the training data and excluding them from training. The intuition is that by filtering out popular code, the features will be more representative of what's unique to each sample.
 
-This idea, as well as several other such as model stacking and blending which I'll write about later, as well as some implementation ideas were given to me by Nikita Buchka ([@advegoc](https://twitter.com/advegoc) and [blogs](https://securelist.com/all/?author=551&filter=)).
+This idea, as well as several other such as model stacking and blending which I write about in [Measuring the Usefulness of Multiple Models](https://calebfenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/), as well as some implementation ideas were given to me by Nikita Buchka ([@advegoc](https://twitter.com/advegoc) and [blogs](https://securelist.com/all/?author=551&filter=)).
 <!-- more -->
 
 ## Fingerprinting Code
@@ -293,11 +293,11 @@ Below are the model scores **with** popularity filtering:
 ## Conclusion
 
 I really expected better model performance with filtration, but a loss of ~1.5% is a fairly significant reduction in accuracy. Most of the loss in accuracy seems to be from recall since precision seems to be fairly unaffected. This suggests the model wasn't able to detect certain types of malware when popular classes were filtered. I'm really not sure why this is. I'd need to investigate specifically which samples were missed to understand more, but there are other experiments which I think would help that I'd rather do first.
- 
+
 Perhaps I could also modify thresholds to filter out only the tippy top most popular methods and classes, or reduce the threshold to filter out anything which occurs more than a dozen or so times.
 
 ## Future Work
 
 The two things I really want to try are sample clustering and model blending. Sample clustering would allow me to cluster similar samples and reduce the total number of training samples. This would allow me to vastly scale up sample size without losing much information and without a proportional increase in training time.
 
-Blending and stacking is training multiple models on the same data and then using the output of those models as features for a meta estimator. In this way, the strengths of different models can be combined and the individual weaknesses reduced. It's pretty common in [Kaggle](https://www.kaggle.com/competitions) competitions. I've actually done the experiments but haven't posted them here yet. Maybe I'll do that next.
+Blending and stacking is training multiple models on the same data and then using the output of those models as features for a meta estimator. In this way, the strengths of different models can be combined and the individual weaknesses reduced. It's pretty common in [Kaggle](https://www.kaggle.com/competitions) competitions. I've written a bit about this in [Measuring the Usefulness of Multiple Models](https://calebfenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/).

@@ -57,6 +57,8 @@ matrix = fa.fit_transform(matrix)
 
 The random forest (RF), extra trees (ET), and multi-layer perceptron (MLP) models were built using the [SKLearn](https://github.com/scikit-learn/scikit-learn) Python library from the prepared matrix.
 
+**NOTE:** I've since learned it's much better to use [MaxAbsScaler](http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MaxAbsScaler.html) with sparse feature matricies. Read this for an explanation why: [Right function for normalizing input of sklearn SVM](https://stackoverflow.com/questions/30918781/right-function-for-normalizing-input-of-sklearn-svm). Look here for some example code: [normalization.py](https://gist.github.com/CalebFenton/66aa04af7b4a4d98efca059cb8c2e7aa#file-normalization-py)
+
 ## Testing the Models
 
 The strongest performing model was the random forest with extra trees coming in a close second. The lackluster MLP performance is likely due to bad tuning of hyper parameters but it could just be a bad algorithm for this type of problem.
