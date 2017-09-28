@@ -10,7 +10,8 @@ date: 2016-04-23 00:00
 
 I gave a talk at [TetCon 2016](https://tetcon.org) about Android obfuscation and deobfuscation.
 
-The talks at TetCon were great and the people there were super nice. I got all kinds of new ideas and spent the entire flight home furiously coding. Super motivating to hear from and talk to other people working on similar problems. Thanks to the organizers and volunteers Thai for making everything happen.
+The talks at TetCon were great and the people there were super nice. I got all kinds of new ideas and spent the entire flight home furiously coding. Super motivating to hear from and talk to other people working on similar problems. Thanks to the organizers and volunteers for making everything happen.
+<!-- more -->
 
 Also, special thanks to everyone for speaking English around me!
 

@@ -9,7 +9,6 @@ date: 2016-04-29 00:00
 When it comes to writing software, humans are the best game in town. Unfortunately, we're absolutely _terrible_ at it. Of course, we're good at other stuff -- recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to [validate an email address](http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html) or [properly deal with names](http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/). That fact we get anything to work at all is amazing
 
 The bottom line is that if developers are writing code, they're writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or [sold](http://0day.today/). For reasons which I shall explain, I believe that _most_ security vulnerabilities are fixed but _never disclosed_.
-
 <!-- more -->
 
 ## Why does disclosure matter?
