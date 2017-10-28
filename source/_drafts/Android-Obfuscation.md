@@ -26,7 +26,7 @@ Fast forward to 2015, and there are many commercial obfuscators and packers read
 
 ## Optimizations as obfuscation
 
-Since these are done by ProGuard, they are very common. ProGuard is mainly an optimizer that obfuscates almost as an after thought. It's simple to setup and the obfuscations can make reversing a bit more tedious. It's been adopted into the official Androidroid build process for years now. Despite this, many companies release apps that haven't been ProGuarded! Oh well. Their lazyness is your boon.
+Since these are done by ProGuard, they are very common. ProGuard is mainly an optimizer that obfuscates almost as an after thought. It's simple to setup and the obfuscations can make reversing a bit more tedious. It's been adopted into the official Android	 build process for years now. Despite this, many companies release apps that haven't been ProGuarded! Oh well. Their lazyness is your boon.
 
 
 ### Identifier remapping
@@ -63,6 +63,7 @@ Removing these symbols can be annoying if you are a devloper and want useful sta
 Look at all the useful information that's stripped away when symbols are removed.
 
 Before:
+
 ```
 .class public Lorg/cf/KwisatzHaderach;
 .source "KwisatzHaderach.java"
@@ -86,6 +87,7 @@ Before:
 ```
 
 After:
+
 ```
 .class public Lorg/cf/KwisatzHaderach;
 .super Ljava/lang/Object;
