@@ -23,7 +23,7 @@ public class Instance {
 ```
 <!-- more -->
 
-The above smali gets turned into this (you can safely ignore `<init>()V`):
+The above Smali gets turned into this (you can safely ignore the `<init>()V` method):
 
 ```smali
 .class public LInstance;
@@ -49,9 +49,12 @@ The above smali gets turned into this (you can safely ignore `<init>()V`):
 .end method
 ```
 
-Do your decompilations look different? It may be because mine was generated using `baksmali --use-locals` which separates the registers into registers used within the method body (locals) and those passed as parameters. Local registers are named `v0`, `v1`, `v2`, and so on and the parameters are named `p0`, `p1`, etc.
+For more information on how to convert Java to Smali, check out: [Understanding Dalvik Static Fields 1 of 2](https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/) and [Building with and Detecting Android's Jack Compiler](https://calebfenton.github.io/2016/12/01/building-with-and-detecting-jack/).
+
+*PROTIP:* If your decompilation looks different than mine, it may be because mine was generated using `baksmali --use-locals` which separates the registers into those registers used within the method body (locals) and those passed as parameters. Local registers are named `v0`, `v1`, `v2`, and so on and the parameters are named `p0`, `p1`, etc. I always use `--use-locals` because it makes it a bit easier to visually distinguish between local method registers and method arguments.
 
 The default behavior is to name all registers based on how they're actually laid out by Dalvik: `r0`, `r1`, `r2` and so on, regardless of if they're local or parameters. To clarify, a method like this:
+
 ```smali
 public example(JI)V
     .registers 3
@@ -59,15 +62,15 @@ public example(JI)V
 
 Has a register layout like this:
 * `r0`, `r1`, `r2` - local registers
-* `r3` - `this` register (p0 with `--use-locals`)
+* `r3` - `this` register (`p0` with `--use-locals`)
 * `r4` & `r5` - `J` parameter (wide types use two registers)
 * `r6` - `I` parameter
 
 ## The Question
 
-I wondered if `p0` was somehow special and if it was possible to rewrite it. One of the optimizers I'm working on needs to rewrite Smali and it works best if it knows all of the available registers at a certain point in code. A register is "available" if it's not used for the rest of the execution. If you've ever written a tool to automatically modify Smali, you have probably run into this problem.
+I wondered if `p0` was somehow special and if it was possible to rewrite it. One of the optimizers I'm working on needs to rewrite Smali, and it works best if it knows all of the available registers at a certain point in code. A register is "available" if it's not used for the rest of the execution. If you've ever written a tool to automatically modify Smali, you have probably run into this problem.
 
-**Spoiler warning:** It is _not_ special and it _is_ possible to reassign `p0`!
+**Spoiler warning:** `p0` is _not_ special and it _is_ possible to reassign!
 
 Here's the code I used to test:
 
@@ -113,3 +116,7 @@ $ smali hello.smali -o classes.dex && zip Hello.zip classes.dex && adb push Hell
 ```
 
 The test code outputs the expected `5` with no errors or warnings. It makes sense that a register should be able to hold a reference to anything, but the only way to be absolutely sure (without closely examining the source) is to test it.
+
+## Summary
+
+Now you know the `p0` register can be re-purposed within code, but more importantly you've hopefully also picked up some techniques for testing hypotheses. If you're doing a lot of low-level Smali analysis, it's really handy to know how to translate Java to Smali and how to execute DEX files directly on the command line.
