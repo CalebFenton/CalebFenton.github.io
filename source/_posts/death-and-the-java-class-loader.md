@@ -4,6 +4,7 @@ tags:
   - simplify
   - research
   - android
+  - dalvik
 comments: true
 date: 2016-07-08 00:00
 ---
