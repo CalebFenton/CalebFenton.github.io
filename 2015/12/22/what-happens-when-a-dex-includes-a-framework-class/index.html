@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>How does Dalvik handle &#39;this&#39; registers? | Caleb Fenton&#39;s Blog</title>
+  <title>What happens when a DEX includes a framework class? | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="The this ReferenceFor every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the this reference. I wanted to know if it was legal to reassign">
+  <meta name="description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
 <meta name="keywords" content="android,research,dalvik">
 <meta property="og:type" content="article">
-<meta property="og:title" content="How does Dalvik handle &#39;this&#39; registers?">
-<meta property="og:url" content="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/index.html">
+<meta property="og:title" content="What happens when a DEX includes a framework class?">
+<meta property="og:url" content="https://CalebFenton.github.io/2015/12/22/what-happens-when-a-dex-includes-a-framework-class/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
-<meta property="og:description" content="The this ReferenceFor every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the this reference. I wanted to know if it was legal to reassign">
-<meta property="og:updated_time" content="2018-06-21T17:35:11.000Z">
+<meta property="og:description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
+<meta property="og:updated_time" content="2017-10-29T00:33:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="How does Dalvik handle &#39;this&#39; registers?">
-<meta name="twitter:description" content="The this ReferenceFor every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the this reference. I wanted to know if it was legal to reassign">
+<meta name="twitter:title" content="What happens when a DEX includes a framework class?">
+<meta name="twitter:description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -99,10 +99,10 @@ ga('send', 'pageview');
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-how-does-dalvik-handle-this-registers" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-what-happens-when-a-dex-includes-a-framework-class" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/02/21/how-does-dalvik-handle-this-registers/" class="article-date">
-  <time datetime="2016-02-21T20:44:39.000Z" itemprop="datePublished">2016-02-21</time>
+    <a href="/2015/12/22/what-happens-when-a-dex-includes-a-framework-class/" class="article-date">
+  <time datetime="2015-12-22T04:13:40.000Z" itemprop="datePublished">2015-12-21</time>
 </a>
     
   </div>
@@ -113,7 +113,7 @@ ga('send', 'pageview');
         
   
     <h1 class="article-title" itemprop="name">
-      How does Dalvik handle &#39;this&#39; registers?
+      What happens when a DEX includes a framework class?
     </h1>
   
 
@@ -121,38 +121,32 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="The-this-Reference"><a href="#The-this-Reference" class="headerlink" title="The this Reference"></a>The <code>this</code> Reference</h2><p>For every instance (virtual, non-static) method in Dalvik, the first parameter is a reference to itself, or, in Java, the <code>this</code> reference. I wanted to know if it was legal to reassign the register value.</p>
-<p>Just so I’m sure you know what I’m talking about, here’s a simple Java class with an instance method called <code>instanceMethod</code>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Instance</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">5</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">instanceMethod</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.number;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>The above Smali gets turned into this (you can safely ignore the <code>&lt;init&gt;()V</code> method):</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LInstance;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.field</span><span class="keyword"> private</span> number:I</div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> constructor</span> &lt;init&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 1</div><div class="line">   <span class="built_in"> invoke-direct </span>&#123;p0&#125;, <span class="class">Ljava/lang/Object;</span>-&gt;&lt;init&gt;()V</div><div class="line">   <span class="built_in"> const/4 </span>v0, 0x5</div><div class="line">   <span class="built_in"> iput </span>v0, p0, <span class="class">LInstance;</span>-&gt;number:I</div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span> instanceMethod()I</div><div class="line"><span class="keyword">    .locals</span> 1</div><div class="line"></div><div class="line">    <span class="comment"># p0 is the 'this' reference</span></div><div class="line">   <span class="built_in"> iget </span>v0, p0, <span class="class">LInstance;</span>-&gt;number:I</div><div class="line"></div><div class="line">   <span class="built_in"> return </span>v0<span class="keyword"></span></div><div class="line">.end method</div></pre></td></tr></table></figure>
-<p>For more information on how to convert Java to Smali, check out: <a href="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/">Understanding Dalvik Static Fields 1 of 2</a> and <a href="https://calebfenton.github.io/2016/12/01/building-with-and-detecting-jack/">Building with and Detecting Android’s Jack Compiler</a>.</p>
-<p><em>PROTIP:</em> If your decompilation looks different than mine, it may be because mine was generated using <code>baksmali --use-locals</code> which separates the registers into those registers used within the method body (locals) and those passed as parameters. Local registers are named <code>v0</code>, <code>v1</code>, <code>v2</code>, and so on and the parameters are named <code>p0</code>, <code>p1</code>, etc. I always use <code>--use-locals</code> because it makes it a bit easier to visually distinguish between local method registers and method arguments.</p>
-<p>The default behavior is to name all registers based on how they’re actually laid out by Dalvik: <code>r0</code>, <code>r1</code>, <code>r2</code> and so on, regardless of if they’re local or parameters. To clarify, a method like this:</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public example(JI)V</div><div class="line"><span class="keyword">    .registers</span> 3</div></pre></td></tr></table></figure>
-<p>Has a register layout like this:</p>
-<ul>
-<li><code>r0</code>, <code>r1</code>, <code>r2</code> - local registers</li>
-<li><code>r3</code> - <code>this</code> register (<code>p0</code> with <code>--use-locals</code>)</li>
-<li><code>r4</code> &amp; <code>r5</code> - <code>J</code> parameter (wide types use two registers)</li>
-<li><code>r6</code> - <code>I</code> parameter</li>
-</ul>
-<h2 id="The-Question"><a href="#The-Question" class="headerlink" title="The Question"></a>The Question</h2><p>I wondered if <code>p0</code> was somehow special and if it was possible to rewrite it. One of the optimizers I’m working on needs to rewrite Smali, and it works best if it knows all of the available registers at a certain point in code. A register is “available” if it’s not used for the rest of the execution. If you’ve ever written a tool to automatically modify Smali, you have probably run into this problem.</p>
-<p><strong>Spoiler warning:</strong> <code>p0</code> is <em>not</em> special and it <em>is</em> possible to reassign!</p>
-<p>Here’s the code I used to test:</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LHello;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"><span class="keyword">.source</span> <span class="string">"Hello.java"</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> constructor</span> &lt;init&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 0</div><div class="line">   <span class="built_in"> invoke-direct </span>&#123;p0&#125;, <span class="class">Ljava/lang/Object;</span>-&gt;&lt;init&gt;()V</div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> main([<span class="class">Ljava/lang/String;</span>)V</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"><span class="keyword">    .param</span> p0, <span class="string">"argv"</span>    <span class="comment"># [Ljava/lang/String;</span></div><div class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></div><div class="line">   <span class="built_in"> new-instance </span>v1, <span class="class">LHello;</span></div><div class="line">   <span class="built_in"> invoke-direct </span>&#123;v1&#125;, <span class="class">LHello;</span>-&gt;&lt;init&gt;()V</div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v1&#125;, <span class="class">LHello;</span>-&gt;instance()I</div><div class="line">   <span class="built_in"> move-result </span>v1</div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(I)V</div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span> instance()I</div><div class="line"><span class="keyword">    .locals</span> 1</div><div class="line"></div><div class="line">    <span class="comment"># rewrite p0 with 0x5, cross fingers, hope it works</span></div><div class="line">   <span class="built_in"> const/4 </span>p0, 0x5</div><div class="line">   <span class="built_in"> return </span>p0<span class="keyword"></span></div><div class="line">.end method</div></pre></td></tr></table></figure>
-<p>And then to compile and run it:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ smali hello.smali -o classes.dex &amp;&amp; zip Hello.zip classes.dex &amp;&amp; adb push Hello.zip /data/<span class="built_in">local</span> &amp;&amp; adb shell dalvikvm -cp /data/<span class="built_in">local</span>/Hello.zip Hello</div><div class="line">  adding: classes.dex (deflated 45%)</div><div class="line">115 KB/s (619 bytes <span class="keyword">in</span> 0.005s)</div><div class="line">5</div></pre></td></tr></table></figure>
-<p>The test code outputs the expected <code>5</code> with no errors or warnings. It makes sense that a register should be able to hold a reference to anything, but the only way to be absolutely sure (without closely examining the source) is to test it.</p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>Now you know the <code>p0</code> register can be re-purposed within code, but more importantly you’ve hopefully also picked up some techniques for testing hypotheses. If you’re doing a lot of low-level Smali analysis, it’s really handy to know how to translate Java to Smali and how to execute DEX files directly on the command line.</p>
+        <h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>While working on a new class loading system for <a href="https://github.com/CalebFenton/simplify/tree/master/smalivm" target="_blank" rel="external">SmaliVM</a>, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as <code>Ljava/lang/Object;</code>. I’d originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be <em>stupid</em>.<br><a id="more"></a></p>
+<p>If Dalvik let apps redefine framework classes, it has huge security implications. Sure, each app runs it its own zygote-spawned sandbox, but what if somewhere, somehow, my malicious app’s DEX file was loaded by an app with system or root access? I could just backdoor <code>Ljava/lang/Object;</code>. Even if that’s not possible, I’m sure I could think of something nefarious if you gave me the ability to backdoor any class.</p>
+<p>Well, derp, so now I have to rewrite part of <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a> and (hopefully) fix some tests. I might as well know exactly how it fails and document it for other researchers, right?</p>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>First, I created two small Smali files.</p>
+<p>smali/<strong>hello.smali</strong>:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LHelloWorld;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> main([<span class="class">Ljava/lang/String;</span>)V</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"></div><div class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></div><div class="line">   <span class="built_in"> const-string </span>v1, <span class="string">"hello,world!"</span></div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</div><div class="line"></div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div></pre></td></tr></table></figure>
+<p>The purpose of this is just to provide a <code>main(String[])</code> method and to have <code>Object</code> as a <code>super</code>.</p>
+<p>smali/<strong>object.smali</strong>:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> &lt;clinit&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"></div><div class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></div><div class="line">   <span class="built_in"> const-string </span>v1, <span class="string">"crazyballs"</span></div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</div><div class="line"></div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div></pre></td></tr></table></figure>
+<p>This is the real test. If I can overwrite framework classes, I should get a lot of errors, duh, but not before <code>&lt;clinit&gt;</code> prints out something witty.</p>
+<p>After that, it was just packing it up and shoving it onto an emulator:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ smali smali -o classes.dex</div><div class="line">$ zip hello.zip classes.dex</div><div class="line">  adding: classes.dex (deflated 47%)</div><div class="line">$ adb push hello.zip /data/<span class="built_in">local</span></div></pre></td></tr></table></figure>
+<p>I’ll also wanted to see the error explosions in the logs. You’d be surprised how many people have an app crash or something and don’t bother looking at the logs. <code>monitor</code> is your friend. It usually has bad news, and confuses Eclipse and IntelliJ if it’s running, but at least it’s honest.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ monitor &amp;<span class="built_in">disown</span></div></pre></td></tr></table></figure>
+<p>Finally, just invoke <code>dalvikvm</code> with our ZIP as the classpath:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ adb shell</div><div class="line">root@android:/ <span class="comment"># cd /data/local</span></div><div class="line">root@android:/data/<span class="built_in">local</span> <span class="comment"># dalvikvm -cp hello.zip HelloWorld</span></div><div class="line">hello,world!</div><div class="line">root@android:/data/<span class="built_in">local</span> <span class="comment">#</span></div></pre></td></tr></table></figure>
+<p>No <code>&quot;crazyballs&quot;</code>, so I guess my hunch was right. I wonder what the error looked like?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">12-21 11:07:22.035: D/dalvikvm(1065): DexOpt: --- BEGIN &apos;hello.zip&apos; (bootstrap=0) ---</div><div class="line">12-21 11:07:22.095: D/dalvikvm(1066): DexOpt: &apos;Ljava/lang/Object;&apos; has an earlier definition; blocking out</div><div class="line">12-21 11:07:22.095: D/dalvikvm(1066): DexOpt: not verifying/optimizing &apos;Ljava/lang/Object;&apos;: multiple definitions</div><div class="line">12-21 11:07:22.115: D/dalvikvm(1066): DexOpt: load 14ms, verify+opt 11ms, 83668 bytes</div><div class="line">12-21 11:07:22.115: D/dalvikvm(1065): DexOpt: --- END &apos;hello.zip&apos; (success) ---</div><div class="line">12-21 11:07:22.115: D/dalvikvm(1065): DEX prep &apos;hello.zip&apos;: unzip in 2ms, rewrite 75ms</div></pre></td></tr></table></figure>
+<p>If you read between the lines, the actual error message is “has an earlier definition; blocking out (idiot)”.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/" data-id="ck6cld6bx000osnkdpawg8cv5" class="article-share-link">Share</a>
+      <a data-url="https://CalebFenton.github.io/2015/12/22/what-happens-when-a-dex-includes-a-framework-class/" data-id="ck6cld6c50017snkd0eduk0ny" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://CalebFenton.github.io/2015/12/22/what-happens-when-a-dex-includes-a-framework-class/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
@@ -163,20 +157,15 @@ ga('send', 'pageview');
     
 <nav id="article-nav">
   
-    <a href="/2016/02/28/decompiling-xapk-files/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/02/08/why-anti-virus-sucks/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Decompiling XAPK Files
+          Why Anti-Virus Software Sucks
         
       </div>
     </a>
   
-  
-    <a href="/2016/02/17/how-does-dalvik-handle-null-types/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">How does Dalvik handle null?</div>
-    </a>
   
 </nav>
 
@@ -285,7 +274,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2016/02/21/how-does-dalvik-handle-this-registers/';
+  var disqus_url = 'https://CalebFenton.github.io/2015/12/22/what-happens-when-a-dex-includes-a-framework-class/';
   
   (function(){
     var dsq = document.createElement('script');
