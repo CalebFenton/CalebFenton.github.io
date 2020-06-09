@@ -75,7 +75,7 @@ printf(" [+] Calling JNI_OnLoad\n");
 onLoadFunc(vm, NULL);
 ```
 
-Tim, just let me know if you want this in native-shim and I'll send [a pull request](https://cdn.meme.am/instances/500x/62024625/please-guy-please-merge-my-pull-request.jpg).
+Tim, just let me know if you want this in native-shim and I'll send [a pull request](https://i.imgur.com/QrfRyEU.jpg).
 
 Eventually, the goal was to make the harness open a socket server, read arguments over the socket, and call the function with those arguments. This way, the decryption function just becomes a service, and a Python script could easily interface with it.
 
