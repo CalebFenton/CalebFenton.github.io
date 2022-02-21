@@ -6,16 +6,18 @@
   <title>Why Most Vulnerabilities Are Never Disclosed | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely terrible at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and">
-<meta name="keywords" content="security,open source">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Why Most Vulnerabilities Are Never Disclosed">
-<meta property="og:url" content="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/index.html">
+<meta property="og:url" content="https://calebfenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
 <meta property="og:description" content="When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely terrible at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and">
-<meta property="og:updated_time" content="2017-10-29T00:33:06.000Z">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-04-29T05:00:00.000Z">
+<meta property="article:modified_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:author" content="Caleb Fenton">
+<meta property="article:tag" content="security">
+<meta property="article:tag" content="open source">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Why Most Vulnerabilities Are Never Disclosed">
-<meta name="twitter:description" content="When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely terrible at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -43,7 +45,9 @@
     <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -59,7 +63,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-</head>
+<meta name="generator" content="Hexo 6.0.0"></head>
 
 <body>
   <div id="container">
@@ -71,10 +75,6 @@ ga('send', 'pageview');
       <h1 id="logo-wrap">
         <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
         <section id="main"><article id="post-why-most-vulnerabilities-are-never-disclosed" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" class="article-date">
-  <time datetime="2016-04-29T07:00:00.000Z" itemprop="datePublished">2016-04-29</time>
+  <time datetime="2016-04-29T05:00:00.000Z" itemprop="datePublished">2016-04-29</time>
 </a>
     
   </div>
@@ -121,16 +121,18 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely <em>terrible</em> at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to <a href="http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html" target="_blank" rel="external">validate an email address</a> or <a href="http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/" target="_blank" rel="external">properly deal with names</a>. That fact we get anything to work at all is amazing</p>
-<p>The bottom line is that if developers are writing code, they’re writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or <a href="http://0day.today/" target="_blank" rel="external">sold</a>. For reasons which I shall explain, I believe that <em>most</em> security vulnerabilities are fixed but <em>never disclosed</em>.<br><a id="more"></a></p>
-<h2 id="Why-does-disclosure-matter"><a href="#Why-does-disclosure-matter" class="headerlink" title="Why does disclosure matter?"></a>Why does disclosure matter?</h2><p>It all has to do with getting people and businesses to update. The cost of updating a library can be <a href="/2016/04/22/reversing-an-open-source-vulnerability">quite high</a>, especially at larger organizations. It’s not a good value to update if only to get a few more features and a few less bugs but getting <em>owned</em> <a href="https://www.privacyandsecuritymatters.com/2015/02/target-data-breach-price-tag-252-million-and-counting/" target="_blank" rel="external">is</a> <a href="http://www.networkworld.com/article/2879814/data-center/sony-hack-cost-15-million-but-earnings-unaffected.html" target="_blank" rel="external">expensive</a> and it makes perfect sense to update if it means not getting owned.</p>
+        <p>When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely <em>terrible</em> at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to <a target="_blank" rel="noopener" href="http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html">validate an email address</a> or <a target="_blank" rel="noopener" href="http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">properly deal with names</a>. That fact we get anything to work at all is amazing</p>
+<p>The bottom line is that if developers are writing code, they’re writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or <a target="_blank" rel="noopener" href="http://0day.today/">sold</a>. For reasons which I shall explain, I believe that <em>most</em> security vulnerabilities are fixed but <em>never disclosed</em>.</p>
+<span id="more"></span>
+
+<h2 id="Why-does-disclosure-matter"><a href="#Why-does-disclosure-matter" class="headerlink" title="Why does disclosure matter?"></a>Why does disclosure matter?</h2><p>It all has to do with getting people and businesses to update. The cost of updating a library can be <a href="/2016/04/22/reversing-an-open-source-vulnerability">quite high</a>, especially at larger organizations. It’s not a good value to update if only to get a few more features and a few less bugs but getting <em>owned</em> <a target="_blank" rel="noopener" href="https://www.privacyandsecuritymatters.com/2015/02/target-data-breach-price-tag-252-million-and-counting/">is</a> <a target="_blank" rel="noopener" href="http://www.networkworld.com/article/2879814/data-center/sony-hack-cost-15-million-but-earnings-unaffected.html">expensive</a> and it makes perfect sense to update if it means not getting owned.</p>
 <p>If most vulnerabilities are never disclosed, businesses may neglect to update vulnerable code. Attackers could exploit this by searching for fixed but undisclosed vulnerabilities.</p>
 <h2 id="Why-aren’t-vulnerabilities-disclosed"><a href="#Why-aren’t-vulnerabilities-disclosed" class="headerlink" title="Why aren’t vulnerabilities disclosed?"></a>Why aren’t vulnerabilities disclosed?</h2><p>There are several forces at play which might cause a vulnerability to slip through the cracks.</p>
 <h3 id="Overlooked-Bug"><a href="#Overlooked-Bug" class="headerlink" title="Overlooked Bug"></a>Overlooked Bug</h3><p>The most obvious possibility is that the security implications of a bug weren’t obvious when the developer fixed it. I have no idea of knowing how common this is relative to the other reasons but it has to happen. Developers can’t be expected to do a full security audit for every bug they fix. Even if there was some review system in place, figuring out how to exploit a bug is <em>highly non-trivial</em>, especially for a large or complex app.</p>
 <h3 id="Lack-of-Awareness"><a href="#Lack-of-Awareness" class="headerlink" title="Lack of Awareness"></a>Lack of Awareness</h3><p>A developer may not be aware of how important it is to disclose every vulnerability. It’s not immediately obvious why it’s important, especially if you’re an inexperienced developer. I believe this is the most common reason for undisclosed vulnerability fixes. In my experience, this is most common in trendy, new projects, i.e.  NPM modules and Ruby gems. Mature projects run by established, organized development communities are more likely to already be familiar with the importance of disclosure. For example, Apache has a pretty good track record of disclosing any vulnerabilities with public advisories any time there’s a release which includes a security fix.</p>
 <h3 id="Lack-of-Resources"><a href="#Lack-of-Resources" class="headerlink" title="Lack of Resources"></a>Lack of Resources</h3><p>Even if a developer understands the importance of disclosure, they may not have time or desire to jump through all the hoops to do a proper disclosure. Instead, maybe they just mention that they fixed some security issues in their change logs.</p>
-<p>A proper disclosure would include requesting a Common Vulnerability and Exposure ID (CVE-ID) or by announcing the issue to a language or framework specific advisory such as <a href="https://github.com/rubysec/ruby-advisory-db" target="_blank" rel="external">Ruby Advisories</a> or <a href="https://nodesecurity.io/advisories" target="_blank" rel="external">Node Security Advisories</a>. Announcing to any of these channels would help to quickly spread the word about a vulnerability, but it requires doing a lot more than writing and committing code and if a developer is maintaining a project in their spare time, they might not be keen to do all this extra work.</p>
-<p>There has been some frustration recently with the CVE system due to researchers being denied CVE-IDs for certain types of issues or because CVE-ID requests were never responded to. More info: <a href="https://cve.mitre.org/data/board/archives/2016-03/msg00002.html" target="_blank" rel="external">Concerns about CVE coverage shrinking</a> and <a href="https://www.nowsecure.com/blog/2015/09/16/ruminations-on-app-cves/" target="_blank" rel="external">Ruminations on App CVEs</a>.</p>
+<p>A proper disclosure would include requesting a Common Vulnerability and Exposure ID (CVE-ID) or by announcing the issue to a language or framework specific advisory such as <a target="_blank" rel="noopener" href="https://github.com/rubysec/ruby-advisory-db">Ruby Advisories</a> or <a target="_blank" rel="noopener" href="https://nodesecurity.io/advisories">Node Security Advisories</a>. Announcing to any of these channels would help to quickly spread the word about a vulnerability, but it requires doing a lot more than writing and committing code and if a developer is maintaining a project in their spare time, they might not be keen to do all this extra work.</p>
+<p>There has been some frustration recently with the CVE system due to researchers being denied CVE-IDs for certain types of issues or because CVE-ID requests were never responded to. More info: <a target="_blank" rel="noopener" href="https://cve.mitre.org/data/board/archives/2016-03/msg00002.html">Concerns about CVE coverage shrinking</a> and <a target="_blank" rel="noopener" href="https://www.nowsecure.com/blog/2015/09/16/ruminations-on-app-cves/">Ruminations on App CVEs</a>.</p>
 <h3 id="Lack-of-Humility"><a href="#Lack-of-Humility" class="headerlink" title="Lack of Humility"></a>Lack of Humility</h3><p>Imagine that you spend a lot of time on a side project and enjoy the admiration and respect of your peers. Then one day you find you’ve made a mistake and didn’t notice a vulnerability in your code. Maybe it was a big, dumb mistake, too, and now everyone might be getting owned because of your stupid mistake. It takes a special kind of someone to get over that and admit it openly; it takes humility and bravery. If it’s a group of developers, the community needs to be healthy and understanding.</p>
 <h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>I believe this is an important issue for developers and businesses to understand, but I don’t think the sky is falling. Companies are increasingly using open source code and this is a security issue people should be thinking about.</p>
 <p>We’re working on tools that help us collect and identify commits to open source projects which fix undisclosed vulnerabilities. We’ll be able to use this information to better protect our users. Initial tests turned up a few dozen vulnerabilities before I had to work on something else. The idea seems sound. I can’t mention any specific details right now, but we’ll be publishing the results and specific details soon.</p>
@@ -138,12 +140,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="ckb85psh9001dr5kd033p5djo" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="ckzxb6f7x0017hfao2m64gjxs" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/" rel="tag">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/" rel="tag">security</a></li></ul>
 
     </footer>
   </div>
@@ -174,7 +176,7 @@ ga('send', 'pageview');
 
 <section id="comments">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 </section>
@@ -215,7 +217,7 @@ ga('send', 'pageview');
     <div id="twitter-feed" class="widget-wrap">
   <h3 class="widget-title">Twitter Feed</h3>
   <div class="widget">
-    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a class="twitter-timeline" data-height="2000" target="_blank" rel="noopener" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 </div>
 
@@ -226,7 +228,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/" rel="tag">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/" rel="tag">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/" rel="tag">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/" rel="tag">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/" rel="tag">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/" rel="tag">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/" rel="tag">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/" rel="tag">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/" rel="tag">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/" rel="tag">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/" rel="tag">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/" rel="tag">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/" rel="tag">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -256,7 +258,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Caleb Fenton<br>
+      &copy; 2022 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -273,7 +275,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/';
+  var disqus_url = 'https://calebfenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/';
   
   (function(){
     var dsq = document.createElement('script');
@@ -288,11 +290,17 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>

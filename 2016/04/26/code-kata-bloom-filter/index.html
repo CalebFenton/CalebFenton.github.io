@@ -6,16 +6,18 @@
   <title>Code Kata: Bloom Filter | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="If you’re unfamiliar with what a Code Kata is, check out my previous post Code Kata: TDD and Run-length Encoding The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom fi">
-<meta name="keywords" content="code-kata,algorithm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Code Kata: Bloom Filter">
-<meta property="og:url" content="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/index.html">
+<meta property="og:url" content="https://calebfenton.github.io/2016/04/26/code-kata-bloom-filter/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
 <meta property="og:description" content="If you’re unfamiliar with what a Code Kata is, check out my previous post Code Kata: TDD and Run-length Encoding The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom fi">
-<meta property="og:updated_time" content="2017-10-29T00:33:06.000Z">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-04-27T00:11:11.000Z">
+<meta property="article:modified_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:author" content="Caleb Fenton">
+<meta property="article:tag" content="code-kata">
+<meta property="article:tag" content="algorithm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Code Kata: Bloom Filter">
-<meta name="twitter:description" content="If you’re unfamiliar with what a Code Kata is, check out my previous post Code Kata: TDD and Run-length Encoding The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom fi">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -43,7 +45,9 @@
     <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -59,7 +63,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-</head>
+<meta name="generator" content="Hexo 6.0.0"></head>
 
 <body>
   <div id="container">
@@ -71,10 +75,6 @@ ga('send', 'pageview');
       <h1 id="logo-wrap">
         <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
         <section id="main"><article id="post-code-kata-bloom-filter" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/26/code-kata-bloom-filter/" class="article-date">
-  <time datetime="2016-04-27T02:11:11.000Z" itemprop="datePublished">2016-04-26</time>
+  <time datetime="2016-04-27T00:11:11.000Z" itemprop="datePublished">2016-04-26</time>
 </a>
     
   </div>
@@ -122,60 +122,67 @@ ga('send', 'pageview');
     <div class="article-entry" itemprop="articleBody">
       
         <p>If you’re unfamiliar with what a Code Kata is, check out my previous post <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a></p>
-<p>The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.<br><a id="more"></a></p>
+<p>The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.</p>
+<span id="more"></span>
+
 <h1 id="What-is-a-bloom-filter"><a href="#What-is-a-bloom-filter" class="headerlink" title="What is a bloom filter?"></a>What is a bloom filter?</h1><p>A bloom filter has two methods:</p>
 <ol>
 <li><code>add</code> - adds an element</li>
-<li><code>check</code> / <code>include</code> - false if an element is <em>definately not</em> in the filter, true if it <em>possibly</em> is</li>
+<li><code>check</code> &#x2F; <code>include</code> - false if an element is <em>definately not</em> in the filter, true if it <em>possibly</em> is</li>
 </ol>
 <p>This is a <em>probabilistic</em> data structure. It can say if an element is <em>definately not</em> in the set (no false negative), but it may say an element is in the set which isn’t (false positive). The trade off for this uncertainty is that even for large sets the bloom filter is relatively much smaller and faster than storing looking up in a complete set.</p>
 <p>I’m going to assume you’re familiar with the technical aspects of the bloom filter. Others have already done a great job of explaining how they work.</p>
 <ul>
-<li>Easy to read description: <a href="http://billlaboon.com/probabilistic-data-structures-part-i-bloom-filters/" target="_blank" rel="external">http://billlaboon.com/probabilistic-data-structures-part-i-bloom-filters/</a></li>
-<li>Description plus a cool interactive visual aid: <a href="https://www.jasondavies.com/bloomfilter/" target="_blank" rel="external">https://www.jasondavies.com/bloomfilter/</a></li>
+<li>Easy to read description: <a target="_blank" rel="noopener" href="http://billlaboon.com/probabilistic-data-structures-part-i-bloom-filters/">http://billlaboon.com/probabilistic-data-structures-part-i-bloom-filters/</a></li>
+<li>Description plus a cool interactive visual aid: <a target="_blank" rel="noopener" href="https://www.jasondavies.com/bloomfilter/">https://www.jasondavies.com/bloomfilter/</a></li>
 </ul>
-<h1 id="When-to-use-a-bloom-filter"><a href="#When-to-use-a-bloom-filter" class="headerlink" title="When to use a bloom filter?"></a>When to use a bloom filter?</h1><p>It’s usefulness is not as obvious as an <code>Array</code> or <code>Hash</code>, but there are situations where expensive I/O operations can be skipped for elements definitely not in the filter, and only done if an element may be in the present.</p>
+<h1 id="When-to-use-a-bloom-filter"><a href="#When-to-use-a-bloom-filter" class="headerlink" title="When to use a bloom filter?"></a>When to use a bloom filter?</h1><p>It’s usefulness is not as obvious as an <code>Array</code> or <code>Hash</code>, but there are situations where expensive I&#x2F;O operations can be skipped for elements definitely not in the filter, and only done if an element may be in the present.</p>
 <p>Example time. Let’s say you’re analyzing Android applications and want to know which strings are unique to a given app. This is important for automated signature generation for malware detection. You must use strings <em>endemic</em> to a particular sample so the signature won’t false positive. Let’s also assume you already have a few million Android apps and their strings. The simple approach is to extract and store strings and their frequencies. The distribution of string frequencies has a long tail. Some strings are in almost every app, but most are only in a small number of apps. Also, most of the strings for any given app are in almost every app. When analyzing an application, each string frequency is looked up to see if it’s under some threshold. These lookups are expensive.</p>
 <p>To improve on this, you create a bloom filter and add the common strings. Now, instead of checking the frequency of every string with an expensive table lookup, you check the bloom filter <em>first</em>. Most lookups are thus eliminated. The trade off is some genuinely uncommon strings are considered as common. In this situation, for this scenario, that’s fine. If there’s difficulty finding enough unique strings, you can skip the bloom filter and lookup each string. This won’t happen often so it’s an acceptable cost.</p>
 <p>More example uses for bloom filters:</p>
 <ul>
-<li><a href="https://www.quora.com/What-are-the-best-applications-of-Bloom-filters" target="_blank" rel="external">https://www.quora.com/What-are-the-best-applications-of-Bloom-filters</a></li>
-<li><a href="https://stackoverflow.com/questions/4282375/what-is-the-advantage-to-using-bloom-filters" target="_blank" rel="external">https://stackoverflow.com/questions/4282375/what-is-the-advantage-to-using-bloom-filters</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.quora.com/What-are-the-best-applications-of-Bloom-filters">https://www.quora.com/What-are-the-best-applications-of-Bloom-filters</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/4282375/what-is-the-advantage-to-using-bloom-filters">https://stackoverflow.com/questions/4282375/what-is-the-advantage-to-using-bloom-filters</a></li>
 </ul>
-<h1 id="Kata-Bloom-Filter"><a href="#Kata-Bloom-Filter" class="headerlink" title="Kata: Bloom Filter"></a>Kata: Bloom Filter</h1><h2 id="Day-1"><a href="#Day-1" class="headerlink" title="Day 1"></a>Day 1</h2><p>I’m only giving myself 30 minutes, so I’m going to keep it basic. First, I’ll setup a Ruby project with RSpec. I’ve covered how to do this in my last kata, here: <a href="https://blog.srcclr.com/code-kata-tdd-run-length-encoding/" target="_blank" rel="external">https://blog.srcclr.com/code-kata-tdd-run-length-encoding/</a></p>
+<h1 id="Kata-Bloom-Filter"><a href="#Kata-Bloom-Filter" class="headerlink" title="Kata: Bloom Filter"></a>Kata: Bloom Filter</h1><h2 id="Day-1"><a href="#Day-1" class="headerlink" title="Day 1"></a>Day 1</h2><p>I’m only giving myself 30 minutes, so I’m going to keep it basic. First, I’ll setup a Ruby project with RSpec. I’ve covered how to do this in my last kata, here: <a target="_blank" rel="noopener" href="https://blog.srcclr.com/code-kata-tdd-run-length-encoding/">https://blog.srcclr.com/code-kata-tdd-run-length-encoding/</a></p>
 <p>Normally, I’d start with tests, but as I found in my last kata, strict TDD of algorithms is hard. I’d rather prototype the algorithm then hit it with tests. If it were just engineering code, I’d consider testing first.</p>
 <p>I start by quickly reviewing a few articles on how they work. That takes a few minutes. All I really need is an array, preferably a bitset, and some hashing methods. I don’t want to spend time worrying about efficient storage, and I don’t want to pull in any libraries until I get it to work. I’ll just use a plain array. I pick 100 elements as a starting size because it’s close to some numbers I’ve seen while reading about it.</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">BloomFilter</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initialize</span><span class="params">(size = <span class="number">100</span>)</span></span></div><div class="line">        @bitset = Array.new(size, <span class="number">0</span>)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BloomFilter</span></span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initialize</span><span class="params">(size = <span class="number">100</span>)</span></span></span><br><span class="line">        <span class="variable">@bitset</span> = Array.new(size, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>Now, I need some hashing methods. The only important property of the hash functions is that they are evenly distributed. A quick review of the String reveals <code>String#hash</code> which looks idea, and <code>String#sum</code> which looks less ideal. I figure it’s good enough for now. Perfect is the enemy of good.</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(s)</span></span></div><div class="line">    hash(s).each &#123; <span class="params">|h|</span> @bitset[h] = <span class="number">1</span> &#125;</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">hash</span><span class="params">(s)</span></span></div><div class="line">    h1 = s.hash % @bitset.size</div><div class="line">    h2 = s.sum % @bitset.size</div><div class="line">    [h1, h2]</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(s)</span></span></span><br><span class="line">    hash(s).each &#123; <span class="params">|h|</span> <span class="variable">@bitset</span>[h] = <span class="number">1</span> &#125;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hash</span><span class="params">(s)</span></span></span><br><span class="line">    h1 = s.hash % <span class="variable">@bitset</span>.size</span><br><span class="line">    h2 = s.sum % <span class="variable">@bitset</span>.size</span><br><span class="line">    [h1, h2]</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>To wrap it up, add a method to check if an element is possibly in the filter:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">include?</span><span class="params">(s)</span></span></div><div class="line">    hash(s).each &#123; <span class="params">|h|</span> <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">unless</span> @bitset[h] == <span class="number">1</span> &#125;</div><div class="line">    <span class="literal">true</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">include?</span><span class="params">(s)</span></span></span><br><span class="line">    hash(s).each &#123; <span class="params">|h|</span> <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">unless</span> <span class="variable">@bitset</span>[h] == <span class="number">1</span> &#125;</span><br><span class="line">    <span class="literal">true</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>With only a few minutes left, I wrote a little benchmarking code to make sure it all worked:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Add lots of random strings</span></div><div class="line">length = <span class="number">10</span></div><div class="line">strings = []</div><div class="line"><span class="number">100</span>.times &#123; strings &lt;&lt; rand(<span class="number">36</span> ** length).to_s(<span class="number">36</span>) &#125;</div><div class="line"></div><div class="line">b = BloomFilter.new</div><div class="line">strings.each &#123; <span class="params">|s|</span> b.add s &#125;</div><div class="line"></div><div class="line"><span class="comment"># Make sure they're all possibly included</span></div><div class="line">strings.each &#123; <span class="params">|s|</span> puts <span class="string">"<span class="subst">#&#123;s&#125;</span> should be included but isn't"</span> <span class="keyword">unless</span> b.<span class="keyword">include</span>? s &#125;</div><div class="line"></div><div class="line"><span class="comment"># Rough check of false positives</span></div><div class="line">other_strings = []</div><div class="line"><span class="number">100</span>.times <span class="keyword">do</span></div><div class="line">    string = rand(<span class="number">36</span> ** (<span class="number">1</span> + rand(<span class="number">100</span>))).to_s(<span class="number">36</span>)</div><div class="line">    <span class="keyword">next</span> <span class="keyword">if</span> strings.<span class="keyword">include</span>? string</div><div class="line">    other_strings &lt;&lt; string</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">fps = <span class="number">0</span>.<span class="number">0</span></div><div class="line">other_strings.each &#123; <span class="params">|s|</span> fps += <span class="number">1.0</span> <span class="keyword">if</span> b.<span class="keyword">include</span>? s &#125;</div><div class="line">puts <span class="string">"False positive %: <span class="subst">#&#123;<span class="number">100</span> * (fps / other_strings.size)&#125;</span>"</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Add lots of random strings</span></span><br><span class="line">length = <span class="number">10</span></span><br><span class="line">strings = []</span><br><span class="line"><span class="number">100</span>.times &#123; strings &lt;&lt; rand(<span class="number">36</span> ** length).to_s(<span class="number">36</span>) &#125;</span><br><span class="line"></span><br><span class="line">b = BloomFilter.new</span><br><span class="line">strings.each &#123; <span class="params">|s|</span> b.add s &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Make sure they&#x27;re all possibly included</span></span><br><span class="line">strings.each &#123; <span class="params">|s|</span> puts <span class="string">&quot;<span class="subst">#&#123;s&#125;</span> should be included but isn&#x27;t&quot;</span> <span class="keyword">unless</span> b.<span class="keyword">include</span>? s &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rough check of false positives</span></span><br><span class="line">other_strings = []</span><br><span class="line"><span class="number">100</span>.times <span class="keyword">do</span></span><br><span class="line">    string = rand(<span class="number">36</span> ** (<span class="number">1</span> + rand(<span class="number">100</span>))).to_s(<span class="number">36</span>)</span><br><span class="line">    <span class="keyword">next</span> <span class="keyword">if</span> strings.<span class="keyword">include</span>? string</span><br><span class="line">    other_strings &lt;&lt; string</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">fps = <span class="number">0.0</span></span><br><span class="line">other_strings.each &#123; <span class="params">|s|</span> fps += <span class="number">1.0</span> <span class="keyword">if</span> b.<span class="keyword">include</span>? s &#125;</span><br><span class="line">puts <span class="string">&quot;False positive %: <span class="subst">#&#123;<span class="number">100</span> * (fps / other_strings.size)&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="Day-2"><a href="#Day-2" class="headerlink" title="Day 2"></a>Day 2</h2><p>I read a bit more about bloom filters. I learn there are a few tunable parameters, and some advanced implementations that allow for removal of elements. The advanced stuff looks way out of the scope of a 30 minute session. I’m thinking that a 30 minute kata isn’t a good way to learn anything complicated. You’d need a few solid hours of uninterrupted study to digest anything heavy. For my goal of deepening my understanding of bloom filters, it’s enough. There are two main tunable aspects of the bloom filter:</p>
 <ol>
 <li>Size of the array, usually <em>m</em>. ~16 bits per element regardless of element size to give 0.1% error rate.</li>
 <li>Number of hashing methods, usually <em>k</em>. Three seems common.</li>
 </ol>
 <p>I wanted to add some tests with randomly generated data. For example, generate 1,000 strings, add them all to a filter, and make sure they’re all possibly present. Then, generate 1,000 strings not in the original set and make sure none of them are present. I feel like that’s not a good unit test, because you’d have to <code>add</code> and <code>include?</code> in the same test. I spent a lot of time trying to learn the relevant RSpec syntax to make it work.</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">require</span> <span class="string">'bloom_filter'</span></div><div class="line"></div><div class="line">describe BloomFilter <span class="keyword">do</span></div><div class="line">    let(<span class="string">'bf'</span>) &#123; BloomFilter.new &#125;</div><div class="line"></div><div class="line">    describe <span class="string">'#include?'</span> <span class="keyword">do</span></div><div class="line">        it <span class="string">'should include strings once added'</span> <span class="keyword">do</span></div><div class="line">            strings = []</div><div class="line">            <span class="number">100</span>.times &#123; strings &lt;&lt; rand(<span class="number">36</span> ** (<span class="number">1</span> + rand(<span class="number">100</span>))).to_s(<span class="number">36</span>) &#125;</div><div class="line">            strings.each &#123; <span class="params">|s|</span> bf.add s &#125;</div><div class="line">            strings.each &#123; <span class="params">|s|</span> expect(bf.<span class="keyword">include</span>?(s)).to be <span class="literal">true</span> &#125;</div><div class="line">        <span class="keyword">end</span></div><div class="line"></div><div class="line">        it <span class="string">'should not include strings that are not added'</span> <span class="keyword">do</span></div><div class="line">            strings = []</div><div class="line">            <span class="number">100</span>.times &#123; strings &lt;&lt; rand(<span class="number">36</span> ** (<span class="number">1</span> + rand(<span class="number">100</span>))).to_s(<span class="number">36</span>) &#125;</div><div class="line">            strings.each &#123; <span class="params">|s|</span> expect(bf.<span class="keyword">include</span>?(s)).to be <span class="literal">false</span> &#125;</div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="string">&#x27;bloom_filter&#x27;</span></span><br><span class="line"></span><br><span class="line">describe BloomFilter <span class="keyword">do</span></span><br><span class="line">    let(<span class="string">&#x27;bf&#x27;</span>) &#123; BloomFilter.new &#125;</span><br><span class="line"></span><br><span class="line">    describe <span class="string">&#x27;#include?&#x27;</span> <span class="keyword">do</span></span><br><span class="line">        it <span class="string">&#x27;should include strings once added&#x27;</span> <span class="keyword">do</span></span><br><span class="line">            strings = []</span><br><span class="line">            <span class="number">100</span>.times &#123; strings &lt;&lt; rand(<span class="number">36</span> ** (<span class="number">1</span> + rand(<span class="number">100</span>))).to_s(<span class="number">36</span>) &#125;</span><br><span class="line">            strings.each &#123; <span class="params">|s|</span> bf.add s &#125;</span><br><span class="line">            strings.each &#123; <span class="params">|s|</span> expect(bf.<span class="keyword">include</span>?(s)).to be <span class="literal">true</span> &#125;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">        it <span class="string">&#x27;should not include strings that are not added&#x27;</span> <span class="keyword">do</span></span><br><span class="line">            strings = []</span><br><span class="line">            <span class="number">100</span>.times &#123; strings &lt;&lt; rand(<span class="number">36</span> ** (<span class="number">1</span> + rand(<span class="number">100</span>))).to_s(<span class="number">36</span>) &#125;</span><br><span class="line">            strings.each &#123; <span class="params">|s|</span> expect(bf.<span class="keyword">include</span>?(s)).to be <span class="literal">false</span> &#125;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>I also moved the benchmark code out of the <code>BloomFilter</code> class file and into it’s own file.</p>
 <h2 id="Day-3"><a href="#Day-3" class="headerlink" title="Day 3"></a>Day 3</h2><p>Rewrote everything. Such practice. Much fast.</p>
 <h2 id="Day-4"><a href="#Day-4" class="headerlink" title="Day 4"></a>Day 4</h2><p>Rewrote everything. Added an alias for <code>#&lt;&lt;</code> so addition can be like <code>Array#&lt;&lt;</code>. Renamed <code>include?</code> to <code>test</code> because it’s more honest, and shorter than <code>may_include?</code>.</p>
 <h2 id="Day-5"><a href="#Day-5" class="headerlink" title="Day 5"></a>Day 5</h2><p>Optimization time. I updated the benchmarking code and saw that I wasn’t getting the false positive rate as low as I wanted. I suspected it was my hash functions. I replaced <code>String#sum</code> with two over-kill cryptographic digests <code>MD5</code> and <code>SHA1</code>. I could have gotten away with something simpler, like <code>CRC32</code> or <code>ADLER</code>, but I had no internet and this is all I could divine by grepping through the Ruby installation.</p>
 <p>The effect was good though. It brought the error rate down an order of magnitude.</p>
 <h1 id="Final-Thoughts"><a href="#Final-Thoughts" class="headerlink" title="Final Thoughts"></a>Final Thoughts</h1><p>I feel like I understand the bloom filter now. This includes a deeper appreciation for how much I don’t yet understand of advanced implementations of bloom filters. The simple, mindful practice of carefully writing Ruby was useful. Each time I rewrote it, it came faster and more easily and little optimizations were more apparent.</p>
-<p>The full project can be viewed here:<br><a href="https://github.com/CalebFenton/code_kata/tree/master/bloom_filter" target="_blank" rel="external">https://github.com/CalebFenton/code_kata/tree/master/bloom_filter</a></p>
+<p>The full project can be viewed here:<br><a target="_blank" rel="noopener" href="https://github.com/CalebFenton/code_kata/tree/master/bloom_filter">https://github.com/CalebFenton/code_kata/tree/master/bloom_filter</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="ckb85psgo0009r5kdfs08nmb4" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="ckzxb6f7g0004hfaobp019uee" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a></li></ul>
 
     </footer>
   </div>
@@ -206,7 +213,7 @@ ga('send', 'pageview');
 
 <section id="comments">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 </section>
@@ -247,7 +254,7 @@ ga('send', 'pageview');
     <div id="twitter-feed" class="widget-wrap">
   <h3 class="widget-title">Twitter Feed</h3>
   <div class="widget">
-    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a class="twitter-timeline" data-height="2000" target="_blank" rel="noopener" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 </div>
 
@@ -258,7 +265,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/" rel="tag">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/" rel="tag">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/" rel="tag">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/" rel="tag">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/" rel="tag">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/" rel="tag">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/" rel="tag">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/" rel="tag">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/" rel="tag">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/" rel="tag">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/" rel="tag">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/" rel="tag">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/" rel="tag">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -288,7 +295,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Caleb Fenton<br>
+      &copy; 2022 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -305,7 +312,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/';
+  var disqus_url = 'https://calebfenton.github.io/2016/04/26/code-kata-bloom-filter/';
   
   (function(){
     var dsq = document.createElement('script');
@@ -320,11 +327,17 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>

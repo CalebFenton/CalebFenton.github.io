@@ -6,16 +6,18 @@
   <title>Code Kata: TDD and Run-length Encoding | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="A kata is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A code kata is is a training method for">
-<meta name="keywords" content="code-kata,tdd">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Code Kata: TDD and Run-length Encoding">
-<meta property="og:url" content="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/index.html">
+<meta property="og:url" content="https://calebfenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
 <meta property="og:description" content="A kata is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A code kata is is a training method for">
-<meta property="og:updated_time" content="2017-10-29T00:33:06.000Z">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-04-24T00:26:04.000Z">
+<meta property="article:modified_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:author" content="Caleb Fenton">
+<meta property="article:tag" content="code-kata">
+<meta property="article:tag" content="tdd">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Code Kata: TDD and Run-length Encoding">
-<meta name="twitter:description" content="A kata is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A code kata is is a training method for">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -43,7 +45,9 @@
     <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -59,7 +63,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-</head>
+<meta name="generator" content="Hexo 6.0.0"></head>
 
 <body>
   <div id="container">
@@ -71,10 +75,6 @@ ga('send', 'pageview');
       <h1 id="logo-wrap">
         <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
         <section id="main"><article id="post-code-kata-tdd-and-run-length-encoding" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/" class="article-date">
-  <time datetime="2016-04-24T02:26:04.000Z" itemprop="datePublished">2016-04-23</time>
+  <time datetime="2016-04-24T00:26:04.000Z" itemprop="datePublished">2016-04-23</time>
 </a>
     
   </div>
@@ -121,8 +121,10 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>A <em>kata</em> is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A <em>code kata</em> is is a training method for developing skill in programming. Take something you do frequently, or wish to do better, strip away everything not essential, and practice it repeatedly.<br><a id="more"></a></p>
-<p>I was introduced to code katas by <a href="https://twitter.com/OngEmil" target="_blank" rel="external">@OngEmil</a> who’s one of the best engineers I’ve ever met. The law of broscience teaches us that “Emil is good implies his advice is true”, so I took it seriously and started practicing and I feel like they’re a useful learning tool to understand.</p>
+        <p>A <em>kata</em> is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A <em>code kata</em> is is a training method for developing skill in programming. Take something you do frequently, or wish to do better, strip away everything not essential, and practice it repeatedly.</p>
+<span id="more"></span>
+
+<p>I was introduced to code katas by <a target="_blank" rel="noopener" href="https://twitter.com/OngEmil">@OngEmil</a> who’s one of the best engineers I’ve ever met. The law of broscience teaches us that “Emil is good implies his advice is true”, so I took it seriously and started practicing and I feel like they’re a useful learning tool to understand.</p>
 <p>Example code kata:</p>
 <ul>
 <li>Build a trivial Ruby project with Gemfile and specs</li>
@@ -158,23 +160,32 @@ ga('send', 'pageview');
 <h1 id="Kata-Run-Length-Encoding"><a href="#Kata-Run-Length-Encoding" class="headerlink" title="Kata: Run Length Encoding"></a>Kata: Run Length Encoding</h1><p>For this kata, I’ll be implementing <a href="https://en.wikipedia.org/wiki/Run-length_encoding" target="_blank">run-length encoding</a> using test-driven development. It’s simple, but not too simple. The goal is not to practice the algorithm, but to practice writing RSpec tests, and setting up the project. Originally, I tried doing a kata on using TDD to come up with an edit distance algorithm but found it to be a little too complex. I don’t think it’s always possible to get to an algorithm using TDD. I’m also going to be pretending to not know <a href="http://rosettacode.org/wiki/Run-length_encoding#Ruby" target="_blank">regex</a>.</p>
 <p>When performing a kata, be deliberate and focused. Take your time, and let these things sink in. Time box it to 30 minutes and stop if you go over. Start over again next time and you’ll be faster.</p>
 <p>First, create the directory and hop in:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir run_length</div><div class="line"><span class="built_in">cd</span> run_length</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> run_length</span><br><span class="line"><span class="built_in">cd</span> run_length</span><br></pre></td></tr></table></figure>
+
 <p>Or, if you use <em>zsh</em>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">take run_length <span class="comment"># now you're cool</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">take run_length <span class="comment"># now you&#x27;re cool</span></span><br></pre></td></tr></table></figure>
+
 <p>I use <a href="https://rvm.io/" target="_blank">RVM</a> to manage having multiple Ruby and JRuby versions and multiple gemsets for each. A project can specify which Ruby version and gemset to use. When you navigate into that directory, RVM will automatically switch to that version.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">echo</span> 2.2.1 &gt; .ruby-version</div><div class="line"><span class="built_in">echo</span> run_length &gt; .ruby-gemset</div><div class="line"><span class="built_in">cd</span> .</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 2.2.1 &gt; .ruby-version</span><br><span class="line"><span class="built_in">echo</span> run_length &gt; .ruby-gemset</span><br><span class="line"><span class="built_in">cd</span> .</span><br></pre></td></tr></table></figure>
+
 <p>Create a <code>Gemfile</code>:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">source <span class="string">'https://rubygems.org'</span></div><div class="line">gem <span class="string">'rspec'</span>, <span class="string">'~&gt; 3.0'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">source <span class="string">&#x27;https://rubygems.org&#x27;</span></span><br><span class="line">gem <span class="string">&#x27;rspec&#x27;</span>, <span class="string">&#x27;~&gt; 3.0&#x27;</span></span><br></pre></td></tr></table></figure>
+
 <p>Since this is an empty gemset, need to install <code>bundler</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gem install bundler</div><div class="line">bundle install</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gem install bundler</span><br><span class="line">bundle install</span><br></pre></td></tr></table></figure>
+
 <p>Now, when can initialize rspec:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rspec --init</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rspec --init</span><br></pre></td></tr></table></figure>
+
 <p>Create a <em>minimal</em> <code>lib/run_length.rb</code>:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">RunLength</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">get</span><span class="params">(string)</span></span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RunLength</span></span></span><br><span class="line">    def <span class="keyword">self</span>.get(string)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>Create <code>spec/run_length_spec.rb</code> with one test. I opted for a simple test not because it’s an edge case (empty input), but because it’s simple. I’ll avoid defensive programming, so I won’t test for input of unicode, input of numbers, etc.</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">require</span> <span class="string">'run_length'</span></div><div class="line"></div><div class="line">describe RunLength <span class="keyword">do</span></div><div class="line">    describe <span class="string">'#get'</span> <span class="keyword">do</span></div><div class="line">        let(<span class="string">'get'</span>) &#123; RunLength.get(string) &#125;</div><div class="line">        context <span class="string">'with an empty string'</span> <span class="keyword">do</span></div><div class="line">            let(<span class="string">'string'</span>) &#123; <span class="string">''</span> &#125;</div><div class="line">            subject&#123; get &#125;</div><div class="line">            it &#123; should eq <span class="string">''</span> &#125;</div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="string">&#x27;run_length&#x27;</span></span><br><span class="line"></span><br><span class="line">describe RunLength <span class="keyword">do</span></span><br><span class="line">    describe <span class="string">&#x27;#get&#x27;</span> <span class="keyword">do</span></span><br><span class="line">        let(<span class="string">&#x27;get&#x27;</span>) &#123; RunLength.get(string) &#125;</span><br><span class="line">        context <span class="string">&#x27;with an empty string&#x27;</span> <span class="keyword">do</span></span><br><span class="line">            let(<span class="string">&#x27;string&#x27;</span>) &#123; <span class="string">&#x27;&#x27;</span> &#125;</span><br><span class="line">            subject&#123; get &#125;</span><br><span class="line">            it &#123; should eq <span class="string">&#x27;&#x27;</span> &#125;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>What do you know? It fails:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">╭─caleb@haxcalibur  ~/repos/code_kata/run_length ‹ruby-2.2.1@fuzzy_lcs›</div><div class="line">╰─$ rspec</div><div class="line">F</div><div class="line"></div><div class="line">Failures:</div><div class="line"></div><div class="line">  1) RunLength<span class="comment">#get with an empty string should eq ''</span></div><div class="line">     Failure/Error: it &#123; should eq <span class="string">''</span> &#125;</div><div class="line"></div><div class="line">       expected: <span class="string">''</span></div><div class="line">            got: nil</div><div class="line"></div><div class="line">       (compared using ==)</div><div class="line">     <span class="comment"># ./spec/run_length_spec.rb:11:in `block (4 levels) in &lt;top (required)&gt;'</span></div><div class="line"></div><div class="line">Finished <span class="keyword">in</span> 0.00109 seconds (files took 0.08408 seconds to load)</div><div class="line">1 example, 1 failure</div><div class="line"></div><div class="line">Failed examples:</div><div class="line"></div><div class="line">rspec ./spec/run_length_spec.rb:11 <span class="comment"># RunLength#get with an empty string should eq ''</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">╭─caleb@haxcalibur  ~/repos/code_kata/run_length ‹ruby-2.2.1@fuzzy_lcs›</span><br><span class="line">╰─$ rspec</span><br><span class="line">F</span><br><span class="line"></span><br><span class="line">Failures:</span><br><span class="line"></span><br><span class="line">  1) RunLength<span class="comment">#get with an empty string should eq &#x27;&#x27;</span></span><br><span class="line">     Failure/Error: it &#123; should eq <span class="string">&#x27;&#x27;</span> &#125;</span><br><span class="line"></span><br><span class="line">       expected: <span class="string">&#x27;&#x27;</span></span><br><span class="line">            got: nil</span><br><span class="line"></span><br><span class="line">       (compared using ==)</span><br><span class="line">     <span class="comment"># ./spec/run_length_spec.rb:11:in `block (4 levels) in &lt;top (required)&gt;&#x27;</span></span><br><span class="line"></span><br><span class="line">Finished <span class="keyword">in</span> 0.00109 seconds (files took 0.08408 seconds to load)</span><br><span class="line">1 example, 1 failure</span><br><span class="line"></span><br><span class="line">Failed examples:</span><br><span class="line"></span><br><span class="line">rspec ./spec/run_length_spec.rb:11 <span class="comment"># RunLength#get with an empty string should eq &#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
 <p>I’m practicing <a href="http://www.jamesshore.com/Blog/Red-Green-Refactor.html" target="_blank">Red, Green, Refactor</a>. That means, to fix a test, I’ll add just enough code to pass the tests <em>and nothing else</em>. Then, I’ll clean it up if necessary. This is not something I normally get to practice. For comparison, my normal workflow is:</p>
 <ol>
 <li>build a prototype</li>
@@ -187,37 +198,45 @@ ga('send', 'pageview');
 </ol>
 <p>You might call this “test assisted development” mixed with “merciless refactoring.” I’m usually programming something weird or researchy, and it works well for me with those types of problems. I’ll use tests to break the problem down and build intuition. Writing good unit tests <em>after</em> writing a functioning unit usually leads to a lot of refactoring at first. I’ve found I can approach the design of a unit by thinking about how I would test it, and that cuts down on refactoring time. I use unwritten tests as opportunties to work when there’s limited time. It can be hard to implement a new feature in 30 minutes, but I could probably add one or two test cases in that time.</p>
 <p>After writing <em>just enough</em> code to pass the test, it becomes:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">get</span><span class="params">(string)</span></span></div><div class="line">    <span class="string">''</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def <span class="keyword">self</span>.get(string)</span><br><span class="line">    <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>Why return <code>&#39;&#39;</code> instead of <code>string</code>? Because empty quotes is more simple than a variable. Avoid adding any complexity. Before writing code, ask: “Can there be less and still pass the tests?”</p>
 <p>Now, let’s add a slightly less trivial test case:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">context <span class="string">'with "a"'</span> <span class="keyword">do</span></div><div class="line">    let(<span class="string">'string'</span>) &#123; <span class="string">'a'</span> &#125;</div><div class="line">    subject&#123; get &#125;</div><div class="line">    it &#123; should eq <span class="string">'1a'</span> &#125;</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">context <span class="string">&#x27;with &quot;a&quot;&#x27;</span> <span class="keyword">do</span></span><br><span class="line">    let(<span class="string">&#x27;string&#x27;</span>) &#123; <span class="string">&#x27;a&#x27;</span> &#125;</span><br><span class="line">    subject&#123; get &#125;</span><br><span class="line">    it &#123; should eq <span class="string">&#x27;1a&#x27;</span> &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>Code change seems a little much. Spent some time thinking about it, but couldn’t think of anything.</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">get</span><span class="params">(string)</span></span></div><div class="line">    <span class="keyword">return</span> <span class="string">''</span> <span class="keyword">if</span> string.empty?</div><div class="line">    <span class="string">"1<span class="subst">#&#123;string&#125;</span>"</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def <span class="keyword">self</span>.get(string)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span> <span class="keyword">if</span> string.empty?</span><br><span class="line">    <span class="string">&quot;1<span class="subst">#&#123;string&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>Next test adds a little more complexity:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">context <span class="string">'with "aa"'</span> <span class="keyword">do</span></div><div class="line">    let(<span class="string">'string'</span>) &#123; <span class="string">'aa'</span> &#125;</div><div class="line">    subject&#123; get &#125;</div><div class="line">    it &#123; should eq <span class="string">'2a'</span> &#125;</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">context <span class="string">&#x27;with &quot;aa&quot;&#x27;</span> <span class="keyword">do</span></span><br><span class="line">    let(<span class="string">&#x27;string&#x27;</span>) &#123; <span class="string">&#x27;aa&#x27;</span> &#125;</span><br><span class="line">    subject&#123; get &#125;</span><br><span class="line">    it &#123; should eq <span class="string">&#x27;2a&#x27;</span> &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>There’s a pattern emerging. We can just add lots of <code>if/else</code>s for each test case, but that isn’t going to webscale. It would appear we must violate the principle of “just pass the tests.” But, lots of conditionals could be said to have a certain complexity. The challenge now is to write the code in a way that is more simple than having two conditionals and an else. Also, we can be certain there is a nearly 1 to 1 ratio of inputs to conditionals. At this point, I’m trying to avoid jumping ahead and solving the entire problem, since it’s simple enough to guess.</p>
 <p>The code becomes:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">get</span><span class="params">(string)</span></span></div><div class="line">    <span class="keyword">return</span> <span class="string">''</span> <span class="keyword">if</span> string.empty?</div><div class="line">    <span class="string">"<span class="subst">#&#123;string.size&#125;</span><span class="subst">#&#123;string[<span class="number">0</span>]&#125;</span>"</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def <span class="keyword">self</span>.get(string)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span> <span class="keyword">if</span> string.empty?</span><br><span class="line">    <span class="string">&quot;<span class="subst">#&#123;string.size&#125;</span><span class="subst">#&#123;string[<span class="number">0</span>]&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>It’s not much more complex. It passes the tests. I keep feeling there’s a smarter way to do it. That’s fine. I’ll practice this again for a few days and see if anything new jumps out at me.</p>
 <p>Fourth test:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">context <span class="string">'with "aab"'</span> <span class="keyword">do</span></div><div class="line">    let(<span class="string">'string'</span>) &#123; <span class="string">'aab'</span> &#125;</div><div class="line">    subject&#123; get &#125;</div><div class="line">    it &#123; should eq <span class="string">'2a1b'</span> &#125;</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">context <span class="string">&#x27;with &quot;aab&quot;&#x27;</span> <span class="keyword">do</span></span><br><span class="line">    let(<span class="string">&#x27;string&#x27;</span>) &#123; <span class="string">&#x27;aab&#x27;</span> &#125;</span><br><span class="line">    subject&#123; get &#125;</span><br><span class="line">    it &#123; should eq <span class="string">&#x27;2a1b&#x27;</span> &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>Originally, I started writing a state machine that iterated over the string and juggled variables like character counts, last character processed, etc. This added a lot of complexity and was ugly. I want to add the least amount of complexity and still pass the tests. I thought about it for a few minutes and rewrote it into something more clear:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">get</span><span class="params">(string)</span></span></div><div class="line">    counts = Hash.new(<span class="number">0</span>)</div><div class="line">    string.each_char &#123; <span class="params">|l|</span> counts[l] += <span class="number">1</span> &#125;</div><div class="line">    counts.map &#123; <span class="params">|l, c|</span> <span class="string">"<span class="subst">#&#123;c&#125;</span><span class="subst">#&#123;l&#125;</span>"</span> &#125;.join</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">def <span class="keyword">self</span>.get(string)</span><br><span class="line">    counts = Hash.new(<span class="number">0</span>)</span><br><span class="line">    string.each_char &#123; <span class="params">|l|</span> counts[l] += <span class="number">1</span> &#125;</span><br><span class="line">    counts.map &#123; <span class="params">|l, c|</span> <span class="string">&quot;<span class="subst">#&#123;c&#125;</span><span class="subst">#&#123;l&#125;</span>&quot;</span> &#125;.join</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>You could point out this still makes use of a state machine, but the difference is that this is more idiomatic, there’s less state tracking, and it’s relying on code I didn’t have to write. Not writing code is the best way to not write bugs. This relies on the fact that Ruby &gt; 1.9 maintains key insertion order for hashes. If it didn’t, I could use a sorted hash, or a sorted set of just keys.</p>
 <p>Some people might say we’re done, but I’d like to add just <em>one</em> complex case. This is not so much to test for correctness. It doesn’t cover any additional code because no code changes are needed to make it pass, but it does <em>document the intent</em> of the code.</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">context <span class="string">'with "aaaabcccccccccdddddz"'</span> <span class="keyword">do</span></div><div class="line">    let(<span class="string">'string'</span>) &#123; <span class="string">'aaaabcccccccccdddddz'</span> &#125;</div><div class="line">    subject&#123; get &#125;</div><div class="line">    it &#123; should eq <span class="string">'4a1b9c5d1z'</span> &#125;</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">context <span class="string">&#x27;with &quot;aaaabcccccccccdddddz&quot;&#x27;</span> <span class="keyword">do</span></span><br><span class="line">    let(<span class="string">&#x27;string&#x27;</span>) &#123; <span class="string">&#x27;aaaabcccccccccdddddz&#x27;</span> &#125;</span><br><span class="line">    subject&#123; get &#125;</span><br><span class="line">    it &#123; should eq <span class="string">&#x27;4a1b9c5d1z&#x27;</span> &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>That’s about 30 minutes for me. I’ll stop here and practice again tomorrow. I’ll do this for a week and next time I need to setup a Ruby + RVM + Rails project, I can get all the foundation laid without having to consult any documentation. If this problem is too short after a few days, I’ll add a decoding method.</p>
 <p>What do you think? Do you see something I could have done better? A better test? Cleaner, simpler solutions? Let me know. Have an idea for a kata? Share it here.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="ckb85psgp000br5kd576t0chs" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="ckzxb6f7i0006hfaohbzlfftv" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tdd/">tdd</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tdd/" rel="tag">tdd</a></li></ul>
 
     </footer>
   </div>
@@ -248,7 +267,7 @@ ga('send', 'pageview');
 
 <section id="comments">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 </section>
@@ -289,7 +308,7 @@ ga('send', 'pageview');
     <div id="twitter-feed" class="widget-wrap">
   <h3 class="widget-title">Twitter Feed</h3>
   <div class="widget">
-    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a class="twitter-timeline" data-height="2000" target="_blank" rel="noopener" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 </div>
 
@@ -300,7 +319,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/" rel="tag">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/" rel="tag">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/" rel="tag">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/" rel="tag">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/" rel="tag">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/" rel="tag">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/" rel="tag">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/" rel="tag">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/" rel="tag">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/" rel="tag">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/" rel="tag">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/" rel="tag">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/" rel="tag">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -330,7 +349,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Caleb Fenton<br>
+      &copy; 2022 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -347,7 +366,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/';
+  var disqus_url = 'https://calebfenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/';
   
   (function(){
     var dsq = document.createElement('script');
@@ -362,11 +381,17 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>

@@ -5,15 +5,16 @@
   
   <title>Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Reverse engineering, computer security, programming, and hacks.">
+  <meta name="description" content="Reverse engineering, bitcoin, cyber security, economics, programming, and hacks.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Caleb Fenton&#39;s Blog">
-<meta property="og:url" content="https://CalebFenton.github.io/page/2/index.html">
+<meta property="og:url" content="https://calebfenton.github.io/page/2/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
-<meta property="og:description" content="Reverse engineering, computer security, programming, and hacks.">
+<meta property="og:description" content="Reverse engineering, bitcoin, cyber security, economics, programming, and hacks.">
+<meta property="og:locale">
+<meta property="article:author" content="Caleb Fenton">
+<meta property="article:tag" content="android, malware, machine learning, cyber security, programming hacking, reverse engineering, economics, bitcoin">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Caleb Fenton&#39;s Blog">
-<meta name="twitter:description" content="Reverse engineering, computer security, programming, and hacks.">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -41,7 +42,9 @@
     <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -57,7 +60,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-</head>
+<meta name="generator" content="Hexo 6.0.0"></head>
 
 <body>
   <div id="container">
@@ -69,10 +72,6 @@ ga('send', 'pageview');
       <h1 id="logo-wrap">
         <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -102,7 +101,7 @@ ga('send', 'pageview');
     <article id="post-understanding_dalvik_static_fields_1_of_2" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/07/31/understanding_dalvik_static_fields_1_of_2/" class="article-date">
-  <time datetime="2016-07-31T07:00:00.000Z" itemprop="datePublished">2016-07-31</time>
+  <time datetime="2016-07-31T05:00:00.000Z" itemprop="datePublished">2016-07-31</time>
 </a>
     
   </div>
@@ -121,9 +120,10 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>This story starts with <a href="https://github.com/teDDyGH" target="_blank" rel="external">someone</a> reporting a very well written and concise <a href="https://github.com/CalebFenton/simplify/issues/50" target="_blank" rel="external">issue</a> for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case you didn’t know, you can initialize a static field in smali like this:</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.field</span><span class="keyword"> private</span><span class="keyword"> static</span> someInt:I = 5</div></pre></td></tr></table></figure>
-<p>I’d seen that smali supported this format years ago, and included it in my <a href="https://github.com/ShaneWilton/sublime-smali" target="_blank" rel="external">Smali syntax definitions for Sublime</a>, but I couldn’t ever produce a DEX which used this. Whenever I had a simple, primitive static field, <code>dx</code> would generate bytecode which initialized the field in the class initializer <code>&lt;clinit&gt;</code>.</p>
+        <p>This story starts with <a target="_blank" rel="noopener" href="https://github.com/teDDyGH">someone</a> reporting a very well written and concise <a target="_blank" rel="noopener" href="https://github.com/CalebFenton/simplify/issues/50">issue</a> for Simplify. After digging into it, I found a problem with how smalivm was handling static field initialization. In case you didn’t know, you can initialize a static field in smali like this:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.field</span><span class="keyword"> private</span><span class="keyword"> static</span> someInt:I = 5</span><br></pre></td></tr></table></figure>
+
+<p>I’d seen that smali supported this format years ago, and included it in my <a target="_blank" rel="noopener" href="https://github.com/ShaneWilton/sublime-smali">Smali syntax definitions for Sublime</a>, but I couldn’t ever produce a DEX which used this. Whenever I had a simple, primitive static field, <code>dx</code> would generate bytecode which initialized the field in the class initializer <code>&lt;clinit&gt;</code>.</p>
 <p>Ok, so now I needed to support this in smalivm which means I had to figure out <em>exactly</em> how everything worked, what was valid, what was invalid, and how each type (float, long, int, …) looks. Yay!</p>
         
           <p class="article-more-link">
@@ -133,12 +133,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/" data-id="ckb85psh20014r5kdv8t3tkiu" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/" data-id="ckzxb6f7s000thfao6y6a3no0" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/07/31/understanding_dalvik_static_fields_1_of_2/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/" rel="tag">research</a></li></ul>
 
     </footer>
   </div>
@@ -150,7 +150,7 @@ ga('send', 'pageview');
     <article id="post-death-and-the-java-class-loader" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/07/08/death-and-the-java-class-loader/" class="article-date">
-  <time datetime="2016-07-08T07:00:00.000Z" itemprop="datePublished">2016-07-08</time>
+  <time datetime="2016-07-08T05:00:00.000Z" itemprop="datePublished">2016-07-08</time>
 </a>
     
   </div>
@@ -170,7 +170,7 @@ ga('send', 'pageview');
     <div class="article-entry" itemprop="articleBody">
       
         <p>When <a href="https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/">smalivm</a> is virtually executing code, sometimes it needs to pass around Java Class objects. If it’s a Java API class like <code>String</code> or <code>LinkedList</code>, that’s no problem because smalivm is running in a JVM and has access to those classes already. But what if the class is of a type that’s from the app it’s trying to run? That class only exists in virtual execution imagination land, and if I don’t want to rewrite everything and implement core JVM stuff myself, I need to dynamically create classes.</p>
-<p>What this means is, when you pass smalivm an input DEX, it’ll create a real life Java class which talks and walks just like the DEX class you give it, except it’ll be inert and soulless, without any code. This way it can pass around the dry husk of a Java class, and if input DEX code wants to check the number of names of methods or do tricky reflection stuff, all those properties are there.<br>
+<p>What this means is, when you pass smalivm an input DEX, it’ll create a real life Java class which talks and walks just like the DEX class you give it, except it’ll be inert and soulless, without any code. This way it can pass around the dry husk of a Java class, and if input DEX code wants to check the number of names of methods or do tricky reflection stuff, all those properties are there.</p>
         
           <p class="article-more-link">
             <a href="/2016/07/08/death-and-the-java-class-loader/#more">Read More</a>
@@ -179,12 +179,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="ckb85psgs000hr5kdmcmaiz5m" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/07/08/death-and-the-java-class-loader/" data-id="ckzxb6f7k0009hfao2sfga8i1" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/07/08/death-and-the-java-class-loader/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/07/08/death-and-the-java-class-loader/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/">smalivm</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/" rel="tag">research</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/" rel="tag">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a></li></ul>
 
     </footer>
   </div>
@@ -196,7 +196,7 @@ ga('send', 'pageview');
     <article id="post-what-is-a-company" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/06/18/what-is-a-company/" class="article-date">
-  <time datetime="2016-06-18T07:00:00.000Z" itemprop="datePublished">2016-06-18</time>
+  <time datetime="2016-06-18T05:00:00.000Z" itemprop="datePublished">2016-06-18</time>
 </a>
     
   </div>
@@ -216,7 +216,7 @@ ga('send', 'pageview');
     <div class="article-entry" itemprop="articleBody">
       
         <p>People throw around the phrase “company culture” a lot. There are tons of articles on LinkedIn and Medium about “How to 10x Your Company Culture”, “The 7 Mistakes Managers Make Which Harm Culture”, “12 Steps to Improving Culture”, and so on. Some articles are really good and many are at least interesting, but I always felt like they all make assumptions that limit creativity in their approaches to understand and improve culture. Companies are just people. </p>
-<p>I’d always been a bit of a loner, and maybe that’s why when I started working it was endlessly fascinating for me to watch the company with the camera pulled way back as if I was an alien trying to understand the fundamental forces which made the organization work. I observed and mused about how to understand companies from first principals for about a decade until one day I made some unexpected conceptual connections that really pulled back the curtain and helped me understand culture differently. And it’s all thanks to <em>online video games</em>.<br>
+<p>I’d always been a bit of a loner, and maybe that’s why when I started working it was endlessly fascinating for me to watch the company with the camera pulled way back as if I was an alien trying to understand the fundamental forces which made the organization work. I observed and mused about how to understand companies from first principals for about a decade until one day I made some unexpected conceptual connections that really pulled back the curtain and helped me understand culture differently. And it’s all thanks to <em>online video games</em>.</p>
         
           <p class="article-more-link">
             <a href="/2016/06/18/what-is-a-company/#more">Read More</a>
@@ -225,12 +225,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/06/18/what-is-a-company/" data-id="ckb85psh7001cr5kd38jd77sv" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/06/18/what-is-a-company/" data-id="ckzxb6f7w0015hfaog2eg5scr" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/06/18/what-is-a-company/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/06/18/what-is-a-company/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/business/">business</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/culture/">culture</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/business/" rel="tag">business</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/culture/" rel="tag">culture</a></li></ul>
 
     </footer>
   </div>
@@ -242,7 +242,7 @@ ga('send', 'pageview');
     <article id="post-dalvik-virtual-execution-with-smalivm" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/" class="article-date">
-  <time datetime="2016-04-30T07:00:00.000Z" itemprop="datePublished">2016-04-30</time>
+  <time datetime="2016-04-30T05:00:00.000Z" itemprop="datePublished">2016-04-30</time>
 </a>
     
   </div>
@@ -261,7 +261,7 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing code on a real machine can get messy, especially if it’s malicious. But what can you do if you want to understand a lot of malicious code? What if it’s obfuscated and even harder for your brain? Maybe you want to do some fancy analysis so you can accurately know when certain methods are called? Well, for this there’s executing on a <em>virtual</em> machine, i.e. virtual execution. There are many different ways of implementing a virtual machine. You could simulate an entire computer like  VirtualBox and QEMU or you could simulate a smaller subset. The general idea is the same between all types: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.<br>
+        <p>Sometimes it’s useful to know what code does without executing it. You could read the code with your eyeballs and run it with your brain but that takes too long and it’s really hard, and executing code on a real machine can get messy, especially if it’s malicious. But what can you do if you want to understand a lot of malicious code? What if it’s obfuscated and even harder for your brain? Maybe you want to do some fancy analysis so you can accurately know when certain methods are called? Well, for this there’s executing on a <em>virtual</em> machine, i.e. virtual execution. There are many different ways of implementing a virtual machine. You could simulate an entire computer like  VirtualBox and QEMU or you could simulate a smaller subset. The general idea is the same between all types: build a program which simulates executing other programs in all the important ways and gracefully fails for everything else.</p>
         
           <p class="article-more-link">
             <a href="/2016/04/30/dalvik-virtual-execution-with-smalivm/#more">Read More</a>
@@ -270,12 +270,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="ckb85psgr000fr5kd0d3l1pi3" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/" data-id="ckzxb6f7j0008hfaocqe96put" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/30/dalvik-virtual-execution-with-smalivm/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/deobfuscation/">deobfuscation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smali/">smali</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/">smalivm</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/" rel="tag">simplify</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smali/" rel="tag">smali</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a></li></ul>
 
     </footer>
   </div>
@@ -287,7 +287,7 @@ ga('send', 'pageview');
     <article id="post-why-most-vulnerabilities-are-never-disclosed" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" class="article-date">
-  <time datetime="2016-04-29T07:00:00.000Z" itemprop="datePublished">2016-04-29</time>
+  <time datetime="2016-04-29T05:00:00.000Z" itemprop="datePublished">2016-04-29</time>
 </a>
     
   </div>
@@ -306,8 +306,8 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely <em>terrible</em> at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to <a href="http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html" target="_blank" rel="external">validate an email address</a> or <a href="http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/" target="_blank" rel="external">properly deal with names</a>. That fact we get anything to work at all is amazing</p>
-<p>The bottom line is that if developers are writing code, they’re writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or <a href="http://0day.today/" target="_blank" rel="external">sold</a>. For reasons which I shall explain, I believe that <em>most</em> security vulnerabilities are fixed but <em>never disclosed</em>.<br>
+        <p>When it comes to writing software, humans are the best game in town. Unfortunately, we’re absolutely <em>terrible</em> at it. Of course, we’re good at other stuff – recognizing faces, tool use, gossiping, and bi-pedal locomotion, but it turns out our brains are not so good at giving a computer the thousands of tiny, precise instructions necessary to <a target="_blank" rel="noopener" href="http://www.ex-parrot.com/~pdw/Mail-RFC822-Address.html">validate an email address</a> or <a target="_blank" rel="noopener" href="http://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">properly deal with names</a>. That fact we get anything to work at all is amazing</p>
+<p>The bottom line is that if developers are writing code, they’re writing bugs and some bugs are vulnerabilities. Some are found and responsibly disclosed while others are kept secret or <a target="_blank" rel="noopener" href="http://0day.today/">sold</a>. For reasons which I shall explain, I believe that <em>most</em> security vulnerabilities are fixed but <em>never disclosed</em>.</p>
         
           <p class="article-more-link">
             <a href="/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#more">Read More</a>
@@ -316,12 +316,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="ckb85psh9001dr5kd033p5djo" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/" data-id="ckzxb6f7x0017hfao2m64gjxs" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/29/why-most-vulnerabilities-are-never-disclosed/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/" rel="tag">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/" rel="tag">security</a></li></ul>
 
     </footer>
   </div>
@@ -333,7 +333,7 @@ ga('send', 'pageview');
     <article id="post-code-kata-bloom-filter" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/26/code-kata-bloom-filter/" class="article-date">
-  <time datetime="2016-04-27T02:11:11.000Z" itemprop="datePublished">2016-04-26</time>
+  <time datetime="2016-04-27T00:11:11.000Z" itemprop="datePublished">2016-04-26</time>
 </a>
     
   </div>
@@ -353,7 +353,7 @@ ga('send', 'pageview');
     <div class="article-entry" itemprop="articleBody">
       
         <p>If you’re unfamiliar with what a Code Kata is, check out my previous post <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/">Code Kata: TDD and Run-length Encoding</a></p>
-<p>The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.<br>
+<p>The goal for this kata is to learn an unfamiliar data structure. It’s called a bloom filter. I’ve read the Wikipedia article and have used them, but until I’ve made it myself I don’t understand it deeply. The more fundamental my understanding, the more flexible I can be in applying a concept. It’s just like calculus. There’s a world of difference between merely memorizing a formula and having a deep, intuitive understanding.</p>
         
           <p class="article-more-link">
             <a href="/2016/04/26/code-kata-bloom-filter/#more">Read More</a>
@@ -362,12 +362,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="ckb85psgo0009r5kdfs08nmb4" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/26/code-kata-bloom-filter/" data-id="ckzxb6f7g0004hfaobp019uee" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/26/code-kata-bloom-filter/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a></li></ul>
 
     </footer>
   </div>
@@ -379,7 +379,7 @@ ga('send', 'pageview');
     <article id="post-reversing-an-open-source-vulnerability" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/24/reversing-an-open-source-vulnerability/" class="article-date">
-  <time datetime="2016-04-24T07:00:00.000Z" itemprop="datePublished">2016-04-24</time>
+  <time datetime="2016-04-24T05:00:00.000Z" itemprop="datePublished">2016-04-24</time>
 </a>
     
   </div>
@@ -398,7 +398,7 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Vulnerability disclosures rarely include enough technical detail to reproduce the exploit. This is a <em>good</em> thing. It wouldn’t do to arm every script kiddie with exact details of how to write an exploit with every disclosure. However, there are times when someone like an application security engineer or security researcher need to “reverse engineer” the disclosure to reconstruct the technical detail in order to fully understand the vulnerability or write an exploit to test systems for weakness.<br>
+        <p>Vulnerability disclosures rarely include enough technical detail to reproduce the exploit. This is a <em>good</em> thing. It wouldn’t do to arm every script kiddie with exact details of how to write an exploit with every disclosure. However, there are times when someone like an application security engineer or security researcher need to “reverse engineer” the disclosure to reconstruct the technical detail in order to fully understand the vulnerability or write an exploit to test systems for weakness.</p>
         
           <p class="article-more-link">
             <a href="/2016/04/24/reversing-an-open-source-vulnerability/#more">Read More</a>
@@ -407,12 +407,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/" data-id="ckb85psh0000zr5kd69zge19n" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/" data-id="ckzxb6f7s000shfao2t8rf1vp" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/24/reversing-an-open-source-vulnerability/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/">security</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/open-source/" rel="tag">open source</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/security/" rel="tag">security</a></li></ul>
 
     </footer>
   </div>
@@ -424,7 +424,7 @@ ga('send', 'pageview');
     <article id="post-code-kata-tdd-and-run-length-encoding" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/" class="article-date">
-  <time datetime="2016-04-24T02:26:04.000Z" itemprop="datePublished">2016-04-23</time>
+  <time datetime="2016-04-24T00:26:04.000Z" itemprop="datePublished">2016-04-23</time>
 </a>
     
   </div>
@@ -443,7 +443,7 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>A <em>kata</em> is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A <em>code kata</em> is is a training method for developing skill in programming. Take something you do frequently, or wish to do better, strip away everything not essential, and practice it repeatedly.<br>
+        <p>A <em>kata</em> is a martial arts training method. It’s a set of detailed and choreographed movements and poses. The movements are performed repeatedly and internalized. A <em>code kata</em> is is a training method for developing skill in programming. Take something you do frequently, or wish to do better, strip away everything not essential, and practice it repeatedly.</p>
         
           <p class="article-more-link">
             <a href="/2016/04/23/code-kata-tdd-and-run-length-encoding/#more">Read More</a>
@@ -452,12 +452,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="ckb85psgp000br5kd576t0chs" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/" data-id="ckzxb6f7i0006hfaohbzlfftv" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/23/code-kata-tdd-and-run-length-encoding/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/">code-kata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tdd/">tdd</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tdd/" rel="tag">tdd</a></li></ul>
 
     </footer>
   </div>
@@ -469,7 +469,7 @@ ga('send', 'pageview');
     <article id="post-tetcon-2016-android-deobfuscation" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/23/tetcon-2016-android-deobfuscation/" class="article-date">
-  <time datetime="2016-04-23T07:00:00.000Z" itemprop="datePublished">2016-04-23</time>
+  <time datetime="2016-04-23T05:00:00.000Z" itemprop="datePublished">2016-04-23</time>
 </a>
     
   </div>
@@ -488,8 +488,8 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>I gave a talk at <a href="https://tetcon.org" target="_blank" rel="external">TetCon 2016</a> about Android obfuscation and deobfuscation.</p>
-<p>The talks at TetCon were great and the people there were super nice. I got all kinds of new ideas and spent the entire flight home furiously coding. Super motivating to hear from and talk to other people working on similar problems. Thanks to the organizers and volunteers for making everything happen.<br>
+        <p>I gave a talk at <a target="_blank" rel="noopener" href="https://tetcon.org/">TetCon 2016</a> about Android obfuscation and deobfuscation.</p>
+<p>The talks at TetCon were great and the people there were super nice. I got all kinds of new ideas and spent the entire flight home furiously coding. Super motivating to hear from and talk to other people working on similar problems. Thanks to the organizers and volunteers for making everything happen.</p>
         
           <p class="article-more-link">
             <a href="/2016/04/23/tetcon-2016-android-deobfuscation/#more">Read More</a>
@@ -498,12 +498,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/" data-id="ckb85psh10011r5kdo239itjg" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/" data-id="ckzxb6f7t000uhfaocicjdgbd" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/04/23/tetcon-2016-android-deobfuscation/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/deobfuscation/">deobfuscation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dex-oracle/">dex-oracle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/">simplify</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/simplify/" rel="tag">simplify</a></li></ul>
 
     </footer>
   </div>
@@ -515,7 +515,7 @@ ga('send', 'pageview');
     <article id="post-decompiling-xapk-files" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/02/28/decompiling-xapk-files/" class="article-date">
-  <time datetime="2016-02-28T15:41:03.000Z" itemprop="datePublished">2016-02-28</time>
+  <time datetime="2016-02-28T13:41:03.000Z" itemprop="datePublished">2016-02-28</time>
 </a>
     
   </div>
@@ -534,9 +534,10 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>While reviewing new Android reverse engineering questions on Stack Overflow, I came across this request to <a href="http://stackoverflow.com/questions/35070003/decompile-xapk-file" target="_blank" rel="external">decompile an <code>.xapk</code></a>. A brief, non-technical description of the format is described on <a href="https://apkpure.com/xapk.htm" target="_blank" rel="external">APKPure’s website</a>:</p>
+        <p>While reviewing new Android reverse engineering questions on Stack Overflow, I came across this request to <a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/35070003/decompile-xapk-file">decompile an <code>.xapk</code></a>. A brief, non-technical description of the format is described on <a target="_blank" rel="noopener" href="https://apkpure.com/xapk.htm">APKPure’s website</a>:</p>
 <blockquote>
-<p>XAPK is a brand new file format standard for Android APK package file. Contains all APK package and obb cache asset file to keep Android games or apps working, it always ends in “.xapk”. To ensure games, applications run perfectly, APK Install one click install makes it easy for Android users directly install .apk, .xapk file to the root directory.<br>obb cache data?<br>
+<p>XAPK is a brand new file format standard for Android APK package file. Contains all APK package and obb cache asset file to keep Android games or apps working, it always ends in “.xapk”. To ensure games, applications run perfectly, APK Install one click install makes it easy for Android users directly install .apk, .xapk file to the root directory.<br>obb cache data?</p>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/2016/02/28/decompiling-xapk-files/#more">Read More</a>
@@ -545,12 +546,12 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/" data-id="ckb85psgt000jr5kdyfed8f0c" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2016/02/28/decompiling-xapk-files/" data-id="ckzxb6f7l000bhfaob54ght56" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2016/02/28/decompiling-xapk-files/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2016/02/28/decompiling-xapk-files/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reversing/">reversing</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reversing/" rel="tag">reversing</a></li></ul>
 
     </footer>
   </div>
@@ -561,7 +562,7 @@ ga('send', 'pageview');
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
     </nav>
   
 </section>
@@ -602,7 +603,7 @@ ga('send', 'pageview');
     <div id="twitter-feed" class="widget-wrap">
   <h3 class="widget-title">Twitter Feed</h3>
   <div class="widget">
-    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a class="twitter-timeline" data-height="2000" target="_blank" rel="noopener" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 </div>
 
@@ -613,7 +614,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/" rel="tag">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/" rel="tag">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/" rel="tag">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/" rel="tag">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/" rel="tag">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/" rel="tag">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/" rel="tag">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/" rel="tag">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/" rel="tag">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/" rel="tag">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/" rel="tag">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/" rel="tag">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/" rel="tag">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -643,7 +644,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Caleb Fenton<br>
+      &copy; 2022 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -673,11 +674,17 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>

@@ -6,18 +6,21 @@
   <title>Filtering Popular Code and Effects on Model Accuracy | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="I’ve been conducting experiments to try and improve accuracy of a malware detection tool called Judge. This post is about an experiment involving finding which classes and methods occur frequently in">
-<meta name="keywords" content="android,research,machine learning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Filtering Popular Code and Effects on Model Accuracy">
-<meta property="og:url" content="https://CalebFenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/index.html">
+<meta property="og:url" content="https://calebfenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
 <meta property="og:description" content="I’ve been conducting experiments to try and improve accuracy of a malware detection tool called Judge. This post is about an experiment involving finding which classes and methods occur frequently in">
+<meta property="og:locale">
 <meta property="og:image" content="https://calebfenton.github.io/images/filtering-popular-code-and-effects-on-model-accuracy/class_hash_popularity.png">
 <meta property="og:image" content="https://calebfenton.github.io/images/filtering-popular-code-and-effects-on-model-accuracy/method_hash_popularity.png">
-<meta property="og:updated_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:published_time" content="2017-09-25T05:13:37.000Z">
+<meta property="article:modified_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:author" content="Caleb Fenton">
+<meta property="article:tag" content="research">
+<meta property="article:tag" content="android">
+<meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Filtering Popular Code and Effects on Model Accuracy">
-<meta name="twitter:description" content="I’ve been conducting experiments to try and improve accuracy of a malware detection tool called Judge. This post is about an experiment involving finding which classes and methods occur frequently in">
 <meta name="twitter:image" content="https://calebfenton.github.io/images/filtering-popular-code-and-effects-on-model-accuracy/class_hash_popularity.png">
 <meta name="twitter:creator" content="@CalebFenton">
   
@@ -46,7 +49,9 @@
     <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -62,7 +67,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-</head>
+<meta name="generator" content="Hexo 6.0.0"></head>
 
 <body>
   <div id="container">
@@ -74,10 +79,6 @@ ga('send', 'pageview');
       <h1 id="logo-wrap">
         <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -105,7 +106,7 @@ ga('send', 'pageview');
         <section id="main"><article id="post-filtering-popular-code-and-effects-on-model-accuracy" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/" class="article-date">
-  <time datetime="2017-09-25T07:13:37.000Z" itemprop="datePublished">2017-09-25</time>
+  <time datetime="2017-09-25T05:13:37.000Z" itemprop="datePublished">2017-09-25</time>
 </a>
     
   </div>
@@ -124,22 +125,24 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>I’ve been conducting experiments to try and improve accuracy of a malware detection tool called <a href="http://judge.rednaga.io/" target="_blank" rel="external">Judge</a>. This post is about an experiment involving finding which classes and methods occur frequently in the training data and excluding them from training. The intuition is that by filtering out popular code, the features will be more representative of what’s unique to each sample.</p>
-<p>This idea, as well as several other such as model stacking and blending which I write about in <a href="https://calebfenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/">Measuring the Usefulness of Multiple Models</a>, as well as some implementation ideas were given to me by Nikita Buchka (<a href="https://twitter.com/advegoc" target="_blank" rel="external">@advegoc</a> and <a href="https://securelist.com/all/?author=551&amp;filter=" target="_blank" rel="external">blogs</a>).<br><a id="more"></a></p>
+        <p>I’ve been conducting experiments to try and improve accuracy of a malware detection tool called <a target="_blank" rel="noopener" href="http://judge.rednaga.io/">Judge</a>. This post is about an experiment involving finding which classes and methods occur frequently in the training data and excluding them from training. The intuition is that by filtering out popular code, the features will be more representative of what’s unique to each sample.</p>
+<p>This idea, as well as several other such as model stacking and blending which I write about in <a href="https://calebfenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/">Measuring the Usefulness of Multiple Models</a>, as well as some implementation ideas were given to me by Nikita Buchka (<a target="_blank" rel="noopener" href="https://twitter.com/advegoc">@advegoc</a> and <a target="_blank" rel="noopener" href="https://securelist.com/all/?author=551&filter=">blogs</a>).</p>
+<span id="more"></span>
+
 <h2 id="Fingerprinting-Code"><a href="#Fingerprinting-Code" class="headerlink" title="Fingerprinting Code"></a>Fingerprinting Code</h2><p>The first step in filtering out popular code is creating a fingerprinting mechanism which can produce a hash for code at the class and method level. Identical or <em>very</em> nearly identical Java code should map to the same hash value, and any small change in the code should lead to a totally different hash.</p>
 <p>How can you do this? You might think you can just hash the actual Dalvik executable bytes of a method to get a fingerprint, but the exact same Java code may look totally different at the byte level because of differing register layouts and virtual table lookup indices.</p>
-<p>My approach was to transform class and method properties as well as opcodes into a string. Properties include annotation size, interface count, access flags, register count, and so on. This string representation should be highly brittle and sensitive to almost any changes. Finally, the string is hashed into a <code>long</code> using an implementation of <a href="https://github.com/yonik/java_util/blob/master/src/util/hash/MurmurHash3.java" target="_blank" rel="external">MurmurHash3</a>.</p>
-<p>The source code is available here: <a href="https://gist.github.com/CalebFenton/38dc21d6619d51c7609b879752f2d24e" target="_blank" rel="external">DexFileFingerprinter.java</a>. Also note, there’s a <code>boolean strict</code> flag which is true by default. This was an untested idea of building less strict fingerprint strings of methods which would map code which was <em>mostly</em> similar but not exactly identical.</p>
+<p>My approach was to transform class and method properties as well as opcodes into a string. Properties include annotation size, interface count, access flags, register count, and so on. This string representation should be highly brittle and sensitive to almost any changes. Finally, the string is hashed into a <code>long</code> using an implementation of <a target="_blank" rel="noopener" href="https://github.com/yonik/java_util/blob/master/src/util/hash/MurmurHash3.java">MurmurHash3</a>.</p>
+<p>The source code is available here: <a target="_blank" rel="noopener" href="https://gist.github.com/CalebFenton/38dc21d6619d51c7609b879752f2d24e">DexFileFingerprinter.java</a>. Also note, there’s a <code>boolean strict</code> flag which is true by default. This was an untested idea of building less strict fingerprint strings of methods which would map code which was <em>mostly</em> similar but not exactly identical.</p>
 <h2 id="Measuring-Popularity"><a href="#Measuring-Popularity" class="headerlink" title="Measuring Popularity"></a>Measuring Popularity</h2><p>Popularity was measured by fingerprinting every class and method in the benign sample set. This was 107916 apps taken from a variety of sources including non-english speaking markets. Labels were determined by a combination of VirusTotal and manual scanning. VirusTotal criteria were that it had 0 positives and had been scanned after 2 months of it first appearing on VirusTotal. This is to give vendors time to react to new threats. Since vendors tend to put highly sensitive models on VirusTotal, this should slightly bias the data set away from anything remotely resembling adware. However, this was remediated somewhat by adding ~50,000 samples from randomly crawled markets, many of which don’t appear on VirusTotal. These were determined to be benign by scanning them with multiple Android anti-malware products.</p>
 <h3 id="Popularity-Distributions"><a href="#Popularity-Distributions" class="headerlink" title="Popularity Distributions"></a>Popularity Distributions</h3><p>Below is the class hash popularity distribution:</p>
 <p><img src="/images/filtering-popular-code-and-effects-on-model-accuracy/class_hash_popularity.png" alt="class hash popularity"></p>
 <p>As you can see from the above figure, there is a very long tail to the distributions. This means that many classes are only seen rarely and there are only a few classes which are popular. Further, popular classes tend to be much, much more popular than non-popular classes.  These popular classes probably include empty classes and classes from popular SDKs and libraries.</p>
 <p>Below is the method hash popularity distribution which follows a similar distribution:</p>
 <p><img src="/images/filtering-popular-code-and-effects-on-model-accuracy/method_hash_popularity.png" alt="method hash popularity"></p>
-<p>The code for generating these hashes is available here: <a href="https://gist.github.com/CalebFenton/fb25d9e9e9a4450e95f89776fd40836e" target="_blank" rel="external">graph.py</a></p>
-<p>The data for these graphs is here: <a href="https://mega.nz/#!Tcc11TYC!uyY8x6IVePlW0neWh3JCf08i1Zb1rLjCQWZJzwXavGU" target="_blank" rel="external">android-hash-counts.7z</a></p>
+<p>The code for generating these hashes is available here: <a target="_blank" rel="noopener" href="https://gist.github.com/CalebFenton/fb25d9e9e9a4450e95f89776fd40836e">graph.py</a></p>
+<p>The data for these graphs is here: <a target="_blank" rel="noopener" href="https://mega.nz/#!Tcc11TYC!uyY8x6IVePlW0neWh3JCf08i1Zb1rLjCQWZJzwXavGU">android-hash-counts.7z</a></p>
 <h3 id="Selecting-Hashes"><a href="#Selecting-Hashes" class="headerlink" title="Selecting Hashes"></a>Selecting Hashes</h3><p>The threshold for what constituted a “popular” class was 75, which was determined visually. In other words, I kinda eyeballed it. For methods, the threshold was 100. This means, if a class was seen 75 times or a method was seen 100 times, it should be skipped when extracting features. However, this could lead to a loss of valuable information, maybe, so I added a few features for number of classes and methods skipped to the finished model.</p>
-<p>The code for selecting hashes is available here: <a href="https://gist.github.com/CalebFenton/b23550864120621a8f459caca90a1b9f" target="_blank" rel="external">select_popular_hashes.py</a></p>
+<p>The code for selecting hashes is available here: <a target="_blank" rel="noopener" href="https://gist.github.com/CalebFenton/b23550864120621a8f459caca90a1b9f">select_popular_hashes.py</a></p>
 <h3 id="Top-100-Class-Paths"><a href="#Top-100-Class-Paths" class="headerlink" title="Top 100 Class Paths"></a>Top 100 Class Paths</h3><p>Below is a list of the top 100 class paths, sorted by the number of times they were seen. Note, the class path is the <em>first</em> class path seen, not a list of all class paths associated with a hash. From manual inspection, the first several classes were mostly empty and it’s likely that <em>many</em> paths map to the same hash.</p>
 <table>
 <thead>
@@ -150,12 +153,11 @@ ga('send', 'pageview');
 <th>Path</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>1</td>
 <td>-6539677568569540121</td>
 <td>87112</td>
-<td>Lpl/realitypump/ironsky/R;</td>
+<td>Lpl&#x2F;realitypump&#x2F;ironsky&#x2F;R;</td>
 </tr>
 <tr>
 <td>2</td>
@@ -167,31 +169,31 @@ ga('send', 'pageview');
 <td>3</td>
 <td>-2675497598636306534</td>
 <td>70696</td>
-<td>Lcom/realitypump/G2/G2GLSurfaceView$1;</td>
+<td>Lcom&#x2F;realitypump&#x2F;G2&#x2F;G2GLSurfaceView$1;</td>
 </tr>
 <tr>
 <td>4</td>
 <td>-5007384885342135023</td>
 <td>69153</td>
-<td>Lcom/devilishgames/nativeextensions/admob/R$layout;</td>
+<td>Lcom&#x2F;devilishgames&#x2F;nativeextensions&#x2F;admob&#x2F;R$layout;</td>
 </tr>
 <tr>
 <td>5</td>
 <td>7877155950984699004</td>
 <td>68682</td>
-<td>Landroid/support/v4/app/SuperNotCalledException;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;SuperNotCalledException;</td>
 </tr>
 <tr>
 <td>6</td>
 <td>-7642079844424071458</td>
 <td>65704</td>
-<td>Lcom/socialize/ui/comment/CommentDetailActivity;</td>
+<td>Lcom&#x2F;socialize&#x2F;ui&#x2F;comment&#x2F;CommentDetailActivity;</td>
 </tr>
 <tr>
 <td>7</td>
 <td>4173837491973374472</td>
 <td>62937</td>
-<td>Landroid/support/v4/app/FragmentManagerImpl$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerImpl$1;</td>
 </tr>
 <tr>
 <td>8</td>
@@ -203,13 +205,13 @@ ga('send', 'pageview');
 <td>9</td>
 <td>2308415025046174030</td>
 <td>57786</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$4;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$4;</td>
 </tr>
 <tr>
 <td>10</td>
 <td>6014432581692261376</td>
 <td>56086</td>
-<td>Lcom/facebook/internal/FileLruCache$2;</td>
+<td>Lcom&#x2F;facebook&#x2F;internal&#x2F;FileLruCache$2;</td>
 </tr>
 <tr>
 <td>11</td>
@@ -227,31 +229,31 @@ ga('send', 'pageview');
 <td>13</td>
 <td>2544757508923420717</td>
 <td>53475</td>
-<td>Lcom/google/android/gms/internal/i;</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;internal&#x2F;i;</td>
 </tr>
 <tr>
 <td>14</td>
 <td>-3399958614432743607</td>
 <td>51806</td>
-<td>Landroid/support/v4/view/ViewConfigurationCompatFroyo;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewConfigurationCompatFroyo;</td>
 </tr>
 <tr>
 <td>15</td>
 <td>6743212674057076693</td>
 <td>51617</td>
-<td>Landroid/support/v4/app/FragmentManagerState;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerState;</td>
 </tr>
 <tr>
 <td>16</td>
 <td>-7929451300585271506</td>
 <td>51499</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityManagerCompat$AccessibilityManagerIcsImpl$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityManagerCompat$AccessibilityManagerIcsImpl$1;</td>
 </tr>
 <tr>
 <td>17</td>
 <td>-5808535828223012233</td>
 <td>51454</td>
-<td>Landroid/support/v4/view/VelocityTrackerCompatHoneycomb;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;VelocityTrackerCompatHoneycomb;</td>
 </tr>
 <tr>
 <td>18</td>
@@ -263,109 +265,109 @@ ga('send', 'pageview');
 <td>19</td>
 <td>-5945944459787456127</td>
 <td>51047</td>
-<td>Landroid/support/v4/app/ActivityCompatHoneycomb;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ActivityCompatHoneycomb;</td>
 </tr>
 <tr>
 <td>20</td>
 <td>4074238650528361008</td>
 <td>50715</td>
-<td>Landroid/support/v4/view/ViewCompatGingerbread;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewCompatGingerbread;</td>
 </tr>
 <tr>
 <td>21</td>
 <td>8457541340339836364</td>
 <td>50561</td>
-<td>Landroid/support/v4/app/ShareCompatJB;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ShareCompatJB;</td>
 </tr>
 <tr>
 <td>22</td>
 <td>-7602298695408306862</td>
 <td>50458</td>
-<td>Landroid/support/v4/util/LogWriter;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;util&#x2F;LogWriter;</td>
 </tr>
 <tr>
 <td>23</td>
 <td>5534139342145712559</td>
 <td>50432</td>
-<td>Lcom/google/ads/internal/j$a$1;</td>
+<td>Lcom&#x2F;google&#x2F;ads&#x2F;internal&#x2F;j$a$1;</td>
 </tr>
 <tr>
 <td>24</td>
 <td>-4664196824785783660</td>
 <td>50412</td>
-<td>Lretrofit/http/Streaming;</td>
+<td>Lretrofit&#x2F;http&#x2F;Streaming;</td>
 </tr>
 <tr>
 <td>25</td>
 <td>-989624789237851679</td>
 <td>50381</td>
-<td>Lpl/realitypump/ironsky/R$style;</td>
+<td>Lpl&#x2F;realitypump&#x2F;ironsky&#x2F;R$style;</td>
 </tr>
 <tr>
 <td>26</td>
 <td>-5573814636106502307</td>
 <td>50345</td>
-<td>Landroid/support/v4/view/ViewPager$Decor;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewPager$Decor;</td>
 </tr>
 <tr>
 <td>27</td>
 <td>-4316020411289880285</td>
 <td>50316</td>
-<td>Lpl/realitypump/ironsky/BuildConfig;</td>
+<td>Lpl&#x2F;realitypump&#x2F;ironsky&#x2F;BuildConfig;</td>
 </tr>
 <tr>
 <td>28</td>
 <td>2305477454044242758</td>
 <td>50214</td>
-<td>Landroid/support/v4/content/pm/ActivityInfoCompat;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;pm&#x2F;ActivityInfoCompat;</td>
 </tr>
 <tr>
 <td>29</td>
 <td>-2217179160054368884</td>
 <td>49972</td>
-<td>Landroid/support/v4/app/TaskStackBuilderJellybean;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;TaskStackBuilderJellybean;</td>
 </tr>
 <tr>
 <td>30</td>
 <td>-3424197808730443223</td>
 <td>49926</td>
-<td>Landroid/support/v4/view/ViewGroupCompatIcs;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewGroupCompatIcs;</td>
 </tr>
 <tr>
 <td>31</td>
 <td>906934702213877563</td>
 <td>49773</td>
-<td>Landroid/support/v4/accessibilityservice/AccessibilityServiceInfoCompatIcs;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;accessibilityservice&#x2F;AccessibilityServiceInfoCompatIcs;</td>
 </tr>
 <tr>
 <td>32</td>
 <td>-8430991917603055454</td>
 <td>49760</td>
-<td>Landroid/support/v4/os/ParcelableCompatCreatorCallbacks;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompatCreatorCallbacks;</td>
 </tr>
 <tr>
 <td>33</td>
 <td>8802143954482027195</td>
 <td>49534</td>
-<td>Landroid/support/v4/app/Fragment$InstantiationException;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;Fragment$InstantiationException;</td>
 </tr>
 <tr>
 <td>34</td>
 <td>1819905089452899121</td>
 <td>49474</td>
-<td>Landroid/support/v4/app/NavUtilsJB;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;NavUtilsJB;</td>
 </tr>
 <tr>
 <td>35</td>
 <td>-2969348625307750576</td>
 <td>49298</td>
-<td>Landroid/support/v4/net/ConnectivityManagerCompatJellyBean;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;net&#x2F;ConnectivityManagerCompatJellyBean;</td>
 </tr>
 <tr>
 <td>36</td>
 <td>-9115786371403805780</td>
 <td>49239</td>
-<td>Lcom/devilishgames/nativeextensions/admob/R$attr;</td>
+<td>Lcom&#x2F;devilishgames&#x2F;nativeextensions&#x2F;admob&#x2F;R$attr;</td>
 </tr>
 <tr>
 <td>37</td>
@@ -377,382 +379,381 @@ ga('send', 'pageview');
 <td>38</td>
 <td>-7105014750669022041</td>
 <td>49090</td>
-<td>Landroid/support/v4/widget/ResourceCursorAdapter;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;ResourceCursorAdapter;</td>
 </tr>
 <tr>
 <td>39</td>
 <td>7889800717182803764</td>
 <td>49026</td>
-<td>Lcom/ormma/view/Browser$4;</td>
+<td>Lcom&#x2F;ormma&#x2F;view&#x2F;Browser$4;</td>
 </tr>
 <tr>
 <td>40</td>
 <td>-5917040822247039264</td>
 <td>49005</td>
-<td>Landroid/support/v4/view/VelocityTrackerCompat$BaseVelocityTrackerVersionImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;VelocityTrackerCompat$BaseVelocityTrackerVersionImpl;</td>
 </tr>
 <tr>
 <td>41</td>
 <td>-5720493436074601324</td>
 <td>48997</td>
-<td>Landroid/support/v4/view/VelocityTrackerCompat$HoneycombVelocityTrackerVersionImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;VelocityTrackerCompat$HoneycombVelocityTrackerVersionImpl;</td>
 </tr>
 <tr>
 <td>42</td>
 <td>-1588742293679105513</td>
 <td>48978</td>
-<td>Landroid/support/v4/os/ParcelableCompatCreatorHoneycombMR2Stub;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompatCreatorHoneycombMR2Stub;</td>
 </tr>
 <tr>
 <td>43</td>
 <td>-1957521141270853035</td>
 <td>48707</td>
-<td>Lcom/google/ads/util/g$1;</td>
+<td>Lcom&#x2F;google&#x2F;ads&#x2F;util&#x2F;g$1;</td>
 </tr>
 <tr>
 <td>44</td>
 <td>4547472865708723651</td>
 <td>48653</td>
-<td>Landroid/support/v4/os/ParcelableCompat$CompatCreator;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompat$CompatCreator;</td>
 </tr>
 <tr>
 <td>45</td>
 <td>679737453138114582</td>
 <td>48048</td>
-<td>Landroid/support/v4/view/KeyEventCompatHoneycomb;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;KeyEventCompatHoneycomb;</td>
 </tr>
 <tr>
 <td>46</td>
 <td>7698708090613627434</td>
 <td>47722</td>
-<td>Landroid/support/v4/app/FragmentManager$OnBackStackChangedListener;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManager$OnBackStackChangedListener;</td>
 </tr>
 <tr>
 <td>47</td>
 <td>2814151969022890373</td>
 <td>47699</td>
-<td>Landroid/support/v4/content/LocalBroadcastManager$BroadcastRecord;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;LocalBroadcastManager$BroadcastRecord;</td>
 </tr>
 <tr>
 <td>48</td>
 <td>4341191700874667005</td>
 <td>47672</td>
-<td>Landroid/support/v4/content/ContextCompatJellybean;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ContextCompatJellybean;</td>
 </tr>
 <tr>
 <td>49</td>
 <td>7588347216197350949</td>
 <td>47672</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$WorkerRunnable;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$WorkerRunnable;</td>
 </tr>
 <tr>
 <td>50</td>
 <td>5989011503337385482</td>
 <td>47576</td>
-<td>Landroid/support/v4/view/ViewGroupCompat$ViewGroupCompatIcsImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewGroupCompat$ViewGroupCompatIcsImpl;</td>
 </tr>
 <tr>
 <td>51</td>
 <td>-8484019840654742338</td>
 <td>47487</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityRecordCompatJellyBean;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityRecordCompatJellyBean;</td>
 </tr>
 <tr>
 <td>52</td>
 <td>-7092896683557467419</td>
 <td>47449</td>
-<td>Lcom/ormma/controller/Defines;</td>
+<td>Lcom&#x2F;ormma&#x2F;controller&#x2F;Defines;</td>
 </tr>
 <tr>
 <td>53</td>
 <td>-4701498684616902325</td>
 <td>47362</td>
-<td>Lcom/socialize/R;</td>
+<td>Lcom&#x2F;socialize&#x2F;R;</td>
 </tr>
 <tr>
 <td>54</td>
 <td>530400150896447174</td>
 <td>47339</td>
-<td>Landroid/support/v4/view/ViewCompat$GBViewCompatImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewCompat$GBViewCompatImpl;</td>
 </tr>
 <tr>
 <td>55</td>
 <td>-5103961978418681524</td>
 <td>47338</td>
-<td>Lcom/facebook/widget/GraphObjectAdapter$3;</td>
+<td>Lcom&#x2F;facebook&#x2F;widget&#x2F;GraphObjectAdapter$3;</td>
 </tr>
 <tr>
 <td>56</td>
 <td>645745845319975076</td>
 <td>47300</td>
-<td>Landroid/support/v4/view/ViewPager$PagerObserver;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewPager$PagerObserver;</td>
 </tr>
 <tr>
 <td>57</td>
 <td>5597419562948276843</td>
 <td>47252</td>
-<td>Landroid/support/v4/app/ListFragment$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ListFragment$1;</td>
 </tr>
 <tr>
 <td>58</td>
 <td>662320570537411526</td>
 <td>47214</td>
-<td>Landroid/support/v4/widget/CursorAdapter$MyDataSetObserver;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;CursorAdapter$MyDataSetObserver;</td>
 </tr>
 <tr>
 <td>59</td>
 <td>6941237681180831691</td>
 <td>47206</td>
-<td>Landroid/support/v4/view/ViewPager$OnPageChangeListener;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewPager$OnPageChangeListener;</td>
 </tr>
 <tr>
 <td>60</td>
 <td>547540514056755988</td>
 <td>47176</td>
-<td>Landroid/support/v4/app/LoaderManager$LoaderCallbacks;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;LoaderManager$LoaderCallbacks;</td>
 </tr>
 <tr>
 <td>61</td>
 <td>8037420148745296490</td>
 <td>47120</td>
-<td>Landroid/support/v4/app/Fragment$SavedState;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;Fragment$SavedState;</td>
 </tr>
 <tr>
 <td>62</td>
 <td>1431765083981923887</td>
 <td>47057</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityNodeProviderCompat$AccessibilityNodeProviderStubImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityNodeProviderCompat$AccessibilityNodeProviderStubImpl;</td>
 </tr>
 <tr>
 <td>63</td>
 <td>4215379159449676179</td>
 <td>47043</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityRecordCompatIcs;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityRecordCompatIcs;</td>
 </tr>
 <tr>
 <td>64</td>
 <td>-1402826908821352158</td>
 <td>47038</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityNodeInfoCompatIcs;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityNodeInfoCompatIcs;</td>
 </tr>
 <tr>
 <td>65</td>
 <td>6569434689745479135</td>
 <td>47027</td>
-<td>Landroid/support/v4/view/VelocityTrackerCompat$VelocityTrackerVersionImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;VelocityTrackerCompat$VelocityTrackerVersionImpl;</td>
 </tr>
 <tr>
 <td>66</td>
 <td>8380934945701363758</td>
 <td>46987</td>
-<td>Landroid/support/v4/widget/CursorAdapter$ChangeObserver;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;CursorAdapter$ChangeObserver;</td>
 </tr>
 <tr>
 <td>67</td>
 <td>-4672682710599146656</td>
 <td>46984</td>
-<td>Lcom/google/android/gms/drive/metadata/SearchableOrderedMetadataField;</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;drive&#x2F;metadata&#x2F;SearchableOrderedMetadataField;</td>
 </tr>
 <tr>
 <td>68</td>
 <td>2693836027826835029</td>
 <td>46886</td>
-<td>Landroid/support/v4/view/ViewPager$SimpleOnPageChangeListener;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewPager$SimpleOnPageChangeListener;</td>
 </tr>
 <tr>
 <td>69</td>
 <td>-786851131260004710</td>
 <td>46787</td>
-<td>Landroid/support/v4/widget/CursorFilter$CursorFilterClient;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;CursorFilter$CursorFilterClient;</td>
 </tr>
 <tr>
 <td>70</td>
 <td>8667997251744534852</td>
 <td>46787</td>
-<td>Landroid/support/v4/app/BackStackRecord$Op;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;BackStackRecord$Op;</td>
 </tr>
 <tr>
 <td>71</td>
 <td>-5475116159158576131</td>
 <td>46748</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityRecordCompatIcsMr1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityRecordCompatIcsMr1;</td>
 </tr>
 <tr>
 <td>72</td>
 <td>5002996181779391509</td>
 <td>46723</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityNodeInfoCompatJellyBean;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityNodeInfoCompatJellyBean;</td>
 </tr>
 <tr>
 <td>73</td>
 <td>4936223830400664217</td>
 <td>46719</td>
-<td>Landroid/support/v4/content/LocalBroadcastManager$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;LocalBroadcastManager$1;</td>
 </tr>
 <tr>
 <td>74</td>
 <td>239062217891206692</td>
 <td>46658</td>
-<td>Landroid/support/v4/content/Loader$OnLoadCompleteListener;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;Loader$OnLoadCompleteListener;</td>
 </tr>
 <tr>
 <td>75</td>
 <td>-4913400411363934046</td>
 <td>46548</td>
-<td>Landroid/support/v4/view/AccessibilityDelegateCompatIcs$AccessibilityDelegateBridge;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;AccessibilityDelegateCompatIcs$AccessibilityDelegateBridge;</td>
 </tr>
 <tr>
 <td>76</td>
 <td>5650689994489871625</td>
 <td>46535</td>
-<td>Landroid/support/v4/view/AccessibilityDelegateCompatIcs$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;AccessibilityDelegateCompatIcs$1;</td>
 </tr>
 <tr>
 <td>77</td>
 <td>4892105813053381800</td>
 <td>46481</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$AsyncTaskResult;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$AsyncTaskResult;</td>
 </tr>
 <tr>
 <td>78</td>
 <td>6021955058463343957</td>
 <td>46358</td>
-<td>Landroid/support/v4/app/FragmentActivity$FragmentTag;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentActivity$FragmentTag;</td>
 </tr>
 <tr>
 <td>79</td>
 <td>997731539676885091</td>
 <td>46090</td>
-<td>Landroid/support/v4/view/AccessibilityDelegateCompat$AccessibilityDelegateIcsImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;AccessibilityDelegateCompat$AccessibilityDelegateIcsImpl;</td>
 </tr>
 <tr>
 <td>80</td>
 <td>1092001379795394415</td>
 <td>46030</td>
-<td>Lcom/google/android/gms/common/GooglePlayServicesNotAvailableException;</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;common&#x2F;GooglePlayServicesNotAvailableException;</td>
 </tr>
 <tr>
 <td>81</td>
 <td>6233302609198898297</td>
 <td>46028</td>
-<td>Landroid/support/v4/widget/SimpleCursorAdapter$ViewBinder;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;SimpleCursorAdapter$ViewBinder;</td>
 </tr>
 <tr>
 <td>82</td>
 <td>855966447952261336</td>
 <td>46024</td>
-<td>Landroid/support/v4/widget/SimpleCursorAdapter$CursorToStringConverter;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;SimpleCursorAdapter$CursorToStringConverter;</td>
 </tr>
 <tr>
 <td>83</td>
 <td>720132315695652952</td>
 <td>45931</td>
-<td>Landroid/support/v4/app/FragmentState$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentState$1;</td>
 </tr>
 <tr>
 <td>84</td>
 <td>-4176127283910384678</td>
 <td>45931</td>
-<td>Landroid/support/v4/app/FragmentManagerState$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerState$1;</td>
 </tr>
 <tr>
 <td>85</td>
 <td>4286589477084046391</td>
 <td>45931</td>
-<td>Landroid/support/v4/app/BackStackState$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;BackStackState$1;</td>
 </tr>
 <tr>
 <td>86</td>
 <td>3462422210892878260</td>
 <td>45776</td>
-<td>Landroid/support/v4/app/ListFragment$2;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ListFragment$2;</td>
 </tr>
 <tr>
 <td>87</td>
 <td>-7093935369431053865</td>
 <td>45718</td>
-<td>Landroid/support/v4/view/AccessibilityDelegateCompat$AccessibilityDelegateIcsImpl$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;AccessibilityDelegateCompat$AccessibilityDelegateIcsImpl$1;</td>
 </tr>
 <tr>
 <td>88</td>
 <td>5066173829313712639</td>
 <td>45678</td>
-<td>Landroid/support/v4/app/Fragment$SavedState$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;Fragment$SavedState$1;</td>
 </tr>
 <tr>
 <td>89</td>
 <td>3904811169429859734</td>
 <td>45667</td>
-<td>Landroid/support/v4/content/Loader$ForceLoadContentObserver;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;Loader$ForceLoadContentObserver;</td>
 </tr>
 <tr>
 <td>90</td>
 <td>-2256735085640949925</td>
 <td>45608</td>
-<td>Landroid/support/v4/view/AccessibilityDelegateCompat$AccessibilityDelegateJellyBeanImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;AccessibilityDelegateCompat$AccessibilityDelegateJellyBeanImpl;</td>
 </tr>
 <tr>
 <td>91</td>
 <td>343007254769290917</td>
 <td>45595</td>
-<td>Landroid/support/v4/view/ViewPager$SavedState$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewPager$SavedState$1;</td>
 </tr>
 <tr>
 <td>92</td>
 <td>3277445617080844160</td>
 <td>45450</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityNodeProviderCompat$AccessibilityNodeProviderJellyBeanImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityNodeProviderCompat$AccessibilityNodeProviderJellyBeanImpl;</td>
 </tr>
 <tr>
 <td>93</td>
 <td>-8522484960838180971</td>
 <td>45430</td>
-<td>Lcom/google/ads/util/a$a;</td>
+<td>Lcom&#x2F;google&#x2F;ads&#x2F;util&#x2F;a$a;</td>
 </tr>
 <tr>
 <td>94</td>
 <td>7484484164573575266</td>
 <td>45385</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$2;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$2;</td>
 </tr>
 <tr>
 <td>95</td>
 <td>504944274815651800</td>
 <td>45314</td>
-<td>Landroid/support/v4/view/ViewPager$1;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewPager$1;</td>
 </tr>
 <tr>
 <td>96</td>
 <td>5364514390186567115</td>
 <td>45165</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityManagerCompatIcs$AccessibilityStateChangeListenerBridge;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityManagerCompatIcs$AccessibilityStateChangeListenerBridge;</td>
 </tr>
 <tr>
 <td>97</td>
 <td>-1930552062862662117</td>
 <td>45153</td>
-<td>Landroid/support/v4/view/AccessibilityDelegateCompatIcs;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;AccessibilityDelegateCompatIcs;</td>
 </tr>
 <tr>
 <td>98</td>
 <td>-1303476657272658237</td>
 <td>45088</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityEventCompat$AccessibilityEventIcsImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityEventCompat$AccessibilityEventIcsImpl;</td>
 </tr>
 <tr>
 <td>99</td>
 <td>8194078639849743862</td>
 <td>45063</td>
-<td>Landroid/support/v4/app/LoaderManager;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;LoaderManager;</td>
 </tr>
 <tr>
 <td>100</td>
 <td>-5328076847440050904</td>
 <td>45023</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityRecordCompat$AccessibilityRecordJellyBeanImpl;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityRecordCompat$AccessibilityRecordJellyBeanImpl;</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h3 id="Top-100-Method-Signatures"><a href="#Top-100-Method-Signatures" class="headerlink" title="Top 100 Method Signatures"></a>Top 100 Method Signatures</h3><p>Note, method signature is first one seen and the caveats about class paths also apply here – specifically, many popular methods are empty or nearly empty.</p>
 <table>
 <thead>
@@ -763,611 +764,609 @@ ga('send', 'pageview');
 <th>Signature</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>1</td>
 <td>-7642079844424071458</td>
 <td>108157</td>
-<td>Lcom/aaplab/android/robird/util/ThemeUtils;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;util&#x2F;ThemeUtils;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>2</td>
 <td>-6539677568569540121</td>
 <td>92107</td>
-<td>Lcom/handmark/pulltorefresh/library/R;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;handmark&#x2F;pulltorefresh&#x2F;library&#x2F;R;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>3</td>
 <td>8202678715559741078</td>
 <td>85637</td>
-<td>Lcom/nostra13/universalimageloader/core/LoadAndDisplayImageTask$1;-&gt;<init>(Lcom/nostra13/universalimageloader/core/LoadAndDisplayImageTask;)V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;LoadAndDisplayImageTask$1;-&gt;<init>(Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;LoadAndDisplayImageTask;)V</td>
 </tr>
 <tr>
 <td>4</td>
 <td>4890160260607866519</td>
 <td>84235</td>
-<td>Ltwitter4j/internal/logging/LoggerFactory;-&gt;<init>()V</init></td>
+<td>Ltwitter4j&#x2F;internal&#x2F;logging&#x2F;LoggerFactory;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>5</td>
 <td>2609197996308319503</td>
 <td>84222</td>
-<td>Ltwitter4j/UserStreamAdapter;-&gt;<init>()V</init></td>
+<td>Ltwitter4j&#x2F;UserStreamAdapter;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>6</td>
 <td>1118179837447239723</td>
 <td>83255</td>
-<td>Lcom/google/analytics/tracking/android/HitBuilder;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;google&#x2F;analytics&#x2F;tracking&#x2F;android&#x2F;HitBuilder;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>7</td>
 <td>-5936151236995089740</td>
 <td>80384</td>
-<td>Lcom/nostra13/universalimageloader/core/assist/FlushedInputStream;-&gt;<init>(Ljava/io/InputStream;)V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;FlushedInputStream;-&gt;<init>(Ljava&#x2F;io&#x2F;InputStream;)V</td>
 </tr>
 <tr>
 <td>8</td>
 <td>-7680277393425055583</td>
 <td>78740</td>
-<td>Ltwitter4j/internal/http/HttpClientImpl$1;-&gt;<init>(Ltwitter4j/internal/http/HttpClientImpl;)V</init></td>
+<td>Ltwitter4j&#x2F;internal&#x2F;http&#x2F;HttpClientImpl$1;-&gt;<init>(Ltwitter4j&#x2F;internal&#x2F;http&#x2F;HttpClientImpl;)V</td>
 </tr>
 <tr>
 <td>9</td>
 <td>-7092896683557467419</td>
 <td>78187</td>
-<td>Lcom/nostra13/universalimageloader/core/DefaultConfigurationFactory;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;DefaultConfigurationFactory;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>10</td>
 <td>-4701498684616902325</td>
 <td>78131</td>
-<td>Ltwitter4j/auth/AuthorizationFactory;-&gt;<init>()V</init></td>
+<td>Ltwitter4j&#x2F;auth&#x2F;AuthorizationFactory;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>11</td>
 <td>-3124051984392334424</td>
 <td>74756</td>
-<td>Lcom/aaplab/android/robird/ui/widget/photoview/ScrollerProxy;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;widget&#x2F;photoview&#x2F;ScrollerProxy;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>12</td>
 <td>-3752891835737638512</td>
 <td>70619</td>
-<td>Lcom/nostra13/universalimageloader/core/ImageLoaderEngine$1;-&gt;<init>(Lcom/nostra13/universalimageloader/core/ImageLoaderEngine;Lcom/nostra13/universalimageloader/core/LoadAndDisplayImageTask;)V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;ImageLoaderEngine$1;-&gt;<init>(Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;ImageLoaderEngine;Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;LoadAndDisplayImageTask;)V</td>
 </tr>
 <tr>
 <td>13</td>
 <td>7877155950984699004</td>
 <td>69899</td>
-<td>Landroid/support/v4/app/SuperNotCalledException;-&gt;<init>(Ljava/lang/String;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;SuperNotCalledException;-&gt;<init>(Ljava&#x2F;lang&#x2F;String;)V</td>
 </tr>
 <tr>
 <td>14</td>
 <td>-5007384885342135023</td>
 <td>69160</td>
-<td>Lcom/aaplab/android/robird/R$xml;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;R$xml;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>15</td>
 <td>4628587325345143326</td>
 <td>67922</td>
-<td>Lcom/google/analytics/tracking/android/AnalyticsGmsCoreClient$AnalyticsServiceConnection;-&gt;<init>(Lcom/google/analytics/tracking/android/AnalyticsGmsCoreClient;)V</init></td>
+<td>Lcom&#x2F;google&#x2F;analytics&#x2F;tracking&#x2F;android&#x2F;AnalyticsGmsCoreClient$AnalyticsServiceConnection;-&gt;<init>(Lcom&#x2F;google&#x2F;analytics&#x2F;tracking&#x2F;android&#x2F;AnalyticsGmsCoreClient;)V</td>
 </tr>
 <tr>
 <td>16</td>
 <td>3307061431700887237</td>
 <td>67203</td>
-<td>Ltwitter4j/internal/logging/SLF4JLoggerFactory;-&gt;<init>()V</init></td>
+<td>Ltwitter4j&#x2F;internal&#x2F;logging&#x2F;SLF4JLoggerFactory;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>17</td>
 <td>-8202474463569554070</td>
 <td>67026</td>
-<td>Lcom/nostra13/universalimageloader/core/assist/DiscCacheUtil;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;DiscCacheUtil;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>18</td>
 <td>-9115786371403805780</td>
 <td>66898</td>
-<td>Lcom/urbandroid/sleep/R$attr;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;urbandroid&#x2F;sleep&#x2F;R$attr;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>19</td>
 <td>8771223191024956139</td>
 <td>66782</td>
-<td>Landroid/support/v4/app/NoSaveStateFrameLayout;-&gt;<init>(Landroid/content/Context;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;NoSaveStateFrameLayout;-&gt;<init>(Landroid&#x2F;content&#x2F;Context;)V</td>
 </tr>
 <tr>
 <td>20</td>
 <td>-8728496932605184659</td>
 <td>66756</td>
-<td>Lcom/squareup/otto/ThreadEnforcer$2;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;squareup&#x2F;otto&#x2F;ThreadEnforcer$2;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>21</td>
 <td>336673459420538461</td>
 <td>66275</td>
-<td>Lcom/nostra13/universalimageloader/core/assist/deque/LinkedBlockingDeque$Itr;-&gt;<init>(Lcom/nostra13/universalimageloader/core/assist/deque/LinkedBlockingDeque;)V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;deque&#x2F;LinkedBlockingDeque$Itr;-&gt;<init>(Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;deque&#x2F;LinkedBlockingDeque;)V</td>
 </tr>
 <tr>
 <td>22</td>
 <td>5729975003762079487</td>
 <td>66226</td>
-<td>Lcom/nostra13/universalimageloader/core/assist/deque/LinkedBlockingDeque$Itr;-&gt;<init>(Lcom/nostra13/universalimageloader/core/assist/deque/LinkedBlockingDeque;Lcom/nostra13/universalimageloader/core/assist/deque/LinkedBlockingDeque$1;)V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;deque&#x2F;LinkedBlockingDeque$Itr;-&gt;<init>(Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;deque&#x2F;LinkedBlockingDeque;Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;deque&#x2F;LinkedBlockingDeque$1;)V</td>
 </tr>
 <tr>
 <td>23</td>
 <td>-2401040049338412171</td>
 <td>65842</td>
-<td>Lcom/nostra13/universalimageloader/core/display/SimpleBitmapDisplayer;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;display&#x2F;SimpleBitmapDisplayer;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>24</td>
 <td>-2929060470316057339</td>
 <td>65614</td>
-<td>Landroid/support/v4/database/DatabaseUtilsCompat;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;database&#x2F;DatabaseUtilsCompat;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>25</td>
 <td>6315692033328304976</td>
 <td>65281</td>
-<td>Landroid/support/v4/widget/SlidingPaneLayout$SlidingPanelLayoutImplBase;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;SlidingPaneLayout$SlidingPanelLayoutImplBase;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>26</td>
 <td>-893111063096445170</td>
 <td>65223</td>
-<td>Lcom/nostra13/universalimageloader/core/assist/MemoryCacheUtil$1;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;core&#x2F;assist&#x2F;MemoryCacheUtil$1;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>27</td>
 <td>-675924626915601184</td>
 <td>65006</td>
-<td>Lcom/aaplab/android/robird/ui/SearchFragment$1;-&gt;<init>(Lcom/aaplab/android/robird/ui/SearchFragment;Ltwitter4j/Twitter;)V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;SearchFragment$1;-&gt;<init>(Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;SearchFragment;Ltwitter4j&#x2F;Twitter;)V</td>
 </tr>
 <tr>
 <td>28</td>
 <td>-3847130604763184100</td>
 <td>64027</td>
-<td>Lcom/urbandroid/common/http/StringResponseHandlerTemplate;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;urbandroid&#x2F;common&#x2F;http&#x2F;StringResponseHandlerTemplate;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>29</td>
 <td>1416323870660580531</td>
 <td>63987</td>
-<td>Lcom/google/analytics/tracking/android/NoopDispatcher;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;google&#x2F;analytics&#x2F;tracking&#x2F;android&#x2F;NoopDispatcher;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>30</td>
 <td>-3784336663845911879</td>
 <td>63855</td>
-<td>Lcom/aaplab/android/robird/ui/widget/popupmenu/ListPopupWindowCompat$ResizePopupRunnable;-&gt;<init>(Lcom/aaplab/android/robird/ui/widget/popupmenu/ListPopupWindowCompat;)V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;widget&#x2F;popupmenu&#x2F;ListPopupWindowCompat$ResizePopupRunnable;-&gt;<init>(Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;widget&#x2F;popupmenu&#x2F;ListPopupWindowCompat;)V</td>
 </tr>
 <tr>
 <td>31</td>
 <td>8297103538565484969</td>
 <td>63801</td>
-<td>Lcom/aaplab/android/robird/ui/widget/popupmenu/ListPopupWindowCompat$ResizePopupRunnable;-&gt;<init>(Lcom/aaplab/android/robird/ui/widget/popupmenu/ListPopupWindowCompat;Lcom/aaplab/android/robird/ui/widget/popupmenu/ListPopupWindowCompat$1;)V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;widget&#x2F;popupmenu&#x2F;ListPopupWindowCompat$ResizePopupRunnable;-&gt;<init>(Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;widget&#x2F;popupmenu&#x2F;ListPopupWindowCompat;Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;widget&#x2F;popupmenu&#x2F;ListPopupWindowCompat$1;)V</td>
 </tr>
 <tr>
 <td>32</td>
 <td>4173837491973374472</td>
 <td>63394</td>
-<td>Lcom/handmark/pulltorefresh/library/PullToRefreshBase$1;-&gt;run()V</td>
+<td>Lcom&#x2F;handmark&#x2F;pulltorefresh&#x2F;library&#x2F;PullToRefreshBase$1;-&gt;run()V</td>
 </tr>
 <tr>
 <td>33</td>
 <td>-945002099871771481</td>
 <td>62319</td>
-<td>Lcom/google/android/gms/internal/ar;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;internal&#x2F;ar;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>34</td>
 <td>2544757508923420717</td>
 <td>61319</td>
-<td>Lcom/google/android/gms/internal/m;-&gt;<init>(Ljava/lang/String;)V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;internal&#x2F;m;-&gt;<init>(Ljava&#x2F;lang&#x2F;String;)V</td>
 </tr>
 <tr>
 <td>35</td>
 <td>-8312584374661018230</td>
 <td>60614</td>
-<td>Lcom/google/android/gms/wallet/o;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;wallet&#x2F;o;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>36</td>
 <td>-3011160232611646563</td>
 <td>59302</td>
-<td>Lcom/twitter/Extractor$1;-&gt;<init>(Lcom/twitter/Extractor;)V</init></td>
+<td>Lcom&#x2F;twitter&#x2F;Extractor$1;-&gt;<init>(Lcom&#x2F;twitter&#x2F;Extractor;)V</td>
 </tr>
 <tr>
 <td>37</td>
 <td>3315472411031331071</td>
 <td>59008</td>
-<td>Lcom/handmark/pulltorefresh/library/extras/PullToRefreshWebView2$JsValueCallback;-&gt;<init>(Lcom/handmark/pulltorefresh/library/extras/PullToRefreshWebView2;)V</init></td>
+<td>Lcom&#x2F;handmark&#x2F;pulltorefresh&#x2F;library&#x2F;extras&#x2F;PullToRefreshWebView2$JsValueCallback;-&gt;<init>(Lcom&#x2F;handmark&#x2F;pulltorefresh&#x2F;library&#x2F;extras&#x2F;PullToRefreshWebView2;)V</td>
 </tr>
 <tr>
 <td>38</td>
 <td>-5559722447751808665</td>
 <td>58966</td>
-<td>Lde/keyboardsurfer/android/widget/crouton/Manager$1;-&gt;<init>(Lde/keyboardsurfer/android/widget/crouton/Manager;Landroid/view/View;Lde/keyboardsurfer/android/widget/crouton/Crouton;)V</init></td>
+<td>Lde&#x2F;keyboardsurfer&#x2F;android&#x2F;widget&#x2F;crouton&#x2F;Manager$1;-&gt;<init>(Lde&#x2F;keyboardsurfer&#x2F;android&#x2F;widget&#x2F;crouton&#x2F;Manager;Landroid&#x2F;view&#x2F;View;Lde&#x2F;keyboardsurfer&#x2F;android&#x2F;widget&#x2F;crouton&#x2F;Crouton;)V</td>
 </tr>
 <tr>
 <td>39</td>
 <td>3699353597961706907</td>
 <td>58289</td>
-<td>Landroid/support/v4/widget/SlidingPaneLayout$SlidingPanelLayoutImplJBMR1;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;SlidingPaneLayout$SlidingPanelLayoutImplJBMR1;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>40</td>
 <td>-8046356283759202622</td>
 <td>58235</td>
-<td>Landroid/support/v4/widget/SlidingPaneLayout$SimplePanelSlideListener;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;SlidingPaneLayout$SimplePanelSlideListener;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>41</td>
 <td>6652028519967212390</td>
 <td>57846</td>
-<td>Lcom/squareup/otto/Bus$2;-&gt;<init>(Lcom/squareup/otto/Bus;)V</init></td>
+<td>Lcom&#x2F;squareup&#x2F;otto&#x2F;Bus$2;-&gt;<init>(Lcom&#x2F;squareup&#x2F;otto&#x2F;Bus;)V</td>
 </tr>
 <tr>
 <td>42</td>
 <td>7268059251633904232</td>
 <td>57804</td>
-<td>Lcom/google/android/gms/maps/model/RuntimeRemoteException;-&gt;<init>(Landroid/os/RemoteException;)V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;maps&#x2F;model&#x2F;RuntimeRemoteException;-&gt;<init>(Landroid&#x2F;os&#x2F;RemoteException;)V</td>
 </tr>
 <tr>
 <td>43</td>
 <td>2308415025046174030</td>
 <td>57787</td>
-<td>Lcom/nostra13/universalimageloader/utils/ImageSizeUtils$1;-&gt;<clinit>()V</clinit></td>
+<td>Lcom&#x2F;nostra13&#x2F;universalimageloader&#x2F;utils&#x2F;ImageSizeUtils$1;-&gt;<clinit>()V</td>
 </tr>
 <tr>
 <td>44</td>
 <td>6014432581692261376</td>
 <td>56721</td>
-<td>Lcom/google/analytics/tracking/android/GAServiceProxy$2;-&gt;run()V</td>
+<td>Lcom&#x2F;google&#x2F;analytics&#x2F;tracking&#x2F;android&#x2F;GAServiceProxy$2;-&gt;run()V</td>
 </tr>
 <tr>
 <td>45</td>
 <td>-7564279190829922402</td>
 <td>56698</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$InternalHandler;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$InternalHandler;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>46</td>
 <td>-8522484960838180971</td>
 <td>56075</td>
-<td>Lcom/handmark/pulltorefresh/library/PullToRefreshScrollView;-&gt;<init>(Landroid/content/Context;)V</init></td>
+<td>Lcom&#x2F;handmark&#x2F;pulltorefresh&#x2F;library&#x2F;PullToRefreshScrollView;-&gt;<init>(Landroid&#x2F;content&#x2F;Context;)V</td>
 </tr>
 <tr>
 <td>47</td>
 <td>-8522152698274272858</td>
 <td>56041</td>
-<td>Landroid/support/v4/widget/SearchViewCompatIcs;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;SearchViewCompatIcs;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>48</td>
 <td>3363593219160481475</td>
 <td>55914</td>
-<td>Landroid/support/v4/app/ShareCompatICS;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ShareCompatICS;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>49</td>
 <td>-6926701068898159683</td>
 <td>55805</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$InternalHandler;-&gt;<init>(Landroid/support/v4/content/ModernAsyncTask$1;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$InternalHandler;-&gt;<init>(Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$1;)V</td>
 </tr>
 <tr>
 <td>50</td>
 <td>8721373828724890608</td>
 <td>55392</td>
-<td>Landroid/support/v4/app/FragmentManagerState;-&gt;<clinit>()V</clinit></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerState;-&gt;<clinit>()V</td>
 </tr>
 <tr>
 <td>51</td>
 <td>4213088151749349370</td>
 <td>55379</td>
-<td>Landroid/support/v4/app/FragmentManagerState;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerState;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>52</td>
 <td>5389859633888440453</td>
 <td>55377</td>
-<td>Landroid/support/v4/app/FragmentManagerState;-&gt;<init>(Landroid/os/Parcel;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerState;-&gt;<init>(Landroid&#x2F;os&#x2F;Parcel;)V</td>
 </tr>
 <tr>
 <td>53</td>
 <td>7889800717182803764</td>
 <td>55343</td>
-<td>Lcom/google/android/gms/tagmanager/o$1;-&gt;bc(Ljava/lang/String;)V</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;tagmanager&#x2F;o$1;-&gt;bc(Ljava&#x2F;lang&#x2F;String;)V</td>
 </tr>
 <tr>
 <td>54</td>
 <td>-1937623317952501810</td>
 <td>55045</td>
-<td>Lcom/unity3d/player/d$2;-&gt;<init>(Lcom/unity3d/player/d;Landroid/view/View;)V</init></td>
+<td>Lcom&#x2F;unity3d&#x2F;player&#x2F;d$2;-&gt;<init>(Lcom&#x2F;unity3d&#x2F;player&#x2F;d;Landroid&#x2F;view&#x2F;View;)V</td>
 </tr>
 <tr>
 <td>55</td>
 <td>-1853703880280089887</td>
 <td>54821</td>
-<td>Landroid/support/v4/widget/ListViewAutoScrollHelper;-&gt;<init>(Landroid/widget/ListView;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;ListViewAutoScrollHelper;-&gt;<init>(Landroid&#x2F;widget&#x2F;ListView;)V</td>
 </tr>
 <tr>
 <td>56</td>
 <td>153996737814003651</td>
 <td>54818</td>
-<td>Lcom/aaplab/android/robird/util/Events$PullDownToRefreshEvent;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;util&#x2F;Events$PullDownToRefreshEvent;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>57</td>
 <td>-757778117290738428</td>
 <td>54356</td>
-<td>Landroid/support/v4/widget/ViewDragHelper$Callback;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;ViewDragHelper$Callback;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>58</td>
 <td>-7013990137290522882</td>
 <td>54191</td>
-<td>Landroid/support/v4/os/ParcelableCompatCreatorHoneycombMR2;-&gt;<init>(Landroid/support/v4/os/ParcelableCompatCreatorCallbacks;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompatCreatorHoneycombMR2;-&gt;<init>(Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompatCreatorCallbacks;)V</td>
 </tr>
 <tr>
 <td>59</td>
 <td>-526199542608917401</td>
 <td>54151</td>
-<td>Lcom/urbandroid/sleep/alarmclock/DontPressWithParentLayout;-&gt;<init>(Landroid/content/Context;Landroid/util/AttributeSet;)V</init></td>
+<td>Lcom&#x2F;urbandroid&#x2F;sleep&#x2F;alarmclock&#x2F;DontPressWithParentLayout;-&gt;<init>(Landroid&#x2F;content&#x2F;Context;Landroid&#x2F;util&#x2F;AttributeSet;)V</td>
 </tr>
 <tr>
 <td>60</td>
 <td>8802143954482027195</td>
 <td>54126</td>
-<td>Landroid/support/v4/app/Fragment$InstantiationException;-&gt;<init>(Ljava/lang/String;Ljava/lang/Exception;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;Fragment$InstantiationException;-&gt;<init>(Ljava&#x2F;lang&#x2F;String;Ljava&#x2F;lang&#x2F;Exception;)V</td>
 </tr>
 <tr>
 <td>61</td>
 <td>-8778086982190029168</td>
 <td>53895</td>
-<td>Landroid/support/v4/os/ParcelableCompatCreatorHoneycombMR2;-&gt;createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompatCreatorHoneycombMR2;-&gt;createFromParcel(Landroid&#x2F;os&#x2F;Parcel;)Ljava&#x2F;lang&#x2F;Object;</td>
 </tr>
 <tr>
 <td>62</td>
 <td>2590316452339699669</td>
 <td>53895</td>
-<td>Landroid/support/v4/os/ParcelableCompatCreatorHoneycombMR2;-&gt;createFromParcel(Landroid/os/Parcel;Ljava/lang/ClassLoader;)Ljava/lang/Object;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompatCreatorHoneycombMR2;-&gt;createFromParcel(Landroid&#x2F;os&#x2F;Parcel;Ljava&#x2F;lang&#x2F;ClassLoader;)Ljava&#x2F;lang&#x2F;Object;</td>
 </tr>
 <tr>
 <td>63</td>
 <td>-902756984570334141</td>
 <td>53880</td>
-<td>Landroid/support/v4/os/ParcelableCompatCreatorHoneycombMR2;-&gt;newArray(I)[Ljava/lang/Object;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;os&#x2F;ParcelableCompatCreatorHoneycombMR2;-&gt;newArray(I)[Ljava&#x2F;lang&#x2F;Object;</td>
 </tr>
 <tr>
 <td>64</td>
 <td>-8155489102404949519</td>
 <td>53812</td>
-<td>Lcom/google/analytics/tracking/android/FutureApis;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;google&#x2F;analytics&#x2F;tracking&#x2F;android&#x2F;FutureApis;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>65</td>
 <td>7706868487092767732</td>
 <td>53473</td>
-<td>Landroid/support/v4/app/ListFragment;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ListFragment;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>66</td>
 <td>5534139342145712559</td>
 <td>53314</td>
-<td>Lcom/aaplab/android/robird/ui/MediaFragment$1;-&gt;onLoadingCancelled(Ljava/lang/String;Landroid/view/View;)V</td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;MediaFragment$1;-&gt;onLoadingCancelled(Ljava&#x2F;lang&#x2F;String;Landroid&#x2F;view&#x2F;View;)V</td>
 </tr>
 <tr>
 <td>67</td>
 <td>-2916310843770363879</td>
 <td>53211</td>
-<td>Lcom/aaplab/android/robird/ui/widget/HackyViewPager;-&gt;<init>(Landroid/content/Context;Landroid/util/AttributeSet;)V</init></td>
+<td>Lcom&#x2F;aaplab&#x2F;android&#x2F;robird&#x2F;ui&#x2F;widget&#x2F;HackyViewPager;-&gt;<init>(Landroid&#x2F;content&#x2F;Context;Landroid&#x2F;util&#x2F;AttributeSet;)V</td>
 </tr>
 <tr>
 <td>68</td>
 <td>-5945944459787456127</td>
 <td>53070</td>
-<td>Landroid/support/v4/app/ActivityCompatHoneycomb;-&gt;invalidateOptionsMenu(Landroid/app/Activity;)V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ActivityCompatHoneycomb;-&gt;invalidateOptionsMenu(Landroid&#x2F;app&#x2F;Activity;)V</td>
 </tr>
 <tr>
 <td>69</td>
 <td>-3589436608246049539</td>
 <td>53070</td>
-<td>Landroid/support/v4/app/ActivityCompatHoneycomb;-&gt;dump(Landroid/app/Activity;Ljava/lang/String;Ljava/io/FileDescriptor;Ljava/io/PrintWriter;[Ljava/lang/String;)V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;ActivityCompatHoneycomb;-&gt;dump(Landroid&#x2F;app&#x2F;Activity;Ljava&#x2F;lang&#x2F;String;Ljava&#x2F;io&#x2F;FileDescriptor;Ljava&#x2F;io&#x2F;PrintWriter;[Ljava&#x2F;lang&#x2F;String;)V</td>
 </tr>
 <tr>
 <td>70</td>
 <td>-7627280748607221422</td>
 <td>52984</td>
-<td>Landroid/support/v4/app/FragmentPagerAdapter;-&gt;<init>(Landroid/support/v4/app/FragmentManager;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentPagerAdapter;-&gt;<init>(Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManager;)V</td>
 </tr>
 <tr>
 <td>71</td>
 <td>-8514214176211164536</td>
 <td>52797</td>
-<td>Lcom/google/android/gms/analytics/internal/IAnalyticsService$Stub$Proxy;-&gt;<init>(Landroid/os/IBinder;)V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;analytics&#x2F;internal&#x2F;IAnalyticsService$Stub$Proxy;-&gt;<init>(Landroid&#x2F;os&#x2F;IBinder;)V</td>
 </tr>
 <tr>
 <td>72</td>
 <td>8321315701923846730</td>
 <td>52579</td>
-<td>Lcom/google/android/gms/dynamic/a$2;-&gt;<init>(Lcom/google/android/gms/dynamic/a;Landroid/app/Activity;Landroid/os/Bundle;Landroid/os/Bundle;)V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;dynamic&#x2F;a$2;-&gt;<init>(Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;dynamic&#x2F;a;Landroid&#x2F;app&#x2F;Activity;Landroid&#x2F;os&#x2F;Bundle;Landroid&#x2F;os&#x2F;Bundle;)V</td>
 </tr>
 <tr>
 <td>73</td>
 <td>-683162621362766186</td>
 <td>52442</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$3;-&gt;<init>(Landroid/support/v4/content/ModernAsyncTask;Ljava/util/concurrent/Callable;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$3;-&gt;<init>(Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask;Ljava&#x2F;util&#x2F;concurrent&#x2F;Callable;)V</td>
 </tr>
 <tr>
 <td>74</td>
 <td>5818020461474712792</td>
 <td>52404</td>
-<td>Lcom/google/android/gms/analytics/internal/Command$1;-&gt;createFromParcel(Landroid/os/Parcel;)Lcom/google/android/gms/analytics/internal/Command;</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;analytics&#x2F;internal&#x2F;Command$1;-&gt;createFromParcel(Landroid&#x2F;os&#x2F;Parcel;)Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;analytics&#x2F;internal&#x2F;Command;</td>
 </tr>
 <tr>
 <td>75</td>
 <td>-4927133974873939683</td>
 <td>52197</td>
-<td>Lcom/google/android/apps/dashclock/api/ExtensionData$1;-&gt;createFromParcel(Landroid/os/Parcel;)Lcom/google/android/apps/dashclock/api/ExtensionData;</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;apps&#x2F;dashclock&#x2F;api&#x2F;ExtensionData$1;-&gt;createFromParcel(Landroid&#x2F;os&#x2F;Parcel;)Lcom&#x2F;google&#x2F;android&#x2F;apps&#x2F;dashclock&#x2F;api&#x2F;ExtensionData;</td>
 </tr>
 <tr>
 <td>76</td>
 <td>-3399958614432743607</td>
 <td>52112</td>
-<td>Landroid/support/v4/view/ViewConfigurationCompatFroyo;-&gt;getScaledPagingTouchSlop(Landroid/view/ViewConfiguration;)I</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewConfigurationCompatFroyo;-&gt;getScaledPagingTouchSlop(Landroid&#x2F;view&#x2F;ViewConfiguration;)I</td>
 </tr>
 <tr>
 <td>77</td>
 <td>-2969348625307750576</td>
 <td>51979</td>
-<td>Landroid/support/v4/view/KeyEventCompatEclair;-&gt;isTracking(Landroid/view/KeyEvent;)Z</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;KeyEventCompatEclair;-&gt;isTracking(Landroid&#x2F;view&#x2F;KeyEvent;)Z</td>
 </tr>
 <tr>
 <td>78</td>
 <td>-2353508751924428670</td>
 <td>51901</td>
-<td>Lcom/google/android/gms/games/multiplayer/realtime/RoomEntity$a;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;games&#x2F;multiplayer&#x2F;realtime&#x2F;RoomEntity$a;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>79</td>
 <td>-7929451300585271506</td>
 <td>51785</td>
-<td>Landroid/support/v4/view/accessibility/AccessibilityManagerCompat$AccessibilityManagerIcsImpl$1;-&gt;onAccessibilityStateChanged(Z)V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;accessibility&#x2F;AccessibilityManagerCompat$AccessibilityManagerIcsImpl$1;-&gt;onAccessibilityStateChanged(Z)V</td>
 </tr>
 <tr>
 <td>80</td>
 <td>1657002645692441933</td>
 <td>51685</td>
-<td>Landroid/support/v4/view/VelocityTrackerCompatHoneycomb;-&gt;getXVelocity(Landroid/view/VelocityTracker;I)F</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;VelocityTrackerCompatHoneycomb;-&gt;getXVelocity(Landroid&#x2F;view&#x2F;VelocityTracker;I)F</td>
 </tr>
 <tr>
 <td>81</td>
 <td>-5901020707757742812</td>
 <td>51678</td>
-<td>Landroid/support/v4/util/LogWriter;-&gt;<init>(Ljava/lang/String;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;util&#x2F;LogWriter;-&gt;<init>(Ljava&#x2F;lang&#x2F;String;)V</td>
 </tr>
 <tr>
 <td>82</td>
 <td>-780048243655997484</td>
 <td>51617</td>
-<td>Landroid/support/v4/app/FragmentManagerState;-&gt;describeContents()I</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerState;-&gt;describeContents()I</td>
 </tr>
 <tr>
 <td>83</td>
 <td>6743212674057076693</td>
 <td>51617</td>
-<td>Landroid/support/v4/app/FragmentManagerState;-&gt;writeToParcel(Landroid/os/Parcel;I)V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;FragmentManagerState;-&gt;writeToParcel(Landroid&#x2F;os&#x2F;Parcel;I)V</td>
 </tr>
 <tr>
 <td>84</td>
 <td>-736970292080916002</td>
 <td>51616</td>
-<td>Lcom/google/android/gms/analytics/internal/Command$1;-&gt;createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object;</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;analytics&#x2F;internal&#x2F;Command$1;-&gt;createFromParcel(Landroid&#x2F;os&#x2F;Parcel;)Ljava&#x2F;lang&#x2F;Object;</td>
 </tr>
 <tr>
 <td>85</td>
 <td>-5241685838796254039</td>
 <td>51611</td>
-<td>Lcom/google/android/gms/analytics/internal/IAnalyticsService$Stub$Proxy;-&gt;asBinder()Landroid/os/IBinder;</td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;analytics&#x2F;internal&#x2F;IAnalyticsService$Stub$Proxy;-&gt;asBinder()Landroid&#x2F;os&#x2F;IBinder;</td>
 </tr>
 <tr>
 <td>86</td>
 <td>-5808535828223012233</td>
 <td>51461</td>
-<td>Landroid/support/v4/view/VelocityTrackerCompatHoneycomb;-&gt;getYVelocity(Landroid/view/VelocityTracker;I)F</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;VelocityTrackerCompatHoneycomb;-&gt;getYVelocity(Landroid&#x2F;view&#x2F;VelocityTracker;I)F</td>
 </tr>
 <tr>
 <td>87</td>
 <td>-2423550744584704325</td>
 <td>51331</td>
-<td>Lcom/google/android/gms/internal/kc;-&gt;<clinit>()V</clinit></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;internal&#x2F;kc;-&gt;<clinit>()V</td>
 </tr>
 <tr>
 <td>88</td>
 <td>-6705063738206203334</td>
 <td>51229</td>
-<td>Lcom/google/android/gms/internal/x;-&gt;<init>(Lcom/google/android/gms/ads/AdListener;)V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;internal&#x2F;x;-&gt;<init>(Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;ads&#x2F;AdListener;)V</td>
 </tr>
 <tr>
 <td>89</td>
 <td>-5437951835842775581</td>
 <td>51091</td>
-<td>Landroid/support/v4/content/ModernAsyncTask$1;-&gt;<init>()V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;ModernAsyncTask$1;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>90</td>
 <td>3400939097257307009</td>
 <td>51055</td>
-<td>Lcom/google/android/gms/tagmanager/cx;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;google&#x2F;android&#x2F;gms&#x2F;tagmanager&#x2F;cx;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>91</td>
 <td>9207932117182213076</td>
 <td>50985</td>
-<td>Landroid/support/v4/view/MotionEventCompatEclair;-&gt;findPointerIndex(Landroid/view/MotionEvent;I)I</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;MotionEventCompatEclair;-&gt;findPointerIndex(Landroid&#x2F;view&#x2F;MotionEvent;I)I</td>
 </tr>
 <tr>
 <td>92</td>
 <td>8447758234808132189</td>
 <td>50880</td>
-<td>Landroid/support/v4/app/NavUtilsJB;-&gt;getParentActivityIntent(Landroid/app/Activity;)Landroid/content/Intent;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;app&#x2F;NavUtilsJB;-&gt;getParentActivityIntent(Landroid&#x2F;app&#x2F;Activity;)Landroid&#x2F;content&#x2F;Intent;</td>
 </tr>
 <tr>
 <td>93</td>
 <td>4074238650528361008</td>
 <td>50793</td>
-<td>Landroid/support/v4/view/ViewCompatGingerbread;-&gt;setOverScrollMode(Landroid/view/View;I)V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;view&#x2F;ViewCompatGingerbread;-&gt;setOverScrollMode(Landroid&#x2F;view&#x2F;View;I)V</td>
 </tr>
 <tr>
 <td>94</td>
 <td>-6034617258200236949</td>
 <td>50764</td>
-<td>Landroid/support/v4/widget/ResourceCursorAdapter;-&gt;<init>(Landroid/content/Context;ILandroid/database/Cursor;)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;ResourceCursorAdapter;-&gt;<init>(Landroid&#x2F;content&#x2F;Context;ILandroid&#x2F;database&#x2F;Cursor;)V</td>
 </tr>
 <tr>
 <td>95</td>
 <td>-5799817234132788985</td>
 <td>50745</td>
-<td>Landroid/support/v4/widget/ResourceCursorAdapter;-&gt;<init>(Landroid/content/Context;ILandroid/database/Cursor;I)V</init></td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;widget&#x2F;ResourceCursorAdapter;-&gt;<init>(Landroid&#x2F;content&#x2F;Context;ILandroid&#x2F;database&#x2F;Cursor;I)V</td>
 </tr>
 <tr>
 <td>96</td>
 <td>3788487412323627274</td>
 <td>50741</td>
-<td>Landroid/support/v4/util/LogWriter;-&gt;flush()V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;util&#x2F;LogWriter;-&gt;flush()V</td>
 </tr>
 <tr>
 <td>97</td>
 <td>-6252821634745382551</td>
 <td>50741</td>
-<td>Landroid/support/v4/util/LogWriter;-&gt;flushBuilder()V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;util&#x2F;LogWriter;-&gt;flushBuilder()V</td>
 </tr>
 <tr>
 <td>98</td>
 <td>2401124206520909086</td>
 <td>50741</td>
-<td>Landroid/support/v4/util/LogWriter;-&gt;close()V</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;util&#x2F;LogWriter;-&gt;close()V</td>
 </tr>
 <tr>
 <td>99</td>
 <td>-4316020411289880285</td>
 <td>50701</td>
-<td>Lcom/handmark/pulltorefresh/library/BuildConfig;-&gt;<init>()V</init></td>
+<td>Lcom&#x2F;handmark&#x2F;pulltorefresh&#x2F;library&#x2F;BuildConfig;-&gt;<init>()V</td>
 </tr>
 <tr>
 <td>100</td>
 <td>8457541340339836364</td>
 <td>50645</td>
-<td>Landroid/support/v4/content/IntentCompatHoneycomb;-&gt;makeMainActivity(Landroid/content/ComponentName;)Landroid/content/Intent;</td>
+<td>Landroid&#x2F;support&#x2F;v4&#x2F;content&#x2F;IntentCompatHoneycomb;-&gt;makeMainActivity(Landroid&#x2F;content&#x2F;ComponentName;)Landroid&#x2F;content&#x2F;Intent;</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h2 id="Impacts-on-Model-Accuracy"><a href="#Impacts-on-Model-Accuracy" class="headerlink" title="Impacts on Model Accuracy"></a>Impacts on Model Accuracy</h2><p>Unfortunately, it seemed like filtering classes as described above had a negative impact on model accuracy. It’s not fun to write about negative results, but it might spark some useful discussion or prevent someone else from wasting time. If you’ve found opposite effects, I’d love to know more details about how you implemented it.</p>
-<p>Models were scored by selecting the top 100, 500, 1000, 5000, and 10,000 features using <a href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.mutual_info_score.html" target="_blank" rel="external">mutual information scoring</a> and then performing a 3 fold cross validation. These metrics aren’t perfect since they don’t represent total possible performance, but they should be good for comparison.</p>
+<p>Models were scored by selecting the top 100, 500, 1000, 5000, and 10,000 features using <a target="_blank" rel="noopener" href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.mutual_info_score.html">mutual information scoring</a> and then performing a 3 fold cross validation. These metrics aren’t perfect since they don’t represent total possible performance, but they should be good for comparison.</p>
 <p>Below is a table of model performance scores <strong>without</strong> popularity filtering:</p>
 <table>
 <thead>
@@ -1378,8 +1377,7 @@ ga('send', 'pageview');
 <th>accuracy</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>100</td>
 <td>0.946433740702</td>
 <td>0.977091995842</td>
@@ -1409,8 +1407,7 @@ ga('send', 'pageview');
 <td>0.981061094076</td>
 <td>0.97440419396</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>Below are the model scores <strong>with</strong> popularity filtering:</p>
 <table>
 <thead>
@@ -1421,8 +1418,7 @@ ga('send', 'pageview');
 <th>accuracy</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>100</td>
 <td>0.860611027171</td>
 <td>0.975812305816</td>
@@ -1452,22 +1448,21 @@ ga('send', 'pageview');
 <td>0.979931426705</td>
 <td>0.959205947827</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>I really expected better model performance with filtration, but a loss of ~1.5% is a fairly significant reduction in accuracy. Most of the loss in accuracy seems to be from recall since precision seems to be fairly unaffected. This suggests the model wasn’t able to detect certain types of malware when popular classes were filtered. I’m really not sure why this is. I’d need to investigate specifically which samples were missed to understand more, but there are other experiments which I think would help that I’d rather do first.</p>
 <p>Perhaps I could also modify thresholds to filter out only the tippy top most popular methods and classes, or reduce the threshold to filter out anything which occurs more than a dozen or so times.</p>
 <h2 id="Future-Work"><a href="#Future-Work" class="headerlink" title="Future Work"></a>Future Work</h2><p>The two things I really want to try are sample clustering and model blending. Sample clustering would allow me to cluster similar samples and reduce the total number of training samples. This would allow me to vastly scale up sample size without losing much information and without a proportional increase in training time.</p>
-<p>Blending and stacking is training multiple models on the same data and then using the output of those models as features for a meta estimator. In this way, the strengths of different models can be combined and the individual weaknesses reduced. It’s pretty common in <a href="https://www.kaggle.com/competitions" target="_blank" rel="external">Kaggle</a> competitions. I’ve written a bit about this in <a href="https://calebfenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/">Measuring the Usefulness of Multiple Models</a>.</p>
+<p>Blending and stacking is training multiple models on the same data and then using the output of those models as features for a meta estimator. In this way, the strengths of different models can be combined and the individual weaknesses reduced. It’s pretty common in <a target="_blank" rel="noopener" href="https://www.kaggle.com/competitions">Kaggle</a> competitions. I’ve written a bit about this in <a href="https://calebfenton.github.io/2017/09/28/measuring-the-usefulness-of-multiple-models/">Measuring the Usefulness of Multiple Models</a>.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/" data-id="ckb85psgw000qr5kdkv719b13" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/" data-id="ckzxb6f7l000chfaoaxjlgkfb" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/machine-learning/">machine learning</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/" rel="tag">research</a></li></ul>
 
     </footer>
   </div>
@@ -1498,7 +1493,7 @@ ga('send', 'pageview');
 
 <section id="comments">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 </section>
@@ -1539,7 +1534,7 @@ ga('send', 'pageview');
     <div id="twitter-feed" class="widget-wrap">
   <h3 class="widget-title">Twitter Feed</h3>
   <div class="widget">
-    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a class="twitter-timeline" data-height="2000" target="_blank" rel="noopener" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 </div>
 
@@ -1550,7 +1545,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/" rel="tag">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/" rel="tag">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/" rel="tag">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/" rel="tag">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/" rel="tag">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/" rel="tag">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/" rel="tag">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/" rel="tag">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/" rel="tag">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/" rel="tag">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/" rel="tag">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/" rel="tag">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/" rel="tag">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1580,7 +1575,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Caleb Fenton<br>
+      &copy; 2022 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -1597,7 +1592,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/';
+  var disqus_url = 'https://calebfenton.github.io/2017/09/25/filtering-popular-code-and-effects-on-model-accuracy/';
   
   (function(){
     var dsq = document.createElement('script');
@@ -1612,11 +1607,17 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>

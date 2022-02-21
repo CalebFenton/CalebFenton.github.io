@@ -6,19 +6,21 @@
   <title>Monitoring HTTPS Traffic of a Single App on OSX | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitiv">
-<meta name="keywords" content="python,networking">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Monitoring HTTPS Traffic of a Single App on OSX">
-<meta property="og:url" content="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/index.html">
+<meta property="og:url" content="https://calebfenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
 <meta property="og:description" content="If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitiv">
+<meta property="og:locale">
 <meta property="og:image" content="https://calebfenton.github.io/images/single-app-mitm-proxy/added_cert_untrusted.png">
 <meta property="og:image" content="https://calebfenton.github.io/images/single-app-mitm-proxy/trust_info.png">
 <meta property="og:image" content="https://calebfenton.github.io/images/single-app-mitm-proxy/cert_installed_trusted.png">
-<meta property="og:updated_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:published_time" content="2017-05-27T05:13:37.000Z">
+<meta property="article:modified_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:author" content="Caleb Fenton">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="networking">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Monitoring HTTPS Traffic of a Single App on OSX">
-<meta name="twitter:description" content="If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitiv">
 <meta name="twitter:image" content="https://calebfenton.github.io/images/single-app-mitm-proxy/added_cert_untrusted.png">
 <meta name="twitter:creator" content="@CalebFenton">
   
@@ -47,7 +49,9 @@
     <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -63,7 +67,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-</head>
+<meta name="generator" content="Hexo 6.0.0"></head>
 
 <body>
   <div id="container">
@@ -75,10 +79,6 @@ ga('send', 'pageview');
       <h1 id="logo-wrap">
         <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -106,7 +106,7 @@ ga('send', 'pageview');
         <section id="main"><article id="post-monitoring-https-of-a-single-app-on-osx" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/05/27/monitoring-https-of-a-single-app-on-osx/" class="article-date">
-  <time datetime="2017-05-27T07:13:37.000Z" itemprop="datePublished">2017-05-27</time>
+  <time datetime="2017-05-27T05:13:37.000Z" itemprop="datePublished">2017-05-27</time>
 </a>
     
   </div>
@@ -125,39 +125,47 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a href="https://en.wikipedia.org/wiki/Rosy_retrospection" target="_blank" rel="external">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a href="https://www.4chan.org" target="_blank" rel="external">deep dark web</a> for a few hundred <a href="https://coinmarketcap.com/currencies/dogecoin/" target="_blank" rel="external">dogecoin</a>.</p>
-<p>In today-time, doing any network analysis absolutely requires knowledge of HTTPS / SSL / TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how <a href="https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server" target="_blank" rel="external">Man-in-the-Middle works</a>, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.</p>
-<p>In this post, I’ll be describing how to monitor the encrypted HTTPS traffic of a single app on macOS as well as solutions to some of the frustrating problems I encountered.<br><a id="more"></a></p>
+        <p>If you reverse engineer network protocols or do any other network security stuff, you’ve probably needed to collect network traffic at least once – either to understand a protocol or look for sensitive information. Back in the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Rosy_retrospection">good old days</a>, this simply meant firing up tcpdump and watching those sweet, plaintext packets flow on by. Now, everyone has a stick up their butts about encryption – bunch of cry babies couldn’t handle getting their accounts hacked and their private info sold on the <a target="_blank" rel="noopener" href="https://www.4chan.org/">deep dark web</a> for a few hundred <a target="_blank" rel="noopener" href="https://coinmarketcap.com/currencies/dogecoin/">dogecoin</a>.</p>
+<p>In today-time, doing any network analysis absolutely requires knowledge of HTTPS &#x2F; SSL &#x2F; TLS interception and it turns out to be non trivial almost all of the time! Of course, this makes sense because the entire point of TLS is to secure your communication. Like any other seldom trodden path, intercepting TLS has some caveats.  First, you have to grok how <a target="_blank" rel="noopener" href="https://security.stackexchange.com/questions/8145/does-https-prevent-man-in-the-middle-attacks-by-proxy-server">Man-in-the-Middle works</a>, how certificates work and how to install them on your system, how to massage your OS and certain apps into using those certs. Finally, you’ve got to navigate a bunch of proxy documentation and configuration to actually intercept and display the traffic.</p>
+<p>In this post, I’ll be describing how to monitor the encrypted HTTPS traffic of a single app on macOS as well as solutions to some of the frustrating problems I encountered.</p>
+<span id="more"></span>
+
 <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>The process for intercepting traffic is as follows:</p>
 <ol>
 <li>Generate a root certificate</li>
 <li>Install the cert</li>
-<li>Use <a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="external">proxychains</a> to proxy a specific app</li>
-<li>Use <a href="https://mitmproxy.org/" target="_blank" rel="external">mitmproxy</a> to intercept traffic</li>
+<li>Use <a target="_blank" rel="noopener" href="https://github.com/rofl0r/proxychains-ng">proxychains</a> to proxy a specific app</li>
+<li>Use <a target="_blank" rel="noopener" href="https://mitmproxy.org/">mitmproxy</a> to intercept traffic</li>
 <li>Yell at your computer because it doesn’t work for reasons which are highly opaque</li>
 </ol>
 <p>You get to skip step 5 since you’re reading this post. Congratulations.</p>
 <h2 id="Installing-Stuff"><a href="#Installing-Stuff" class="headerlink" title="Installing Stuff"></a>Installing Stuff</h2><p>Install proxychains the way you probably install everything else: by blindly <code>brew install</code>‘ing it, but add a little <code>-ng</code> at the end:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">brew install proxychains-ng</div></pre></td></tr></table></figure>
-<p>There’s a slightly newer version forked <a href="https://github.com/haad/proxychains" target="_blank" rel="external">on GitHub</a> but I couldn’t be bothered to <code>make</code> it and the brew formula is <em>conspicuously</em> <a href="https://gist.github.com/allenhuang/3792521#gistcomment-1367295" target="_blank" rel="external">missing from the brew repo</a>. What are you trying to hide, bro?</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
+
+<p>There’s a slightly newer version forked <a target="_blank" rel="noopener" href="https://github.com/haad/proxychains">on GitHub</a> but I couldn’t be bothered to <code>make</code> it and the brew formula is <em>conspicuously</em> <a target="_blank" rel="noopener" href="https://gist.github.com/allenhuang/3792521#gistcomment-1367295">missing from the brew repo</a>. What are you trying to hide, bro?</p>
 <p>Create a <em>proxychains.conf</em> and add these lines:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">strict_chain</div><div class="line">quiet_mode</div><div class="line">proxy_dns</div><div class="line">remote_dns_subnet 224</div><div class="line">tcp_read_time_out 15000</div><div class="line">tcp_connect_time_out 8000</div><div class="line"></div><div class="line">[ProxyList]</div><div class="line">http 127.0.0.1 8080</div></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">strict_chain</span><br><span class="line">quiet_mode</span><br><span class="line">proxy_dns</span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">http 127.0.0.1 8080</span><br></pre></td></tr></table></figure>
+
 <p>The main important line is <code>http 127.0.0.1 8080</code> which tells proxychains to redirect all traffic from the app to 127.0.0.1 port 8080, which is where we’ll be running mitmproxy.</p>
 <p>Next, install mitmproxy with <code>pip</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="comment"># because I know you probably never upgrade pip and this is really just a test to see if you're paying attention and just copy / pasting everything</span></div><div class="line">pip install --upgrade pip</div><div class="line">pip install mitmproxy <span class="comment"># this is all that matters</span></div></pre></td></tr></table></figure>
-<p>Go ahead and start <code>mitmproxy</code> so it’ll be running (duh) and because it helpfully generates a root cert for you in <em>~/.mitmproxy</em>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mitmproxy --host</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment"># because I know you probably never upgrade pip and this is really just a test to see if you&#x27;re paying attention and just copy / pasting everything</span></span><br><span class="line">pip install --upgrade pip</span><br><span class="line">pip install mitmproxy <span class="comment"># this is all that matters</span></span><br></pre></td></tr></table></figure>
+
+<p>Go ahead and start <code>mitmproxy</code> so it’ll be running (duh) and because it helpfully generates a root cert for you in <em>~&#x2F;.mitmproxy</em>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mitmproxy --host</span><br></pre></td></tr></table></figure>
+
 <p>To install the certs, you have two options. First, the clicky-clicky method:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">open ~/.mitmproxy</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open ~/.mitmproxy</span><br></pre></td></tr></table></figure>
+
 <p>Then, press <code>Command+Space</code> and type <code>Keychain Access</code>. Next, double click <em>mitmproxy-ca-cert.pem</em> to install it. Or, you can drag it to Keychain Access. At this point, you should see something like this:</p>
-<p><img src="/images/single-app-mitm-proxy/added_cert_untrusted.png" alt=""></p>
+<p><img src="/images/single-app-mitm-proxy/added_cert_untrusted.png"></p>
 <p>The cert is installed but it’s not trusted. To trust the cert, right click on it and select <code>Get Info</code>. Expand <code>Trust</code> and select <code>Always Trust</code> for <code>When using this certificate</code>. It should look like this:</p>
-<p><img src="/images/single-app-mitm-proxy/trust_info.png" alt=""></p>
+<p><img src="/images/single-app-mitm-proxy/trust_info.png"></p>
 <p>The second install option is to just do it from the command line:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem</span><br></pre></td></tr></table></figure>
+
 <p>Finally, your cert should look something like this:</p>
-<p><img src="/images/single-app-mitm-proxy/cert_installed_trusted.png" alt=""></p>
-<p>If you have any other certs than those in the screen shot, you may be backdoor’ed! The <a href="https://cdn.arstechnica.net/wp-content/uploads/2013/11/party-van-640x215.jpg" target="_blank" rel="external">vans</a> are on their way.</p>
+<p><img src="/images/single-app-mitm-proxy/cert_installed_trusted.png"></p>
+<p>If you have any other certs than those in the screen shot, you may be backdoor’ed! The <a target="_blank" rel="noopener" href="https://cdn.arstechnica.net/wp-content/uploads/2013/11/party-van-640x215.jpg">vans</a> are on their way.</p>
 <h2 id="Using-mitmproxy"><a href="#Using-mitmproxy" class="headerlink" title="Using mitmproxy"></a>Using mitmproxy</h2><p>The mitmproxy manual is very good and those people put a lot of work into the software and documentation, so I’m not going to explain it here. It’s also pretty simple to figure out and I’m not going to patronize you by holding your hand like you’re a little baby.</p>
 <p><strong>However</strong>, if you’ve never used mitmproxy before, you should know a few key bindings. The first two are obvious:</p>
 <ul>
@@ -170,17 +178,22 @@ ga('send', 'pageview');
 <li>Q backs out of a selected item</li>
 </ul>
 <h2 id="Testing-Everything"><a href="#Testing-Everything" class="headerlink" title="Testing Everything"></a>Testing Everything</h2><p>Now that you have a proxychains configuration pointed at localhost, the certs are installed, and mitmproxy is running, you’re ready to test stuff and see if it works!</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">proxychains4 -f proxychains.conf curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
-<p>Now, check out mitmproxy and observe how there is <strong>no</strong> logged traffic. Hurray! It’s not working! But why is this? <strong>Because system apps silently ignore your bullshit.</strong> It has something to do with <a href="https://github.com/rofl0r/proxychains-ng/issues/78" target="_blank" rel="external">SIP not allowing proxychains to do it’s thing</a>. You can work around this like so:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cp `<span class="built_in">which</span> curl` .</div><div class="line">proxychains4 -f proxychains.conf ./curl https://calebfenton.github.io/</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 -f proxychains.conf curl https://calebfenton.github.io/</span><br></pre></td></tr></table></figure>
+
+<p>Now, check out mitmproxy and observe how there is <strong>no</strong> logged traffic. Hurray! It’s not working! But why is this? <strong>Because system apps silently ignore your bullshit.</strong> It has something to do with <a target="_blank" rel="noopener" href="https://github.com/rofl0r/proxychains-ng/issues/78">SIP not allowing proxychains to do it’s thing</a>. You can work around this like so:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> `<span class="built_in">which</span> curl` .</span><br><span class="line">proxychains4 -f proxychains.conf ./curl https://calebfenton.github.io/</span><br></pre></td></tr></table></figure>
+
 <p>Or you could just <code>brew install wget</code> and replace <code>curl</code> with <code>wget</code> and that should work because <code>wget</code> is not a system app.</p>
 <p>Once you see traffic on mitmproxy, it means a lot is working: mitmproxy is correctly mitm’ing, your freshly installed backdoor root cert is respected, and proxychains is correctly hooking the right stuff. This is really good! Probably enough for most people, but I was trying to proxy some Python code. So, on to some possible problems with Python!</p>
 <p>If you want to follow along, add these lines to <em>req.py</em>:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> requests</div><div class="line">r = requests.get(<span class="string">'https://calebfenton.github.io/'</span>)</div><div class="line">print(r)</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">r = requests.get(<span class="string">&#x27;https://calebfenton.github.io/&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(r)</span><br></pre></td></tr></table></figure>
+
 <p>You may need to <code>pip install requests</code> if you hate yourself and don’t have requests installed already. This script basically does what <code>curl</code> does, except it prints out a lot less. Let’s try it with proxychains:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ proxychains4 python req.py <span class="comment"># automatically finds proxychains.conf</span></div><div class="line">[proxychains] config file found: /Users/caleb/secret-shit-omg/proxychains.conf</div><div class="line">[proxychains] preloading /usr/<span class="built_in">local</span>/Cellar/proxychains-ng/4.12_1/lib/libproxychains4.dylib</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"req2.py"</span>, line 2, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">    r = requests.get(<span class="string">'https://calebfenton.github.io/'</span>)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/api.py"</span>, line 71, <span class="keyword">in</span> get</div><div class="line">    <span class="built_in">return</span> request(<span class="string">'get'</span>, url, params=params, **kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/api.py"</span>, line 57, <span class="keyword">in</span> request</div><div class="line">    <span class="built_in">return</span> session.request(method=method, url=url, **kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/sessions.py"</span>, line 475, <span class="keyword">in</span> request</div><div class="line">    resp = self.send(prep, **send_kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/sessions.py"</span>, line 585, <span class="keyword">in</span> send</div><div class="line">    r = adapter.send(request, **kwargs)</div><div class="line">  File <span class="string">"/usr/local/lib/python2.7/site-packages/requests/adapters.py"</span>, line 477, <span class="keyword">in</span> send</div><div class="line">    raise SSLError(e, request=request)</div><div class="line">requests.exceptions.SSLError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains4 python req.py <span class="comment"># automatically finds proxychains.conf</span></span><br><span class="line">[proxychains] config file found: /Users/caleb/secret-shit-omg/proxychains.conf</span><br><span class="line">[proxychains] preloading /usr/local/Cellar/proxychains-ng/4.12_1/lib/libproxychains4.dylib</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;req2.py&quot;</span>, line 2, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    r = requests.get(<span class="string">&#x27;https://calebfenton.github.io/&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;/usr/local/lib/python2.7/site-packages/requests/api.py&quot;</span>, line 71, <span class="keyword">in</span> get</span><br><span class="line">    <span class="built_in">return</span> request(<span class="string">&#x27;get&#x27;</span>, url, params=params, **kwargs)</span><br><span class="line">  File <span class="string">&quot;/usr/local/lib/python2.7/site-packages/requests/api.py&quot;</span>, line 57, <span class="keyword">in</span> request</span><br><span class="line">    <span class="built_in">return</span> session.request(method=method, url=url, **kwargs)</span><br><span class="line">  File <span class="string">&quot;/usr/local/lib/python2.7/site-packages/requests/sessions.py&quot;</span>, line 475, <span class="keyword">in</span> request</span><br><span class="line">    resp = self.send(prep, **send_kwargs)</span><br><span class="line">  File <span class="string">&quot;/usr/local/lib/python2.7/site-packages/requests/sessions.py&quot;</span>, line 585, <span class="keyword">in</span> send</span><br><span class="line">    r = adapter.send(request, **kwargs)</span><br><span class="line">  File <span class="string">&quot;/usr/local/lib/python2.7/site-packages/requests/adapters.py&quot;</span>, line 477, <span class="keyword">in</span> send</span><br><span class="line">    raise SSLError(e, request=request)</span><br><span class="line">requests.exceptions.SSLError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:661)</span><br></pre></td></tr></table></figure>
+
 <p>Python doesn’t give a shit about your certs. Hah! You can do a quick test that this is the case by changing the <code>requests.get</code> to include a <code>verify</code> parameter pointing to your cert:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> requests</div><div class="line">r = requests.get(<span class="string">'https://calebfenton.github.io/'</span>, verify=<span class="string">'/Users/caleb/.mitmproxy/mitmproxy-ca-cert.pem'</span>)</div><div class="line">print(r)</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">r = requests.get(<span class="string">&#x27;https://calebfenton.github.io/&#x27;</span>, verify=<span class="string">&#x27;/Users/caleb/.mitmproxy/mitmproxy-ca-cert.pem&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(r)</span><br></pre></td></tr></table></figure>
+
 <p>This <em>works fine</em> because you’re telling the <code>requests</code> module  to trust your mitmproxy cert.</p>
 <p>What if you can’t be bothered to change your target app or maybe it uses something other than requests? You have at least two options:</p>
 <ul>
@@ -188,19 +201,20 @@ ga('send', 'pageview');
 <li>For other modules, try setting <code>SSL_CERT_FILE</code> with the path to your root cert</li>
 </ul>
 <p>For example, using the first version of <em>req.py</em> without <code>verify</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ REQUESTS_CA_BUNDLE=/Users/caleb/.mitmproxy/mitmproxy-ca-cert.cer proxychains4 python req.py</div><div class="line">[proxychains] config file found: /Users/caleb/secret-shit-omg/proxychains.conf</div><div class="line">[proxychains] preloading /usr/<span class="built_in">local</span>/Cellar/proxychains-ng/4.12_1/lib/libproxychains4.dylib</div><div class="line">&lt;Response [200]&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ REQUESTS_CA_BUNDLE=/Users/caleb/.mitmproxy/mitmproxy-ca-cert.cer proxychains4 python req.py</span><br><span class="line">[proxychains] config file found: /Users/caleb/secret-shit-omg/proxychains.conf</span><br><span class="line">[proxychains] preloading /usr/local/Cellar/proxychains-ng/4.12_1/lib/libproxychains4.dylib</span><br><span class="line">&lt;Response [200]&gt;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>This post only covers a small number of the problems that can bite you when trying to mitm HTTPS. However, most of the time, I just need to proxy a single app and don’t want to use iptables or ipfw to redirect all traffic because 1.) that’s noisy and 2.) <a href="/images/single-app-mitm-proxy/man_iptables.png">firewall rules are confusing</a> and I don’t want to master that arcanum unless I have to, not ashamed to admit it. With this post, you should have everything you need to successfully proxy and monitor traffic of a single app on OSX (most of the time).</p>
 <p>Good luck. Happy sniffing.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="ckb85psgy000wr5kdkjn7f895" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/" data-id="ckzxb6f7r000phfaogp6hb61y" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/networking/">networking</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/networking/" rel="tag">networking</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li></ul>
 
     </footer>
   </div>
@@ -231,7 +245,7 @@ ga('send', 'pageview');
 
 <section id="comments">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 </section>
@@ -272,7 +286,7 @@ ga('send', 'pageview');
     <div id="twitter-feed" class="widget-wrap">
   <h3 class="widget-title">Twitter Feed</h3>
   <div class="widget">
-    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a class="twitter-timeline" data-height="2000" target="_blank" rel="noopener" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 </div>
 
@@ -283,7 +297,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/" rel="tag">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/" rel="tag">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/" rel="tag">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/" rel="tag">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/" rel="tag">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/" rel="tag">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/" rel="tag">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/" rel="tag">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/" rel="tag">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/" rel="tag">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/" rel="tag">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/" rel="tag">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/" rel="tag">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -313,7 +327,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Caleb Fenton<br>
+      &copy; 2022 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -330,7 +344,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/';
+  var disqus_url = 'https://calebfenton.github.io/2017/05/27/monitoring-https-of-a-single-app-on-osx/';
   
   (function(){
     var dsq = document.createElement('script');
@@ -345,11 +359,17 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>

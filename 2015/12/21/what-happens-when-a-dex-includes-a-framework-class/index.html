@@ -5,17 +5,20 @@
   
   <title>What happens when a DEX includes a framework class? | Caleb Fenton&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
-<meta name="keywords" content="android,research,dalvik">
+  <meta name="description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system &#x2F; framework class such as Ljava&#x2F;lang&#x2F;Obje">
 <meta property="og:type" content="article">
 <meta property="og:title" content="What happens when a DEX includes a framework class?">
-<meta property="og:url" content="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/index.html">
+<meta property="og:url" content="https://calebfenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/index.html">
 <meta property="og:site_name" content="Caleb Fenton&#39;s Blog">
-<meta property="og:description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
-<meta property="og:updated_time" content="2017-10-29T00:33:06.000Z">
+<meta property="og:description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system &#x2F; framework class such as Ljava&#x2F;lang&#x2F;Obje">
+<meta property="og:locale">
+<meta property="article:published_time" content="2015-12-22T02:13:40.000Z">
+<meta property="article:modified_time" content="2017-10-29T00:33:06.000Z">
+<meta property="article:author" content="Caleb Fenton">
+<meta property="article:tag" content="research">
+<meta property="article:tag" content="android">
+<meta property="article:tag" content="dalvik">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="What happens when a DEX includes a framework class?">
-<meta name="twitter:description" content="WhyWhile working on a new class loading system for SmaliVM, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as Ljava/lang/Object;.">
 <meta name="twitter:creator" content="@CalebFenton">
   
     <link rel="alternative" href="/rss2.xml" title="Caleb Fenton&#39;s Blog" type="application/atom+xml">
@@ -43,7 +46,9 @@
     <meta name="theme-color" content="#ffffff">
   
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
   
 <!-- Google Analytics -->
 <script type="text/javascript">
@@ -59,7 +64,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-</head>
+<meta name="generator" content="Hexo 6.0.0"></head>
 
 <body>
   <div id="container">
@@ -71,10 +76,6 @@ ga('send', 'pageview');
       <h1 id="logo-wrap">
         <a href="/" id="logo">Caleb Fenton&#39;s Blog</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Break Stuff To Make It Better</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -102,7 +103,7 @@ ga('send', 'pageview');
         <section id="main"><article id="post-what-happens-when-a-dex-includes-a-framework-class" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" class="article-date">
-  <time datetime="2015-12-22T04:13:40.000Z" itemprop="datePublished">2015-12-21</time>
+  <time datetime="2015-12-22T02:13:40.000Z" itemprop="datePublished">2015-12-21</time>
 </a>
     
   </div>
@@ -121,35 +122,43 @@ ga('send', 'pageview');
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>While working on a new class loading system for <a href="https://github.com/CalebFenton/simplify/tree/master/smalivm" target="_blank" rel="external">SmaliVM</a>, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system / framework class such as <code>Ljava/lang/Object;</code>. I’d originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be <em>stupid</em>.<br><a id="more"></a></p>
+        <h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>While working on a new class loading system for <a target="_blank" rel="noopener" href="https://github.com/CalebFenton/simplify/tree/master/smalivm">SmaliVM</a>, I needed to understand exactly how DalvikVM handles the case of a DEX file including a system &#x2F; framework class such as <code>Ljava/lang/Object;</code>. I’d originally assumed, naively, in retrospect, that class files in a DEX file should take precedence. Thinking about this for a half second, I have no idea what the hell I was thinking. That would be <em>stupid</em>.</p>
+<span id="more"></span>
+
 <p>If Dalvik let apps redefine framework classes, it has huge security implications. Sure, each app runs it its own zygote-spawned sandbox, but what if somewhere, somehow, my malicious app’s DEX file was loaded by an app with system or root access? I could just backdoor <code>Ljava/lang/Object;</code>. Even if that’s not possible, I’m sure I could think of something nefarious if you gave me the ability to backdoor any class.</p>
-<p>Well, derp, so now I have to rewrite part of <a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a> and (hopefully) fix some tests. I might as well know exactly how it fails and document it for other researchers, right?</p>
+<p>Well, derp, so now I have to rewrite part of <a target="_blank" rel="noopener" href="https://github.com/CalebFenton/simplify">Simplify</a> and (hopefully) fix some tests. I might as well know exactly how it fails and document it for other researchers, right?</p>
 <h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>First, I created two small Smali files.</p>
-<p>smali/<strong>hello.smali</strong>:</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LHelloWorld;</span></div><div class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> main([<span class="class">Ljava/lang/String;</span>)V</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"></div><div class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></div><div class="line">   <span class="built_in"> const-string </span>v1, <span class="string">"hello,world!"</span></div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</div><div class="line"></div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div></pre></td></tr></table></figure>
+<p>smali&#x2F;<strong>hello.smali</strong>:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LHelloWorld;</span></span><br><span class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> main([<span class="class">Ljava/lang/String;</span>)V</span><br><span class="line"><span class="keyword">    .locals</span> 2</span><br><span class="line"></span><br><span class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></span><br><span class="line">   <span class="built_in"> const-string </span>v1, <span class="string">&quot;hello,world!&quot;</span></span><br><span class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</span><br><span class="line"></span><br><span class="line">   <span class="built_in"> return-void</span></span><br><span class="line"><span class="built_in"></span><span class="keyword">.end method</span></span><br></pre></td></tr></table></figure>
+
 <p>The purpose of this is just to provide a <code>main(String[])</code> method and to have <code>Object</code> as a <code>super</code>.</p>
-<p>smali/<strong>object.smali</strong>:</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">.class</span> <span class="class">Ljava/lang/Object;</span></div><div class="line"></div><div class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> &lt;clinit&gt;()V</div><div class="line"><span class="keyword">    .locals</span> 2</div><div class="line"></div><div class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></div><div class="line">   <span class="built_in"> const-string </span>v1, <span class="string">"crazyballs"</span></div><div class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</div><div class="line"></div><div class="line">   <span class="built_in"> return-void</span></div><div class="line"><span class="keyword">.end method</span></div></pre></td></tr></table></figure>
+<p>smali&#x2F;<strong>object.smali</strong>:</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.class</span> <span class="class">Ljava/lang/Object;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> &lt;clinit&gt;()V</span><br><span class="line"><span class="keyword">    .locals</span> 2</span><br><span class="line"></span><br><span class="line">   <span class="built_in"> sget-object </span>v0, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></span><br><span class="line">   <span class="built_in"> const-string </span>v1, <span class="string">&quot;crazyballs&quot;</span></span><br><span class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</span><br><span class="line"></span><br><span class="line">   <span class="built_in"> return-void</span></span><br><span class="line"><span class="built_in"></span><span class="keyword">.end method</span></span><br></pre></td></tr></table></figure>
+
 <p>This is the real test. If I can overwrite framework classes, I should get a lot of errors, duh, but not before <code>&lt;clinit&gt;</code> prints out something witty.</p>
 <p>After that, it was just packing it up and shoving it onto an emulator:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ smali smali -o classes.dex</div><div class="line">$ zip hello.zip classes.dex</div><div class="line">  adding: classes.dex (deflated 47%)</div><div class="line">$ adb push hello.zip /data/<span class="built_in">local</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ smali smali -o classes.dex</span><br><span class="line">$ zip hello.zip classes.dex</span><br><span class="line">  adding: classes.dex (deflated 47%)</span><br><span class="line">$ adb push hello.zip /data/local</span><br></pre></td></tr></table></figure>
+
 <p>I’ll also wanted to see the error explosions in the logs. You’d be surprised how many people have an app crash or something and don’t bother looking at the logs. <code>monitor</code> is your friend. It usually has bad news, and confuses Eclipse and IntelliJ if it’s running, but at least it’s honest.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ monitor &amp;<span class="built_in">disown</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ monitor &amp;<span class="built_in">disown</span></span><br></pre></td></tr></table></figure>
+
 <p>Finally, just invoke <code>dalvikvm</code> with our ZIP as the classpath:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ adb shell</div><div class="line">root@android:/ <span class="comment"># cd /data/local</span></div><div class="line">root@android:/data/<span class="built_in">local</span> <span class="comment"># dalvikvm -cp hello.zip HelloWorld</span></div><div class="line">hello,world!</div><div class="line">root@android:/data/<span class="built_in">local</span> <span class="comment">#</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ adb shell</span><br><span class="line">root@android:/ <span class="comment"># cd /data/local</span></span><br><span class="line">root@android:/data/local <span class="comment"># dalvikvm -cp hello.zip HelloWorld</span></span><br><span class="line">hello,world!</span><br><span class="line">root@android:/data/local <span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
 <p>No <code>&quot;crazyballs&quot;</code>, so I guess my hunch was right. I wonder what the error looked like?</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">12-21 11:07:22.035: D/dalvikvm(1065): DexOpt: --- BEGIN &apos;hello.zip&apos; (bootstrap=0) ---</div><div class="line">12-21 11:07:22.095: D/dalvikvm(1066): DexOpt: &apos;Ljava/lang/Object;&apos; has an earlier definition; blocking out</div><div class="line">12-21 11:07:22.095: D/dalvikvm(1066): DexOpt: not verifying/optimizing &apos;Ljava/lang/Object;&apos;: multiple definitions</div><div class="line">12-21 11:07:22.115: D/dalvikvm(1066): DexOpt: load 14ms, verify+opt 11ms, 83668 bytes</div><div class="line">12-21 11:07:22.115: D/dalvikvm(1065): DexOpt: --- END &apos;hello.zip&apos; (success) ---</div><div class="line">12-21 11:07:22.115: D/dalvikvm(1065): DEX prep &apos;hello.zip&apos;: unzip in 2ms, rewrite 75ms</div></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">12-21 11:07:22.035: D/dalvikvm(1065): DexOpt: --- BEGIN &#x27;hello.zip&#x27; (bootstrap=0) ---</span><br><span class="line">12-21 11:07:22.095: D/dalvikvm(1066): DexOpt: &#x27;Ljava/lang/Object;&#x27; has an earlier definition; blocking out</span><br><span class="line">12-21 11:07:22.095: D/dalvikvm(1066): DexOpt: not verifying/optimizing &#x27;Ljava/lang/Object;&#x27;: multiple definitions</span><br><span class="line">12-21 11:07:22.115: D/dalvikvm(1066): DexOpt: load 14ms, verify+opt 11ms, 83668 bytes</span><br><span class="line">12-21 11:07:22.115: D/dalvikvm(1065): DexOpt: --- END &#x27;hello.zip&#x27; (success) ---</span><br><span class="line">12-21 11:07:22.115: D/dalvikvm(1065): DEX prep &#x27;hello.zip&#x27;: unzip in 2ms, rewrite 75ms</span><br></pre></td></tr></table></figure>
+
 <p>If you read between the lines, the actual error message is “has an earlier definition; blocking out (idiot)”.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" data-id="ckb85psh50019r5kdpy476zby" class="article-share-link">Share</a>
+      <a data-url="https://calebfenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/" data-id="ckzxb6f7v0011hfao3l85c9if" class="article-share-link">Share</a>
       
-        <a href="https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="https://calebfenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/">research</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/" rel="tag">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/research/" rel="tag">research</a></li></ul>
 
     </footer>
   </div>
@@ -175,7 +184,7 @@ ga('send', 'pageview');
 
 <section id="comments">
   <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
 </section>
 </section>
@@ -216,7 +225,7 @@ ga('send', 'pageview');
     <div id="twitter-feed" class="widget-wrap">
   <h3 class="widget-title">Twitter Feed</h3>
   <div class="widget">
-    <a class="twitter-timeline" data-height="2000" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a class="twitter-timeline" data-height="2000" target="_blank" rel="noopener" href="https://twitter.com/caleb_fenton">Tweets by caleb_fenton</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 </div>
 
@@ -227,7 +236,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/">tdd</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/" rel="tag">android</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anti-virus/" rel="tag">anti-virus</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitcoin/" rel="tag">bitcoin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/business/" rel="tag">business</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code-kata/" rel="tag">code-kata</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/culture/" rel="tag">culture</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dalvik/" rel="tag">dalvik</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deobfuscation/" rel="tag">deobfuscation</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dex-oracle/" rel="tag">dex-oracle</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jni/" rel="tag">jni</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/" rel="tag">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realtalk/" rel="tag">realtalk</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/research/" rel="tag">research</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing/" rel="tag">reversing</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/security/" rel="tag">security</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simplify/" rel="tag">simplify</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smali/" rel="tag">smali</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smalivm/" rel="tag">smalivm</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tdd/" rel="tag">tdd</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -257,7 +266,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Caleb Fenton<br>
+      &copy; 2022 Caleb Fenton<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -274,7 +283,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'calebfenton';
   
-  var disqus_url = 'https://CalebFenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/';
+  var disqus_url = 'https://calebfenton.github.io/2015/12/21/what-happens-when-a-dex-includes-a-framework-class/';
   
   (function(){
     var dsq = document.createElement('script');
@@ -289,11 +298,17 @@ ga('send', 'pageview');
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
 
 
 <script src="/js/script.js"></script>
+
 
   </div>
 </body>
