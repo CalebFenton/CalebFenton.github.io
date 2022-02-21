@@ -17,7 +17,7 @@ Also, special thanks to everyone for speaking English around me!
 
 # Slides + Video
 
-http://www.slideshare.net/tekproxy/tetcon-2016
+https://www.slideshare.net/caleb194331/android-deobfuscation-tools-and-techniques
 
 # Tools
 
